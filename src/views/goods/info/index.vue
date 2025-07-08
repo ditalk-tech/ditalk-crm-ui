@@ -18,11 +18,22 @@
                 :default-time="[new Date(2000, 1, 1, 0, 0, 0), new Date(2000, 1, 1, 23, 59, 59)]"
               />
             </el-form-item>
-            <el-form-item label="店铺ID" prop="shopId">
-              <el-input v-model="queryParams.shopId" placeholder="请输入店铺ID" clearable @keyup.enter="handleQuery" />
+            <el-form-item label="店铺" prop="shopId">
+              <el-select v-model="queryParams.shopId" placeholder="请选择店铺" filterable clearable>
+                <el-option v-for="item in shopInfoList" :key="item.id" :label="item.name" :value="item.id" />
+              </el-select>
             </el-form-item>
-            <el-form-item label="分类ID" prop="categoryId">
-              <el-input v-model="queryParams.categoryId" placeholder="请输入分类ID" clearable @keyup.enter="handleQuery" />
+            <el-form-item label="分类" prop="categoryId">
+              <el-tree-select
+                v-model="queryParams.categoryId"
+                :data="categoryOptions"
+                :props="{ value: 'id', label: 'label', children: 'children' } as any"
+                value-key="id"
+                placeholder="请选择分类"
+                check-strictly
+                filterable
+                clearable
+              />
             </el-form-item>
             <el-form-item label="编码" prop="spuCode">
               <el-input v-model="queryParams.spuCode" placeholder="请输入编码" clearable @keyup.enter="handleQuery" />
@@ -119,11 +130,21 @@
     <!-- 添加或修改商品信息对话框 -->
     <el-dialog :title="dialog.title" v-model="dialog.visible" width="960px" append-to-body>
       <el-form ref="infoFormRef" :model="form" :rules="rules" label-width="120px">
-        <el-form-item label="店铺ID" prop="shopId">
-          <el-input v-model="form.shopId" placeholder="请输入店铺ID" />
+        <el-form-item label="店铺" prop="shopId">
+          <el-select v-model="form.shopId" placeholder="请选择店铺" filterable>
+            <el-option v-for="item in shopInfoList" :key="item.id" :label="item.name" :value="item.id" />
+          </el-select>
         </el-form-item>
-        <el-form-item label="分类ID" prop="categoryId">
-          <el-input v-model="form.categoryId" placeholder="请输入分类ID" />
+        <el-form-item label="分类" prop="categoryId">
+          <el-tree-select
+                v-model="form.categoryId"
+                :data="categoryOptions"
+                :props="{ value: 'id', label: 'label', children: 'children' } as any"
+                value-key="id"
+                placeholder="请选择分类"
+                check-strictly
+                filterable
+              />
         </el-form-item>
         <el-form-item label="编码" prop="spuCode">
           <el-input v-model="form.spuCode" placeholder="请输入编码" />
@@ -193,6 +214,13 @@
 <script setup name="Info" lang="ts">
 import { listInfo, getInfo, delInfo, addInfo, updateInfo } from '@/api/goods/info';
 import { InfoVO, InfoQuery, InfoForm } from '@/api/goods/info/types';
+import { InfoVO as ShopInfoVO } from '@/api/shop/info/types';
+import { CategoryTreeVO } from '@/api/goods/category/types';
+// import { InfoVO as BrandInfoVO } from '@/api/brand/info/types';
+import { listInfo as listShopInfo } from '@/api/shop/info';
+import { getTreeSelect } from '@/api/goods/category';
+// import { listInfo as listBrandInfo } from '@/api/brand/info';
+
 
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 const { ditalk_goods_state } = toRefs<any>(proxy?.useDict('ditalk_goods_state'));
@@ -206,6 +234,9 @@ const single = ref(true);
 const multiple = ref(true);
 const total = ref(0);
 const dateRangeCreateTime = ref<[DateModelType, DateModelType]>(['', '']);
+const shopInfoList = ref<ShopInfoVO[]>([]);
+// const brandInfoList = ref<BrandInfoVO[]>([]);
+const categoryOptions = ref<CategoryTreeVO[]>([]);
 
 const queryFormRef = ref<ElFormInstance>();
 const infoFormRef = ref<ElFormInstance>();
@@ -382,10 +413,30 @@ const handleDelete = async (row?: InfoVO) => {
 const handleExport = () => {
   proxy?.download('goods/info/export', {
     ...queryParams.value
-  }, `info_${new Date().getTime()}.xlsx`)
+  }, `info_${new Date().getTime()}.xlsx`);
 }
 
 onMounted(() => {
+  getShopList();
+  // getBrandList();
+  getCategoryTree()
   getList();
 });
+
+const getShopList = async () => {
+  const res = await listShopInfo();
+  shopInfoList.value = res.rows;
+}
+
+// const getBrandList = async () => {
+//   const res = await listBrandInfo();
+//   brandList.value = res.rows;
+// }
+
+/** 查询分类下拉树结构 */
+const getCategoryTree = async () => {
+  const res = await getTreeSelect();
+  categoryOptions.value = res.data;
+};
+
 </script>

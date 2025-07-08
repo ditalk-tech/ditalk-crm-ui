@@ -19,7 +19,7 @@
               />
             </el-form-item>
             <el-form-item label="店铺" prop="shopId">
-              <el-select v-model="queryParams.shopId" placeholder="请选择店铺">
+              <el-select v-model="queryParams.shopId" placeholder="请选择店铺" filterable clearable>
                 <el-option v-for="item in shopInfoList" :key="item.id" :label="item.name" :value="item.id" />
               </el-select>
             </el-form-item>
@@ -103,7 +103,7 @@
     <el-dialog :title="dialog.title" v-model="dialog.visible" width="500px" append-to-body>
       <el-form ref="categoryFormRef" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="店铺" prop="shopId">
-          <el-select v-model="form.shopId" placeholder="请选择店铺">
+          <el-select v-model="form.shopId" placeholder="请选择店铺" filterable>
             <el-option v-for="item in shopInfoList" :key="item.id" :label="item.name" :value="item.id" />
           </el-select>
         </el-form-item>
@@ -348,10 +348,15 @@ const handleDelete = async (row: CategoryVO) => {
   proxy?.$modal.msgSuccess("删除成功");
 }
 
-onMounted(async () => {
+const getShopInfoList = async () => {
   // 店铺列表
   const shopListRes = await listShopInfo();
   shopInfoList.value = shopListRes.rows;
+}
+
+onMounted(() => {
+  // 店铺列表
+  getShopInfoList();
   // 商品分类列表
   getList();
 });

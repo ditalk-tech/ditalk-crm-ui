@@ -1,6 +1,6 @@
 import request from '@/utils/request';
 import { AxiosPromise } from 'axios';
-import { CategoryVO, CategoryForm, CategoryQuery } from '@/api/goods/category/types';
+import { CategoryVO, CategoryForm, CategoryQuery, CategoryTreeVO } from '@/api/goods/category/types';
 
 /**
  * 查询商品分类列表
@@ -59,5 +59,16 @@ export const delCategory = (id: string | number | Array<string | number>) => {
   return request({
     url: '/goods/category/' + id,
     method: 'delete'
+  });
+};
+
+/**
+ * 查询下拉树结构
+ */
+export const getTreeSelect = (query?: CategoryQuery): AxiosPromise<CategoryTreeVO[]> => {
+  return request({
+    url: '/goods/category/getTree',
+    method: 'get',
+    params: query
   });
 };

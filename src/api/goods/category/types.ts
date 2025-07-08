@@ -150,5 +150,15 @@ export interface CategoryQuery {
     params?: any;
 }
 
-
+/**
+ * 分类树
+ */
+export interface CategoryTreeVO extends BaseEntity {
+  id: number | string;
+  label: string;
+  parentId: number | string;
+  weight: number;
+  children: CategoryTreeVO[];
+  disabled: boolean;
+}
 
