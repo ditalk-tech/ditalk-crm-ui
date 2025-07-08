@@ -150,22 +150,22 @@
           <editor v-model="form.content" :min-height="192"/>
         </el-form-item>
         <el-form-item label="最低价" prop="minPrice">
-          <el-input-number v-model="form.minPrice" placeholder="请输入最低价" min="0.01" precision="2" />
+          <el-input-number v-model="form.minPrice" placeholder="请输入最低价" :min="0.01" :precision="2" />
         </el-form-item>
         <el-form-item label="总销量" prop="totalSales">
-          <el-input-number v-model="form.totalSales" placeholder="请输入总销量" min="0" precision="0" />
+          <el-input-number v-model="form.totalSales" placeholder="请输入总销量" :min="0" :precision="0" />
         </el-form-item>
         <el-form-item label="可用库存" prop="availableStock">
-          <el-input-number v-model="form.availableStock" placeholder="请输入可用库存" min="0" precision="0" />
+          <el-input-number v-model="form.availableStock" placeholder="请输入可用库存" :min="0" :precision="0" />
         </el-form-item>
         <el-form-item label="综合评分" prop="overallScore">
           <el-space>
-            <el-input-number v-model="form.overallScore" placeholder="请输入综合评分" min="0" max="10" precision="0" />
+            <el-input-number v-model="form.overallScore" placeholder="请输入综合评分" :min="0" :max="10" :precision="0" />
             <el-tooltip content="0-10 分" placement="top"><el-icon><QuestionFilled /></el-icon></el-tooltip>
           </el-space>
         </el-form-item>
         <el-form-item label="排序" prop="sortOrder">
-          <el-input-number v-model="form.sortOrder" placeholder="请输入排序" min="0" max="99999999" precision="0" />
+          <el-input-number v-model="form.sortOrder" placeholder="请输入排序" :min="0" :max="99999999" :precision="0" />
         </el-form-item>
         <el-form-item label="属性JSON" prop="attrJson">
             <el-input v-model="form.attrJson" type="textarea" placeholder="请输入内容" />

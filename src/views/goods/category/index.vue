@@ -18,8 +18,10 @@
                 :default-time="[new Date(2000, 1, 1, 0, 0, 0), new Date(2000, 1, 1, 23, 59, 59)]"
               />
             </el-form-item>
-            <el-form-item label="店铺ID" prop="shopId">
-              <el-input v-model="queryParams.shopId" placeholder="请输入店铺ID" clearable @keyup.enter="handleQuery" />
+            <el-form-item label="店铺" prop="shopId">
+              <el-select v-model="queryParams.shopId" placeholder="请选择店铺">
+                <el-option v-for="item in shopInfoList" :key="item.id" :label="item.name" :value="item.id" />
+              </el-select>
             </el-form-item>
             <el-form-item label="父类ID" prop="parentId">
               <el-input v-model="queryParams.parentId" placeholder="请输入父类ID" clearable @keyup.enter="handleQuery" />
@@ -65,11 +67,8 @@
         :default-expand-all="isExpandAll"
         :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
       >
-        <el-table-column label="创建时间" align="center" prop="createTime" width="180">
-          <template #default="scope">
-            <span>{{ parseTime(scope.row.createTime, '{y}-{m}-{d}') }}</span>
-          </template>
-        </el-table-column>
+        <el-table-column label="ID" align="center" prop="id" width="280" />
+        <el-table-column label="创建时间" align="center" prop="createTime" width="180" />
         <el-table-column label="店铺ID" align="center" prop="shopId" />
         <el-table-column label="父类ID" align="center" prop="parentId" />
         <!-- <el-table-column label="祖级列表" align="center" prop="ancestors" /> -->
@@ -85,7 +84,7 @@
             <dict-tag :options="sys_normal_disable" :value="scope.row.state"/>
           </template>
         </el-table-column>
-        <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+        <el-table-column label="操作" align="center" class-name="small-padding fixed-width" width="110" fixed="right">
           <template #default="scope">
             <el-tooltip content="修改" placement="top">
               <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['goods:category:edit']" />
@@ -103,16 +102,18 @@
     <!-- 添加或修改商品分类对话框 -->
     <el-dialog :title="dialog.title" v-model="dialog.visible" width="500px" append-to-body>
       <el-form ref="categoryFormRef" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="店铺ID" prop="shopId">
-          <el-input v-model="form.shopId" placeholder="请输入店铺ID" />
+        <el-form-item label="店铺" prop="shopId">
+          <el-select v-model="form.shopId" placeholder="请选择店铺">
+            <el-option v-for="item in shopInfoList" :key="item.id" :label="item.name" :value="item.id" />
+          </el-select>
         </el-form-item>
-        <el-form-item label="父类ID" prop="parentId">
+        <el-form-item label="父类" prop="parentId">
           <el-tree-select
             v-model="form.parentId"
             :data="categoryOptions"
             :props="{ value: 'id', label: 'name', children: 'children' }"
             value-key="id"
-            placeholder="请选择父类ID"
+            placeholder="请选择父类"
             check-strictly
           />
         </el-form-item>
@@ -126,7 +127,7 @@
           <image-upload v-model="form.mainPic" :limit="1" />
         </el-form-item>
         <el-form-item label="排序" prop="sortOrder">
-          <el-input-number v-model="form.sortOrder" placeholder="请输入排序" min="0" max="99999999" precision="0" />
+          <el-input-number v-model="form.sortOrder" placeholder="请输入排序" :min="0" :max="99999999" :precision="0" />
         </el-form-item>
         <el-form-item label="状态" prop="state">
           <el-radio-group v-model="form.state">
@@ -151,6 +152,8 @@
 <script setup name="Category" lang="ts">
 import { listCategory, getCategory, delCategory, addCategory, updateCategory } from "@/api/goods/category";
 import { CategoryVO, CategoryQuery, CategoryForm } from '@/api/goods/category/types';
+import { listInfo as listShopInfo } from '@/api/shop/info';
+import { InfoVO as ShopInfoVO } from '@/api/shop/info/types';
 
 type CategoryOption = {
   id: number;
@@ -168,6 +171,7 @@ const buttonLoading = ref(false);
 const showSearch = ref(true);
 const isExpandAll = ref(true);
 const loading = ref(false);
+const shopInfoList = ref<ShopInfoVO[]>([]);
 
 const queryFormRef = ref<ElFormInstance>();
 const categoryFormRef = ref<ElFormInstance>();
@@ -279,9 +283,9 @@ const resetQuery = () => {
 }
 
 /** 新增按钮操作 */
-const handleAdd = (row?: CategoryVO) => {
+const handleAdd = async (row?: CategoryVO) => {
   reset();
-  getTreeselect();
+  await getTreeselect();
   if (row != null && row.id) {
     form.value.parentId = row.id;
   } else {
@@ -344,7 +348,11 @@ const handleDelete = async (row: CategoryVO) => {
   proxy?.$modal.msgSuccess("删除成功");
 }
 
-onMounted(() => {
+onMounted(async () => {
+  // 店铺列表
+  const shopListRes = await listShopInfo();
+  shopInfoList.value = shopListRes.rows;
+  // 商品分类列表
   getList();
 });
 </script>

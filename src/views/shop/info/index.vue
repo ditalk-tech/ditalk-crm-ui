@@ -107,7 +107,7 @@
         </el-form-item>
         <el-form-item label="店铺评分" prop="rating">
           <el-space>
-            <el-input-number min="0" max="10" step="1" precision="0" v-model="form.rating" placeholder="请输入店铺评分" />
+            <el-input-number v-model="form.rating" placeholder="请输入店铺评分" :min="0" :max="10" :precision="0" />
             <el-tooltip content="0-10 分" placement="top"><el-icon><QuestionFilled /></el-icon></el-tooltip>
           </el-space>
         </el-form-item>
