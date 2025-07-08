@@ -165,7 +165,7 @@
           </el-space>
         </el-form-item>
         <el-form-item label="排序" prop="sortOrder">
-          <el-input-number v-model="form.sortOrder" placeholder="请输入排序" />
+          <el-input-number v-model="form.sortOrder" placeholder="请输入排序" min="0" max="99999999" precision="0" />
         </el-form-item>
         <el-form-item label="属性JSON" prop="attrJson">
             <el-input v-model="form.attrJson" type="textarea" placeholder="请输入内容" />
