@@ -58,7 +58,7 @@
       </template>
 
       <el-table v-loading="loading" border :data="memberList" @selection-change="handleSelectionChange">
-        <el-table-column type="selection" width="55" align="center" />
+        <el-table-column type="selection" width="55" align="center" fixed="left" />
         <el-table-column label="ID" align="center" prop="id" v-if="true" />
         <el-table-column label="创建时间" align="center" prop="createTime" width="180" />
         <el-table-column label="活动ID" align="center" prop="eventId" />
@@ -70,7 +70,7 @@
             <dict-tag :options="sys_normal_disable" :value="scope.row.state"/>
           </template>
         </el-table-column>
-        <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+        <el-table-column label="操作" align="center" class-name="small-padding fixed-width" fixed="right">
           <template #default="scope">
             <el-tooltip content="修改" placement="top">
               <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['event:member:edit']"></el-button>
