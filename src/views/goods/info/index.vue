@@ -44,8 +44,10 @@
             <el-form-item label="条形码" prop="barCode">
               <el-input v-model="queryParams.barCode" placeholder="请输入条形码" clearable @keyup.enter="handleQuery" />
             </el-form-item>
-            <el-form-item label="品牌ID" prop="brandId">
-              <el-input v-model="queryParams.brandId" placeholder="请输入品牌ID" clearable @keyup.enter="handleQuery" />
+            <el-form-item label="品牌" prop="brandId">
+              <el-select v-model="queryParams.brandId" placeholder="请选择品牌" filterable>
+                <el-option v-for="item in brandList" :key="item.id" :label="item.name" :value="item.id" />
+              </el-select>
             </el-form-item>
             <el-form-item label="状态" prop="state">
               <el-select v-model="queryParams.state" placeholder="请选择状态" clearable >
@@ -88,15 +90,16 @@
         <el-table-column label="分类ID" align="center" prop="categoryId" />
         <el-table-column label="编码" align="center" prop="spuCode" />
         <el-table-column label="名称" align="center" prop="name" />
+        <el-table-column label="属性JSON" align="center" prop="attrJson" />
         <el-table-column label="副标题" align="center" prop="subtitle" />
-        <el-table-column label="主图ID" align="center" prop="mainPicUrl" width="100">
+        <el-table-column label="主图" align="center" prop="mainPicUrl" width="100">
           <template #default="scope">
             <image-preview :src="scope.row.mainPicUrl" :width="50" :height="50"/>
           </template>
         </el-table-column>
-        <el-table-column label="轮播图ID组" align="center" prop="subPicsUrl" width="100">
+        <el-table-column label="轮播图组" align="center" prop="subPicsUrl" width="180">
           <template #default="scope">
-            <image-preview :src="scope.row.subPicsUrl" :width="50" :height="50"/>
+            <multiple-image-preview :src="scope.row.subPicsUrl" :width="30" :height="30"/>
           </template>
         </el-table-column>
         <el-table-column label="条形码" align="center" prop="barCode" />
@@ -107,7 +110,6 @@
         <el-table-column label="可用库存" align="center" prop="availableStock" />
         <el-table-column label="综合评分" align="center" prop="overallScore" />
         <el-table-column label="排序" align="center" prop="sortOrder" />
-        <el-table-column label="属性JSON" align="center" prop="attrJson" />
         <el-table-column label="状态" align="center" prop="state">
           <template #default="scope">
             <dict-tag :options="ditalk_goods_state" :value="scope.row.state"/>
@@ -155,17 +157,19 @@
         <el-form-item label="副标题" prop="subtitle">
           <el-input v-model="form.subtitle" placeholder="请输入副标题" />
         </el-form-item>
-        <el-form-item label="主图ID" prop="mainPic">
+        <el-form-item label="主图" prop="mainPic">
           <image-upload v-model="form.mainPic" :limit="1"/>
         </el-form-item>
-        <el-form-item label="轮播图ID组" prop="subPics">
+        <el-form-item label="轮播图组" prop="subPics">
           <image-upload v-model="form.subPics"/>
         </el-form-item>
         <el-form-item label="条形码" prop="barCode">
           <el-input v-model="form.barCode" placeholder="请输入条形码" />
         </el-form-item>
-        <el-form-item label="品牌ID" prop="brandId">
-          <el-input v-model="form.brandId" placeholder="请输入品牌ID" />
+        <el-form-item label="品牌" prop="brandId">
+          <el-select v-model="form.brandId" placeholder="请选择品牌" filterable>
+            <el-option v-for="item in brandList" :key="item.id" :label="item.name" :value="item.id" />
+          </el-select>
         </el-form-item>
         <el-form-item label="商品说明">
           <editor v-model="form.content" :min-height="192"/>
@@ -216,10 +220,10 @@ import { listInfo, getInfo, delInfo, addInfo, updateInfo } from '@/api/goods/inf
 import { InfoVO, InfoQuery, InfoForm } from '@/api/goods/info/types';
 import { InfoVO as ShopInfoVO } from '@/api/shop/info/types';
 import { CategoryTreeVO } from '@/api/goods/category/types';
-// import { InfoVO as BrandInfoVO } from '@/api/brand/info/types';
+import { BrandVO } from '@/api/goods/brand/types';
 import { listInfo as listShopInfo } from '@/api/shop/info';
 import { getTreeSelect } from '@/api/goods/category';
-// import { listInfo as listBrandInfo } from '@/api/brand/info';
+import { listBrand } from '@/api/goods/brand';
 
 
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
@@ -235,7 +239,7 @@ const multiple = ref(true);
 const total = ref(0);
 const dateRangeCreateTime = ref<[DateModelType, DateModelType]>(['', '']);
 const shopInfoList = ref<ShopInfoVO[]>([]);
-// const brandInfoList = ref<BrandInfoVO[]>([]);
+const brandList = ref<BrandVO[]>([]);
 const categoryOptions = ref<CategoryTreeVO[]>([]);
 
 const queryFormRef = ref<ElFormInstance>();
@@ -418,7 +422,7 @@ const handleExport = () => {
 
 onMounted(() => {
   getShopList();
-  // getBrandList();
+  getBrandList();
   getCategoryTree()
   getList();
 });
@@ -428,10 +432,10 @@ const getShopList = async () => {
   shopInfoList.value = res.rows;
 }
 
-// const getBrandList = async () => {
-//   const res = await listBrandInfo();
-//   brandList.value = res.rows;
-// }
+const getBrandList = async () => {
+  const res = await listBrand();
+  brandList.value = res.rows;
+}
 
 /** 查询分类下拉树结构 */
 const getCategoryTree = async () => {
