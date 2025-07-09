@@ -90,8 +90,8 @@
         <el-table-column label="分类ID" align="center" prop="categoryId" />
         <el-table-column label="编码" align="center" prop="spuCode" />
         <el-table-column label="名称" align="center" prop="name" />
-        <el-table-column label="属性JSON" align="center" prop="attrJson" />
-        <el-table-column label="副标题" align="center" prop="subtitle" />
+        <el-table-column label="属性集" align="center" prop="attrJson" width="120" show-overflow-tooltip />
+        <el-table-column label="副标题" align="center" prop="subtitle" width="120" show-overflow-tooltip />
         <el-table-column label="主图" align="center" prop="mainPicUrl" width="100">
           <template #default="scope">
             <image-preview :src="scope.row.mainPicUrl" :width="50" :height="50"/>
@@ -104,8 +104,12 @@
         </el-table-column>
         <el-table-column label="条形码" align="center" prop="barCode" />
         <el-table-column label="品牌ID" align="center" prop="brandId" />
-        <el-table-column label="商品说明" align="center" prop="content" />
-        <el-table-column label="最低价" align="center" prop="minPrice" />
+        <!-- <el-table-column label="商品说明" align="center" prop="content" /> -->
+        <el-table-column label="最低价" align="center" prop="minPrice" >
+          <template #default="scope">
+            {{scope.row.minPrice / 100}}
+          </template>
+        </el-table-column>
         <el-table-column label="总销量" align="center" prop="totalSales" />
         <el-table-column label="可用库存" align="center" prop="availableStock" />
         <el-table-column label="综合评分" align="center" prop="overallScore" />
@@ -171,11 +175,17 @@
             <el-option v-for="item in brandList" :key="item.id" :label="item.name" :value="item.id" />
           </el-select>
         </el-form-item>
+        <!-- <el-form-item label="属性集" prop="attrJson">
+            <el-input v-model="form.attrJson" type="textarea" placeholder="请输入内容" />
+        </el-form-item> -->
+        <el-form-item label="属性集">
+          <el-input-tag v-model="attrArray" placeholder="输入后回车" draggable @add-tag="addAttrTag"/>
+        </el-form-item>
         <el-form-item label="商品说明">
           <editor v-model="form.content" :min-height="192"/>
         </el-form-item>
         <el-form-item label="最低价" prop="minPrice">
-          <el-input-number v-model="form.minPrice" placeholder="请输入最低价" :min="0.01" :precision="2" />
+          <el-input-number v-model="minPrice" placeholder="请输入最低价" :min="0.01" :precision="2" />
         </el-form-item>
         <el-form-item label="总销量" prop="totalSales">
           <el-input-number v-model="form.totalSales" placeholder="请输入总销量" :min="0" :precision="0" />
@@ -191,9 +201,6 @@
         </el-form-item>
         <el-form-item label="排序" prop="sortOrder">
           <el-input-number v-model="form.sortOrder" placeholder="请输入排序" :min="0" :max="99999999" :precision="0" />
-        </el-form-item>
-        <el-form-item label="属性JSON" prop="attrJson">
-            <el-input v-model="form.attrJson" type="textarea" placeholder="请输入内容" />
         </el-form-item>
         <el-form-item label="状态" prop="state">
           <el-radio-group v-model="form.state">
@@ -244,6 +251,9 @@ const categoryOptions = ref<CategoryTreeVO[]>([]);
 
 const queryFormRef = ref<ElFormInstance>();
 const infoFormRef = ref<ElFormInstance>();
+const attrArray = ref<string[]>([]);
+
+const minPrice = ref<number>(0); // 用于提交时转换为分
 
 const dialog = reactive<DialogOption>({
   visible: false,
@@ -293,16 +303,16 @@ const data = reactive<PageData<InfoForm, InfoQuery>>({
       { required: true, message: "ID不能为空", trigger: "blur" }
     ],
     shopId: [
-      { required: true, message: "店铺ID不能为空", trigger: "blur" }
+      { required: true, message: "店铺不能为空", trigger: "blur" }
     ],
     categoryId: [
-      { required: true, message: "分类ID不能为空", trigger: "blur" }
+      { required: true, message: "分类不能为空", trigger: "blur" }
     ],
     name: [
       { required: true, message: "名称不能为空", trigger: "blur" }
     ],
     mainPic: [
-      { required: true, message: "主图ID不能为空", trigger: "blur" }
+      { required: true, message: "主图不能为空", trigger: "blur" }
     ],
     minPrice: [
       { required: true, message: "最低价不能为空", trigger: "blur" }
@@ -346,6 +356,9 @@ const cancel = () => {
 
 /** 表单重置 */
 const reset = () => {
+  //
+  attrArray.value = [];
+  //
   form.value = {...initFormData};
   infoFormRef.value?.resetFields();
 }
@@ -385,10 +398,17 @@ const handleUpdate = async (row?: InfoVO) => {
   Object.assign(form.value, res.data);
   dialog.visible = true;
   dialog.title = "修改商品信息";
+  //
+  attrArray.value = json2array(form.value.attrJson);
+  minPrice.value = form.value.minPrice / 100;
 }
 
 /** 提交按钮 */
 const submitForm = () => {
+  //
+  form.value.attrJson = array2json(attrArray.value);
+  form.value.minPrice = minPrice.value * 100;
+  //
   infoFormRef.value?.validate(async (valid: boolean) => {
     if (valid) {
       buttonLoading.value = true;
@@ -442,5 +462,76 @@ const getCategoryTree = async () => {
   const res = await getTreeSelect();
   categoryOptions.value = res.data;
 };
+
+/**
+ * @description: json字符串转数组
+ * @param {string} json
+ * @return {string[]}
+ */
+const json2array = (json: string): string[] => {
+  try {
+    const parsedObj = JSON.parse(json);
+    return Object.entries(parsedObj).map(([key, value]) => `${key}:${value}`);
+  } catch (error) {
+    console.error('Error parsing attrJson:', error);
+    return [];
+  }
+}
+
+/**
+ * @description: 与 json2array 相反的操作
+ * @param {string[]} array
+ * @return {string}
+ */
+const array2json = (array: string[]): string => {
+  try {
+    const parsedObj = array.reduce((acc, cur) => {
+      const [key, value] = cur.split(':');
+      acc[key] = value;
+      return acc;
+    }, {});
+    return JSON.stringify(parsedObj);
+  } catch (error) {
+    console.error('Error parsing attrJson:', error);
+    return '';
+  }
+}
+
+/**
+ * @description: 新增属性标签，格式要求 属性名:属性值。
+ * @param value 
+ */
+const addAttrTag = (value: string) => {
+  // 如果 trim 与 原值不同 说明有空格
+  if (value.trim() != value) {
+    value = value.trim();
+    attrArray.value.pop();
+    attrArray.value.push(value);
+  }
+  // 把所有：转换成:
+  if (value.indexOf('：') != -1) {
+    value = value.replaceAll('：', ':');
+    attrArray.value.pop();
+    attrArray.value.push(value);
+  }
+  // 值中需要有一个:符号 同时 :符号两边不能为空字符串
+  if (value.indexOf(':') == -1 || value.indexOf(':') == 0 || value.indexOf(':') == value.length - 1) {
+    proxy?.$modal.msgError("请输入 属性名:属性值 格式");
+    attrArray.value.pop();
+    return;
+  }
+  // 不能有多个:符号
+  if (value.split(':').length > 2) {
+    proxy?.$modal.msgError("请输入 属性名:属性值 格式，不能有多个:符号");
+    attrArray.value.pop();
+    return;
+  }
+  // 如果attrArray中排除最后一个数据，有与value相同值忽略value
+  if (attrArray.value.slice(0, -1).indexOf(value) != -1) {
+    proxy?.$modal.msgError("标签重复了");
+    attrArray.value.pop();
+    return;
+  }
+}
 
 </script>

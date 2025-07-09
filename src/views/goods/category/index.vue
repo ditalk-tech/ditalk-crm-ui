@@ -214,7 +214,7 @@ const data = reactive<PageData<CategoryForm, CategoryQuery>>({
       { required: true, message: "ID不能为空", trigger: "blur" }
     ],
     shopId: [
-      { required: true, message: "店铺ID不能为空", trigger: "blur" }
+      { required: true, message: "店铺不能为空", trigger: "blur" }
     ],
     parentId: [
       { required: true, message: "父类ID不能为空", trigger: "blur" }
