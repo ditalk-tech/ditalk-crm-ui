@@ -1,151 +1,167 @@
 <template>
   <div class="p-2">
-    <transition :enter-active-class="proxy?.animate.searchAnimate.enter" :leave-active-class="proxy?.animate.searchAnimate.leave">
-      <div v-show="showSearch" class="mb-[10px]">
+    <el-row :gutter="20">
+      <!-- 店铺列表 -->
+      <el-col :lg="4" :xs="24" style="">
         <el-card shadow="hover">
-          <el-form ref="queryFormRef" :model="queryParams" :inline="true">
-            <el-form-item label="ID" prop="id">
-              <el-input v-model="queryParams.id" placeholder="请输入ID" clearable @keyup.enter="handleQuery" />
-            </el-form-item>
-            <el-form-item label="创建时间" style="width: 308px">
-              <el-date-picker
-                v-model="dateRangeCreateTime"
-                value-format="YYYY-MM-DD HH:mm:ss"
-                type="daterange"
-                range-separator="-"
-                start-placeholder="开始日期"
-                end-placeholder="结束日期"
-                :default-time="[new Date(2000, 1, 1, 0, 0, 0), new Date(2000, 1, 1, 23, 59, 59)]"
-              />
-            </el-form-item>
-            <el-form-item label="店铺" prop="shopId">
-              <el-select v-model="queryParams.shopId" placeholder="请选择店铺" filterable clearable>
+          <el-input v-model="shopNameSearch" placeholder="回车检索店铺" prefix-icon="Search" @keyup.enter="getShopInfoList" @clear="getShopInfoList" clearable />
+          <div v-for="item in shopInfoList" :key="item.id">
+            <el-tag :type="shopId == item.id ? 'warning' : 'info'" effect="plain" @click="onClickShopTag(item)" mt-1>{{ item.name }}</el-tag>
+          </div>
+        </el-card>
+      </el-col>
+      <el-col :lg="20" :xs="24">
+        <transition :enter-active-class="proxy?.animate.searchAnimate.enter" :leave-active-class="proxy?.animate.searchAnimate.leave">
+          <div v-show="showSearch" class="mb-[10px]">
+            <el-card shadow="hover">
+              <el-form ref="queryFormRef" :model="queryParams" :inline="true">
+                <el-form-item label="ID" prop="id">
+                  <el-input v-model="queryParams.id" placeholder="请输入ID" clearable @keyup.enter="handleQuery" />
+                </el-form-item>
+                <el-form-item label="创建时间" style="width: 308px">
+                  <el-date-picker
+                    v-model="dateRangeCreateTime"
+                    value-format="YYYY-MM-DD HH:mm:ss"
+                    type="daterange"
+                    range-separator="-"
+                    start-placeholder="开始日期"
+                    end-placeholder="结束日期"
+                    :default-time="[new Date(2000, 1, 1, 0, 0, 0), new Date(2000, 1, 1, 23, 59, 59)]"
+                  />
+                </el-form-item>
+                <!-- <el-form-item label="店铺" prop="shopId">
+                  <el-select v-model="queryParams.shopId" placeholder="请选择店铺" filterable clearable>
+                    <el-option v-for="item in shopInfoList" :key="item.id" :label="item.name" :value="item.id" />
+                  </el-select>
+                </el-form-item> -->
+                <el-form-item label="父类ID" prop="parentId">
+                  <el-input v-model="queryParams.parentId" placeholder="请输入父类ID" clearable @keyup.enter="handleQuery" />
+                </el-form-item>
+                <!-- <el-form-item label="祖级列表" prop="ancestors">
+                  <el-input v-model="queryParams.ancestors" placeholder="请输入祖级列表" clearable @keyup.enter="handleQuery" />
+                </el-form-item> -->
+                <el-form-item label="名称" prop="name">
+                  <el-input v-model="queryParams.name" placeholder="请输入名称" clearable @keyup.enter="handleQuery" />
+                </el-form-item>
+                <el-form-item label="状态" prop="state">
+                  <el-select v-model="queryParams.state" placeholder="请选择状态" clearable>
+                    <el-option v-for="dict in sys_normal_disable" :key="dict.value" :label="dict.label" :value="dict.value"/>
+                  </el-select>
+                </el-form-item>
+                <el-form-item>
+                  <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
+                  <el-button icon="Refresh" @click="resetQuery">重置</el-button>
+                </el-form-item>
+              </el-form>
+            </el-card>
+          </div>
+        </transition>
+
+        <el-card shadow="never">
+          <template #header>
+            <el-row :gutter="10" class="mb8">
+              <el-col :span="1.5">
+                <el-button type="primary" plain icon="Plus" @click="handleAdd()" v-hasPermi="['goods:category:add']">新增</el-button>
+              </el-col>
+              <el-col :span="1.5">
+                <el-button type="info" plain icon="Sort" @click="handleToggleExpandAll">展开/折叠</el-button>
+              </el-col>
+              <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
+            </el-row>
+          </template>
+          <el-table
+            ref="categoryTableRef"
+            v-loading="loading"
+            :data="categoryList"
+            row-key="id"
+            border
+            :default-expand-all="isExpandAll"
+            :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
+          >
+            <el-table-column label="ID" align="center" prop="id" width="280" />
+            <el-table-column label="创建时间" align="center" prop="createTime" width="180" />
+            <!-- <el-table-column label="店铺ID" align="center" prop="shopId" /> -->
+            <el-table-column label="父类ID" align="center" prop="parentId" />
+            <!-- <el-table-column label="祖级列表" align="center" prop="ancestors" /> -->
+            <el-table-column label="名称" align="center" prop="name" />
+            <el-table-column label="主图" align="center" prop="mainPicUrl" width="100">
+              <template #default="scope">
+                <image-preview :src="scope.row.mainPicUrl" :width="50" :height="50"/>
+              </template>
+            </el-table-column>
+            <el-table-column label="排序" align="center" prop="sortOrder" />
+            <el-table-column label="状态" align="center" prop="state">
+              <template #default="scope">
+                <dict-tag :options="sys_normal_disable" :value="scope.row.state"/>
+              </template>
+            </el-table-column>
+            <el-table-column label="操作" align="center" class-name="small-padding fixed-width" width="110" fixed="right">
+              <template #default="scope">
+                <el-tooltip content="修改" placement="top">
+                  <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['goods:category:edit']" />
+                </el-tooltip>
+                <el-tooltip content="新增" placement="top">
+                  <el-button link type="primary" icon="Plus" @click="handleAdd(scope.row)" v-hasPermi="['goods:category:add']" />
+                </el-tooltip>
+                <el-tooltip content="删除" placement="top">
+                  <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['goods:category:remove']" />
+                </el-tooltip>
+              </template>
+            </el-table-column>
+          </el-table>
+        </el-card>
+        <!-- 添加或修改商品分类对话框 -->
+        <el-dialog :title="dialog.title" v-model="dialog.visible" width="500px" append-to-body>
+          <el-form ref="categoryFormRef" :model="form" :rules="rules" label-width="80px">
+            <!-- <el-form-item label="店铺" prop="shopId">
+              <el-select v-model="form.shopId" placeholder="请选择店铺" filterable>
                 <el-option v-for="item in shopInfoList" :key="item.id" :label="item.name" :value="item.id" />
               </el-select>
+            </el-form-item> -->
+            <el-form-item label="店铺">
+              <el-input v-model="shopName" readonly></el-input>
             </el-form-item>
-            <el-form-item label="父类ID" prop="parentId">
-              <el-input v-model="queryParams.parentId" placeholder="请输入父类ID" clearable @keyup.enter="handleQuery" />
+            <el-form-item label="父类" prop="parentId">
+              <el-tree-select
+                v-model="form.parentId"
+                :data="categoryOptions"
+                :props="{ value: 'id', label: 'name', children: 'children' }"
+                value-key="id"
+                placeholder="请选择父类"
+                check-strictly
+              />
             </el-form-item>
             <!-- <el-form-item label="祖级列表" prop="ancestors">
-              <el-input v-model="queryParams.ancestors" placeholder="请输入祖级列表" clearable @keyup.enter="handleQuery" />
+              <el-input v-model="form.ancestors" type="textarea" placeholder="请输入内容" />
             </el-form-item> -->
             <el-form-item label="名称" prop="name">
-              <el-input v-model="queryParams.name" placeholder="请输入名称" clearable @keyup.enter="handleQuery" />
+              <el-input v-model="form.name" placeholder="请输入名称" />
+            </el-form-item>
+            <el-form-item label="主图" prop="mainPic">
+              <image-upload v-model="form.mainPic" :limit="1" />
+            </el-form-item>
+            <el-form-item label="排序" prop="sortOrder">
+              <el-input-number v-model="form.sortOrder" placeholder="请输入排序" :min="0" :max="99999999" :precision="0" />
             </el-form-item>
             <el-form-item label="状态" prop="state">
-              <el-select v-model="queryParams.state" placeholder="请选择状态" clearable>
-                <el-option v-for="dict in sys_normal_disable" :key="dict.value" :label="dict.label" :value="dict.value"/>
-              </el-select>
-            </el-form-item>
-            <el-form-item>
-              <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
-              <el-button icon="Refresh" @click="resetQuery">重置</el-button>
+              <el-radio-group v-model="form.state">
+                <el-radio
+                  v-for="dict in sys_normal_disable"
+                  :key="dict.value"
+                  :value="dict.value"
+                >{{dict.label}}</el-radio>
+              </el-radio-group>
             </el-form-item>
           </el-form>
-        </el-card>
-      </div>
-    </transition>
-
-    <el-card shadow="never">
-      <template #header>
-        <el-row :gutter="10" class="mb8">
-          <el-col :span="1.5">
-            <el-button type="primary" plain icon="Plus" @click="handleAdd()" v-hasPermi="['goods:category:add']">新增</el-button>
-          </el-col>
-          <el-col :span="1.5">
-            <el-button type="info" plain icon="Sort" @click="handleToggleExpandAll">展开/折叠</el-button>
-          </el-col>
-          <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
-        </el-row>
-      </template>
-      <el-table
-        ref="categoryTableRef"
-        v-loading="loading"
-        :data="categoryList"
-        row-key="id"
-        border
-        :default-expand-all="isExpandAll"
-        :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
-      >
-        <el-table-column label="ID" align="center" prop="id" width="280" />
-        <el-table-column label="创建时间" align="center" prop="createTime" width="180" />
-        <el-table-column label="店铺ID" align="center" prop="shopId" />
-        <el-table-column label="父类ID" align="center" prop="parentId" />
-        <!-- <el-table-column label="祖级列表" align="center" prop="ancestors" /> -->
-        <el-table-column label="名称" align="center" prop="name" />
-        <el-table-column label="主图" align="center" prop="mainPicUrl" width="100">
-          <template #default="scope">
-            <image-preview :src="scope.row.mainPicUrl" :width="50" :height="50"/>
+          <template #footer>
+            <div class="dialog-footer">
+              <el-button :loading="buttonLoading" type="primary" @click="submitForm">确 定</el-button>
+              <el-button @click="cancel">取 消</el-button>
+            </div>
           </template>
-        </el-table-column>
-        <el-table-column label="排序" align="center" prop="sortOrder" />
-        <el-table-column label="状态" align="center" prop="state">
-          <template #default="scope">
-            <dict-tag :options="sys_normal_disable" :value="scope.row.state"/>
-          </template>
-        </el-table-column>
-        <el-table-column label="操作" align="center" class-name="small-padding fixed-width" width="110" fixed="right">
-          <template #default="scope">
-            <el-tooltip content="修改" placement="top">
-              <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['goods:category:edit']" />
-            </el-tooltip>
-            <el-tooltip content="新增" placement="top">
-              <el-button link type="primary" icon="Plus" @click="handleAdd(scope.row)" v-hasPermi="['goods:category:add']" />
-            </el-tooltip>
-            <el-tooltip content="删除" placement="top">
-              <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['goods:category:remove']" />
-            </el-tooltip>
-          </template>
-        </el-table-column>
-      </el-table>
-    </el-card>
-    <!-- 添加或修改商品分类对话框 -->
-    <el-dialog :title="dialog.title" v-model="dialog.visible" width="500px" append-to-body>
-      <el-form ref="categoryFormRef" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="店铺" prop="shopId">
-          <el-select v-model="form.shopId" placeholder="请选择店铺" filterable>
-            <el-option v-for="item in shopInfoList" :key="item.id" :label="item.name" :value="item.id" />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="父类" prop="parentId">
-          <el-tree-select
-            v-model="form.parentId"
-            :data="categoryOptions"
-            :props="{ value: 'id', label: 'name', children: 'children' }"
-            value-key="id"
-            placeholder="请选择父类"
-            check-strictly
-          />
-        </el-form-item>
-        <!-- <el-form-item label="祖级列表" prop="ancestors">
-          <el-input v-model="form.ancestors" type="textarea" placeholder="请输入内容" />
-        </el-form-item> -->
-        <el-form-item label="名称" prop="name">
-          <el-input v-model="form.name" placeholder="请输入名称" />
-        </el-form-item>
-        <el-form-item label="主图" prop="mainPic">
-          <image-upload v-model="form.mainPic" :limit="1" />
-        </el-form-item>
-        <el-form-item label="排序" prop="sortOrder">
-          <el-input-number v-model="form.sortOrder" placeholder="请输入排序" :min="0" :max="99999999" :precision="0" />
-        </el-form-item>
-        <el-form-item label="状态" prop="state">
-          <el-radio-group v-model="form.state">
-            <el-radio
-              v-for="dict in sys_normal_disable"
-              :key="dict.value"
-              :value="dict.value"
-            >{{dict.label}}</el-radio>
-          </el-radio-group>
-        </el-form-item>
-      </el-form>
-      <template #footer>
-        <div class="dialog-footer">
-          <el-button :loading="buttonLoading" type="primary" @click="submitForm">确 定</el-button>
-          <el-button @click="cancel">取 消</el-button>
-        </div>
-      </template>
-    </el-dialog>
+        </el-dialog>
+      </el-col>
+    </el-row>
   </div>
 </template>
 
@@ -153,7 +169,7 @@
 import { listCategory, getCategory, delCategory, addCategory, updateCategory } from "@/api/goods/category";
 import { CategoryVO, CategoryQuery, CategoryForm } from '@/api/goods/category/types';
 import { listInfo as listShopInfo } from '@/api/shop/info';
-import { InfoVO as ShopInfoVO } from '@/api/shop/info/types';
+import { InfoVO as ShopInfoVO, InfoQuery as ShopInfoQuery } from '@/api/shop/info/types';
 
 type CategoryOption = {
   id: number;
@@ -172,6 +188,9 @@ const showSearch = ref(true);
 const isExpandAll = ref(true);
 const loading = ref(false);
 const shopInfoList = ref<ShopInfoVO[]>([]);
+const shopId = ref<string | number>()
+const shopName = ref<string>()
+const shopNameSearch = ref<string>()
 
 const queryFormRef = ref<ElFormInstance>();
 const categoryFormRef = ref<ElFormInstance>();
@@ -238,6 +257,13 @@ const { queryParams, form, rules } = toRefs(data);
 
 /** 查询商品分类列表 */
 const getList = async () => {
+  //
+  if (!shopId.value) {
+    proxy?.$modal.msgError("未选择店铺");
+    return;
+  }
+  queryParams.value.shopId = shopId.value; // 指定操作的店铺
+  //
   loading.value = true;
   queryParams.value.params = {};
   proxy?.addDateRange(queryParams.value, dateRangeCreateTime.value, 'CreateTime');
@@ -251,7 +277,13 @@ const getList = async () => {
 
 /** 查询商品分类下拉树结构 */
 const getTreeselect = async () => {
-  const res = await listCategory();
+  if (!shopId.value) {
+    proxy?.$modal.msgError("未选择店铺");
+    return;
+  }
+  const query: CategoryQuery = {}
+  query.shopId = shopId.value
+  const res = await listCategory(query);
   categoryOptions.value = [];
   const data: CategoryOption = { id: 0, name: '顶级节点', children: [] };
   data.children = proxy?.handleTree<CategoryOption>(res.data, "id", "parentId");
@@ -284,7 +316,16 @@ const resetQuery = () => {
 
 /** 新增按钮操作 */
 const handleAdd = async (row?: CategoryVO) => {
-  reset();
+  //
+  if (!shopId.value) {
+    proxy?.$modal.msgError("未选择店铺");
+    return;
+  }
+  //
+  reset(); // 框架默认代码
+  //
+  form.value.shopId = shopId.value // 指定操作的店铺
+  //
   await getTreeselect();
   if (row != null && row.id) {
     form.value.parentId = row.id;
@@ -311,7 +352,15 @@ const toggleExpandAll = (data: CategoryVO[], status: boolean) => {
 
 /** 修改按钮操作 */
 const handleUpdate = async (row: CategoryVO) => {
-  reset();
+  //
+  if (!shopId.value) {
+    proxy?.$modal.msgError("未选择店铺");
+    return;
+  }
+  reset(); // 框架默认代码
+  //
+  form.value.shopId = shopId.value // 指定操作的店铺
+  //
   await getTreeselect();
   if (row != null) {
     form.value.parentId = row.parentId;
@@ -348,16 +397,40 @@ const handleDelete = async (row: CategoryVO) => {
   proxy?.$modal.msgSuccess("删除成功");
 }
 
-const getShopInfoList = async () => {
+onMounted(async () => {
   // 店铺列表
-  const shopListRes = await listShopInfo();
-  shopInfoList.value = shopListRes.rows;
+  await getShopInfoList();
+  // 商品分类列表
+  await getList();
+});
+
+const getShopInfoList = async () => {
+  const query: ShopInfoQuery = { pageNum: 1, pageSize: 100 } // 多于 100 需要先使用检索过滤
+  query.name = shopNameSearch.value
+  // 店铺列表
+  const shopListRes = await listShopInfo(query)
+  shopInfoList.value = shopListRes.rows
+  // 如果shopInfoList不为空，默认时选取第一个店铺
+  if (shopInfoList.value.length > 0) {
+    setShopInfo(shopInfoList.value[0].id, shopInfoList.value[0].name)
+  }
+  // 商品分类列表
+  await getList();
 }
 
-onMounted(() => {
-  // 店铺列表
-  getShopInfoList();
-  // 商品分类列表
-  getList();
-});
+const onClickShopTag = (shopInfo: ShopInfoVO) => {
+  setShopInfo(shopInfo.id, shopInfo.name)
+  getList()
+}
+
+/**
+ * 默认页面全局 ShopInfo 数据
+ * @param id 店铺ID
+ * @param name 店铺名称
+ */
+const setShopInfo = (id: string | number, name: string) => {
+  shopId.value = id
+  shopName.value = name
+}
+
 </script>
