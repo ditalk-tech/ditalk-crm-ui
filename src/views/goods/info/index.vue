@@ -19,7 +19,7 @@
               />
             </el-form-item>
             <el-form-item label="店铺" prop="shopId">
-              <el-select v-model="queryParams.shopId" placeholder="请选择店铺" filterable clearable>
+              <el-select v-model="queryParams.shopId" placeholder="请选择店铺" @change="onChangeShop" filterable clearable>
                 <el-option v-for="item in shopInfoList" :key="item.id" :label="item.name" :value="item.id" />
               </el-select>
             </el-form-item>
@@ -29,7 +29,7 @@
                 :data="categoryOptions"
                 :props="{ value: 'id', label: 'label', children: 'children' } as any"
                 value-key="id"
-                placeholder="请选择分类"
+                placeholder="先选店铺才能选分类"
                 check-strictly
                 filterable
                 clearable
@@ -137,14 +137,14 @@
     <el-dialog :title="dialog.title" v-model="dialog.visible" width="960px" append-to-body>
       <el-form ref="infoFormRef" :model="form" :rules="rules" label-width="120px">
         <el-form-item label="店铺" prop="shopId">
-          <el-select v-model="form.shopId" placeholder="请选择店铺" filterable>
+          <el-select v-model="form.shopId" placeholder="请选择店铺" @change="onChangeShopInForm" filterable>
             <el-option v-for="item in shopInfoList" :key="item.id" :label="item.name" :value="item.id" />
           </el-select>
         </el-form-item>
         <el-form-item label="分类" prop="categoryId">
           <el-tree-select
                 v-model="form.categoryId"
-                :data="categoryOptions"
+                :data="formCategoryOptions"
                 :props="{ value: 'id', label: 'label', children: 'children' } as any"
                 value-key="id"
                 placeholder="请选择分类"
@@ -179,7 +179,7 @@
             <el-input v-model="form.attrJson" type="textarea" placeholder="请输入内容" />
         </el-form-item> -->
         <el-form-item label="属性集">
-          <el-input-tag v-model="attrArray" placeholder="输入后回车" draggable @add-tag="addAttrTag"/>
+          <el-input-tag v-model="attrArray" placeholder="输入后回车，格式 '属性名:属性值'" draggable @add-tag="addAttrTag"/>
         </el-form-item>
         <el-form-item label="商品说明">
           <editor v-model="form.content" :min-height="192"/>
@@ -226,10 +226,10 @@
 import { listInfo, getInfo, delInfo, addInfo, updateInfo } from '@/api/goods/info';
 import { InfoVO, InfoQuery, InfoForm } from '@/api/goods/info/types';
 import { InfoVO as ShopInfoVO } from '@/api/shop/info/types';
-import { CategoryTreeVO } from '@/api/goods/category/types';
-import { BrandVO } from '@/api/goods/brand/types';
 import { listInfo as listShopInfo } from '@/api/shop/info';
+import { CategoryTreeVO, CategoryQuery } from '@/api/goods/category/types';
 import { getTreeSelect } from '@/api/goods/category';
+import { BrandVO } from '@/api/goods/brand/types';
 import { listBrand } from '@/api/goods/brand';
 
 
@@ -248,6 +248,7 @@ const dateRangeCreateTime = ref<[DateModelType, DateModelType]>(['', '']);
 const shopInfoList = ref<ShopInfoVO[]>([]);
 const brandList = ref<BrandVO[]>([]);
 const categoryOptions = ref<CategoryTreeVO[]>([]);
+const formCategoryOptions = ref<CategoryTreeVO[]>([]);
 
 const queryFormRef = ref<ElFormInstance>();
 const infoFormRef = ref<ElFormInstance>();
@@ -357,7 +358,9 @@ const cancel = () => {
 /** 表单重置 */
 const reset = () => {
   //
-  attrArray.value = [];
+  minPrice.value = undefined
+  attrArray.value = []
+  formCategoryOptions.value = []
   //
   form.value = {...initFormData};
   infoFormRef.value?.resetFields();
@@ -443,7 +446,7 @@ const handleExport = () => {
 onMounted(() => {
   getShopList();
   getBrandList();
-  getCategoryTree()
+  // getCategoryTree(null)
   getList();
 });
 
@@ -456,12 +459,6 @@ const getBrandList = async () => {
   const res = await listBrand();
   brandList.value = res.rows;
 }
-
-/** 查询分类下拉树结构 */
-const getCategoryTree = async () => {
-  const res = await getTreeSelect();
-  categoryOptions.value = res.data;
-};
 
 /**
  * @description: json字符串转数组
@@ -526,6 +523,45 @@ const addAttrTag = (value: string) => {
     proxy?.$modal.msgError("标签重复了");
     attrArray.value.pop();
     return;
+  }
+}
+
+/** 获取查询条件分类下拉树结构 */
+const getCategoryTree = async (shopId: number | string) => {
+  const query: CategoryQuery = {}
+  if (!shopId) {
+    return
+  }
+  query.shopId = shopId
+  const res = await getTreeSelect(query)
+  categoryOptions.value = res.data
+};
+
+const onChangeShop = (shopId: number | string) => {
+  categoryOptions.value = []
+  queryParams.value.categoryId = undefined
+  if (shopId) {
+    getCategoryTree(shopId);
+  }
+}
+
+/** 获取Form中的分类下拉树结构 */
+const getFormCategoryTree = async (shopId: number | string) => {
+  const query: CategoryQuery = {}
+  if (!shopId) {
+    return
+  }
+  query.shopId = shopId
+  const res = await getTreeSelect(query)
+  formCategoryOptions.value = res.data
+};
+
+const onChangeShopInForm = (shopId: number | string) => {
+  formCategoryOptions.value = []
+  form.value.categoryId = undefined // remove form value
+  queryParams.value.categoryId = undefined
+  if (shopId) {
+    getFormCategoryTree(shopId);
   }
 }
 
