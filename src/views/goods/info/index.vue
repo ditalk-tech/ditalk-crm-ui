@@ -502,12 +502,7 @@ const array2json = (array: string[]): string => {
  * @param value 
  */
 const addAttrTag = (value: string) => {
-  // 如果 trim 与 原值不同 说明有空格
-  if (value.trim() != value) {
-    value = value.trim();
-    attrArray.value.pop();
-    attrArray.value.push(value);
-  }
+  // 组件默认会值进行 trim 操作
   // 把所有：转换成:
   if (value.indexOf('：') != -1) {
     value = value.replaceAll('：', ':');
