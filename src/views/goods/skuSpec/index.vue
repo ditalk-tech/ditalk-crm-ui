@@ -286,6 +286,7 @@ const handleUpdate = async (row?: SkuSpecVO) => {
   dialog.visible = true;
   dialog.title = "修改SKU规格";
   //
+  await getFormCategoryTree(form.value.shopId);
   specArray.value = JSON.parse(form.value.specJson || '[]');
 }
 
@@ -358,7 +359,7 @@ const getCategoryTree = async (shopId: number | string) => {
 
 const onChangeShop = (shopId: number | string) => {
   categoryOptions.value = []
-  queryParams.value.categoryId = undefined
+  queryParams.value.categoryId = undefined // remove query form value
   if (shopId) {
     getCategoryTree(shopId);
   }
@@ -377,8 +378,7 @@ const getFormCategoryTree = async (shopId: number | string) => {
 
 const onChangeShopInForm = (shopId: number | string) => {
   formCategoryOptions.value = []
-  form.value.categoryId = undefined // remove form value
-  queryParams.value.categoryId = undefined
+  form.value.categoryId = undefined // remove data form value
   if (shopId) {
     getFormCategoryTree(shopId);
   }

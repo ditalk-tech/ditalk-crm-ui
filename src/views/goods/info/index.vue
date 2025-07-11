@@ -404,6 +404,7 @@ const handleUpdate = async (row?: InfoVO) => {
   //
   attrArray.value = json2array(form.value.attrJson);
   minPrice.value = form.value.minPrice / 100;
+  getFormCategoryTree(form.value.shopId);
 }
 
 /** 提交按钮 */
@@ -539,7 +540,7 @@ const getCategoryTree = async (shopId: number | string) => {
 
 const onChangeShop = (shopId: number | string) => {
   categoryOptions.value = []
-  queryParams.value.categoryId = undefined
+  queryParams.value.categoryId = undefined // remove query form value
   if (shopId) {
     getCategoryTree(shopId);
   }
@@ -558,8 +559,7 @@ const getFormCategoryTree = async (shopId: number | string) => {
 
 const onChangeShopInForm = (shopId: number | string) => {
   formCategoryOptions.value = []
-  form.value.categoryId = undefined // remove form value
-  queryParams.value.categoryId = undefined
+  form.value.categoryId = undefined // remove data form value
   if (shopId) {
     getFormCategoryTree(shopId);
   }
