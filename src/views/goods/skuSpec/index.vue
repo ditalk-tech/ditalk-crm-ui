@@ -19,7 +19,7 @@
               />
             </el-form-item>
             <el-form-item label="店铺" prop="shopId">
-              <el-select v-model="queryParams.shopId" placeholder="请选择店铺" filterable clearable>
+              <el-select v-model="queryParams.shopId" placeholder="请选择店铺" @change="onChangeShop" filterable clearable>
                 <el-option v-for="item in shopInfoList" :key="item.id" :label="item.name" :value="item.id" />
               </el-select>
             </el-form-item>
@@ -29,7 +29,7 @@
                 :data="categoryOptions"
                 :props="{ value: 'id', label: 'label', children: 'children' } as any"
                 value-key="id"
-                placeholder="请选择分类"
+                placeholder="先选店铺才能选分类"
                 check-strictly
                 filterable
                 clearable
@@ -103,14 +103,14 @@
     <el-dialog :title="dialog.title" v-model="dialog.visible" width="960px" append-to-body>
       <el-form ref="skuSpecFormRef" :model="form" :rules="rules" label-width="120px">
         <el-form-item label="店铺" prop="shopId">
-          <el-select v-model="form.shopId" placeholder="请选择店铺" filterable>
+          <el-select v-model="form.shopId" placeholder="请选择店铺" @change="onChangeShopInForm" filterable>
             <el-option v-for="item in shopInfoList" :key="item.id" :label="item.name" :value="item.id" />
           </el-select>
         </el-form-item>
         <el-form-item label="分类" prop="categoryId">
           <el-tree-select
                 v-model="form.categoryId"
-                :data="categoryOptions"
+                :data="formCategoryOptions"
                 :props="{ value: 'id', label: 'label', children: 'children' } as any"
                 value-key="id"
                 placeholder="请选择分类"
@@ -152,7 +152,7 @@ import { listSkuSpec, getSkuSpec, delSkuSpec, addSkuSpec, updateSkuSpec } from '
 import { SkuSpecVO, SkuSpecQuery, SkuSpecForm } from '@/api/goods/skuSpec/types';
 import { InfoVO as ShopInfoVO } from '@/api/shop/info/types';
 import { listInfo as listShopInfo } from '@/api/shop/info';
-import { CategoryTreeVO } from '@/api/goods/category/types';
+import { CategoryTreeVO, CategoryQuery } from '@/api/goods/category/types';
 import { getTreeSelect } from '@/api/goods/category';
 
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
@@ -168,7 +168,8 @@ const multiple = ref(true);
 const total = ref(0);
 const dateRangeCreateTime = ref<[DateModelType, DateModelType]>(['', '']);
 const shopInfoList = ref<ShopInfoVO[]>([]);
-const categoryOptions = ref<CategoryTreeVO[]>([]);
+const categoryOptions = ref<CategoryTreeVO[]>([]); // 查询条件里的
+const formCategoryOptions = ref<CategoryTreeVO[]>([]); // 表单里的
 const specArray = ref<string[]>([]);
 
 const queryFormRef = ref<ElFormInstance>();
@@ -326,7 +327,7 @@ const handleExport = () => {
 
 onMounted(() => {
   getShopList();
-  getCategoryTree()
+  // getCategoryTree()
   getList();
 });
 
@@ -335,18 +336,51 @@ const getShopList = async () => {
   shopInfoList.value = res.rows;
 }
 
-/** 查询分类下拉树结构 */
-const getCategoryTree = async () => {
-  const res = await getTreeSelect();
-  categoryOptions.value = res.data;
-};
-
 const addSpecTag = (value: string) => {
   // 如果 value 已在 specArray 中存在，忽略该值
   if (specArray.value.slice(0, -1).indexOf(value) != -1) {
     proxy?.$modal.msgError("标签重复了");
     specArray.value.pop();
     return;
+  }
+}
+
+/** 获取查询条件分类下拉树结构 */
+const getCategoryTree = async (shopId: number | string) => {
+  const query: CategoryQuery = {}
+  if (!shopId) {
+    return
+  }
+  query.shopId = shopId
+  const res = await getTreeSelect(query)
+  categoryOptions.value = res.data
+};
+
+const onChangeShop = (shopId: number | string) => {
+  categoryOptions.value = []
+  queryParams.value.categoryId = undefined
+  if (shopId) {
+    getCategoryTree(shopId);
+  }
+}
+
+/** 获取Form中的分类下拉树结构 */
+const getFormCategoryTree = async (shopId: number | string) => {
+  const query: CategoryQuery = {}
+  if (!shopId) {
+    return
+  }
+  query.shopId = shopId
+  const res = await getTreeSelect(query)
+  formCategoryOptions.value = res.data
+}
+
+const onChangeShopInForm = (shopId: number | string) => {
+  formCategoryOptions.value = []
+  form.value.categoryId = undefined // remove form value
+  queryParams.value.categoryId = undefined
+  if (shopId) {
+    getFormCategoryTree(shopId);
   }
 }
 
