@@ -187,8 +187,8 @@ import { listSku, getSku, delSku, addSku, updateSku } from '@/api/goods/sku';
 import { SkuVO, SkuQuery, SkuForm } from '@/api/goods/sku/types';
 import { InfoVO as ShopInfoVO } from '@/api/shop/info/types';
 import { listInfo as listShopInfo } from '@/api/shop/info';
-import { InfoVO as GoodsInfoVO, InfoQuery as GoodsInfoQuery } from '@/api/goods/info/types';
-import { listInfo as listGoodsInfo } from '@/api/goods/info';
+import { InfoOptionVO as GoodsInfoOptionVO, InfoQuery as GoodsInfoQuery } from '@/api/goods/info/types';
+import { listInfoOption as listGoodsInfoOption } from '@/api/goods/info';
 
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 const { sys_normal_disable } = toRefs<any>(proxy?.useDict('sys_normal_disable'));
@@ -203,8 +203,8 @@ const multiple = ref(true);
 const total = ref(0);
 const dateRangeCreateTime = ref<[DateModelType, DateModelType]>(['', '']);
 const shopInfoList = ref<ShopInfoVO[]>([]);
-const goodsInfoList = ref<GoodsInfoVO[]>([]);
-const formGoodsInfoList = ref<GoodsInfoVO[]>([]);
+const goodsInfoList = ref<GoodsInfoOptionVO[]>([]);
+const formGoodsInfoList = ref<GoodsInfoOptionVO[]>([]);
 
 const queryFormRef = ref<ElFormInstance>();
 const skuFormRef = ref<ElFormInstance>();
@@ -392,7 +392,7 @@ const getGoodsList = async (shopId: number | string) => {
     return
   }
   query.shopId = shopId
-  const res = await listGoodsInfo(query)
+  const res = await listGoodsInfoOption(query)
   goodsInfoList.value = res.rows
 };
 
@@ -411,7 +411,7 @@ const getFormGoodsList = async (shopId: number | string) => {
     return
   }
   query.shopId = shopId
-  const res = await listGoodsInfo(query)
+  const res = await listGoodsInfoOption(query)
   formGoodsInfoList.value = res.rows
 }
 

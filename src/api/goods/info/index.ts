@@ -1,13 +1,13 @@
 import request from '@/utils/request';
 import { AxiosPromise } from 'axios';
-import { InfoVO, InfoForm, InfoQuery } from '@/api/goods/info/types';
+import { InfoVO, InfoForm, InfoQuery, InfoMiniVO, InfoOptionVO } from '@/api/goods/info/types';
+
 
 /**
  * 查询商品信息列表
  * @param query
  * @returns {*}
  */
-
 export const listInfo = (query?: InfoQuery): AxiosPromise<InfoVO[]> => {
   return request({
     url: '/goods/info/list',
@@ -59,5 +59,31 @@ export const delInfo = (id: string | number | Array<string | number>) => {
   return request({
     url: '/goods/info/' + id,
     method: 'delete'
+  });
+};
+
+/**
+ * 查询商品信息Mini列表
+ * @param query
+ * @returns {*}
+ */
+export const listInfoMini = (query?: InfoQuery): AxiosPromise<InfoMiniVO[]> => {
+  return request({
+    url: '/goods/info/list/mini',
+    method: 'get',
+    params: query
+  });
+};
+
+/**
+ * 查询商品信息Option列表
+ * @param query
+ * @returns {*}
+ */
+export const listInfoOption = (query?: InfoQuery): AxiosPromise<InfoOptionVO[]> => {
+  return request({
+    url: '/goods/info/list/option',
+    method: 'get',
+    params: query
   });
 };

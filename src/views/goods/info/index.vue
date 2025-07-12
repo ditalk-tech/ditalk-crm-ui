@@ -91,6 +91,7 @@
         <el-table-column label="编码" align="center" prop="spuCode" />
         <el-table-column label="名称" align="center" prop="name" />
         <el-table-column label="属性集" align="center" prop="attrJson" width="120" show-overflow-tooltip />
+        <el-table-column label="规格集" align="center" prop="specJson" width="120" show-overflow-tooltip />
         <el-table-column label="副标题" align="center" prop="subtitle" width="120" show-overflow-tooltip />
         <el-table-column label="主图" align="center" prop="mainPicUrl" width="100">
           <template #default="scope">
@@ -181,8 +182,8 @@
         <el-form-item label="属性集">
           <el-input-tag v-model="attrArray" placeholder="输入后回车，格式 '属性名:属性值'" draggable @add-tag="addAttrTag"/>
         </el-form-item>
-        <el-form-item label="商品说明">
-          <editor v-model="form.content" :min-height="192"/>
+        <el-form-item label="规格集" prop="specJson">
+          <el-input v-model="form.specJson" type="textarea" placeholder="请输入规格集JSON" />
         </el-form-item>
         <el-form-item label="最低价" prop="minPrice">
           <el-input-number v-model="minPrice" placeholder="请输入最低价" :min="0.01" :precision="2" />
@@ -280,6 +281,7 @@ const initFormData: InfoForm = {
   overallScore: undefined,
   sortOrder: undefined,
   attrJson: undefined,
+  specJson: undefined,
   state: "off_shelf"
 }
 const data = reactive<PageData<InfoForm, InfoQuery>>({

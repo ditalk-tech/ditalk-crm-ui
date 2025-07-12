@@ -103,6 +103,11 @@ export interface InfoVO {
   attrJson: string;
 
   /**
+   * 规格JSON
+   */
+  specJson: string;
+
+  /**
    * 状态
    */
   state: string;
@@ -201,6 +206,11 @@ export interface InfoForm extends BaseEntity {
   attrJson?: string;
 
   /**
+   * 规格JSON
+   */
+  specJson?: string;
+
+  /**
    * 状态
    */
   state?: string;
@@ -254,11 +264,71 @@ export interface InfoQuery extends PageQuery {
    */
   state?: string;
 
-    /**
-     * 日期范围参数
-     */
-    params?: any;
+  /**
+   * 日期范围参数
+   */
+  params?: any;
+
 }
 
+export interface InfoMiniVO {
+  /**
+   * ID
+   */
+  id: string | number;
 
+  /**
+   * 名称
+   */
+  name: string;
+
+  /**
+   * 副标题
+   */
+  subtitle: string;
+
+  /**
+   * 主图ID
+   */
+  mainPic: number;
+
+  /**
+   * 主图IDUrl
+   */
+  mainPicUrl: string;
+
+  /**
+   * 最低价
+   */
+  minPrice: number;
+
+  /**
+   * 总销量
+   */
+  totalSales: number;
+
+  /**
+   * 可用库存
+   */
+  availableStock: number;
+
+  /**
+   * 综合评分
+   */
+  overallScore: number;
+
+}
+
+export interface InfoOptionVO {
+  /**
+   * ID
+   */
+  id: string | number;
+
+  /**
+   * 名称
+   */
+  name: string;
+
+}
 
