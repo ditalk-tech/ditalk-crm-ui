@@ -168,8 +168,8 @@
 <script setup name="Category" lang="ts">
 import { listCategory, getCategory, delCategory, addCategory, updateCategory } from "@/api/goods/category";
 import { CategoryVO, CategoryQuery, CategoryForm } from '@/api/goods/category/types';
-import { listInfo as listShopInfo } from '@/api/shop/info';
-import { InfoVO as ShopInfoVO, InfoQuery as ShopInfoQuery } from '@/api/shop/info/types';
+import { listInfoOption as listShopInfoOption } from '@/api/shop/info';
+import { InfoOptionVO as ShopInfoOptionVO, InfoQuery as ShopInfoQuery } from '@/api/shop/info/types';
 
 type CategoryOption = {
   id: number;
@@ -187,7 +187,7 @@ const buttonLoading = ref(false);
 const showSearch = ref(true);
 const isExpandAll = ref(true);
 const loading = ref(false);
-const shopInfoList = ref<ShopInfoVO[]>([]);
+const shopInfoList = ref<ShopInfoOptionVO[]>([]);
 const shopId = ref<string | number>()
 const shopName = ref<string>()
 const shopNameSearch = ref<string>()
@@ -408,7 +408,7 @@ const getShopInfoList = async () => {
   const query: ShopInfoQuery = { pageNum: 1, pageSize: 100 } // 多于 100 需要先使用检索过滤
   query.name = shopNameSearch.value
   // 店铺列表
-  const shopListRes = await listShopInfo(query)
+  const shopListRes = await listShopInfoOption(query)
   shopInfoList.value = shopListRes.rows
   // 如果shopInfoList不为空，默认时选取第一个店铺
   if (shopInfoList.value.length > 0) {
@@ -418,7 +418,7 @@ const getShopInfoList = async () => {
   await getList();
 }
 
-const onClickShopTag = (shopInfo: ShopInfoVO) => {
+const onClickShopTag = (shopInfo: ShopInfoOptionVO) => {
   setShopInfo(shopInfo.id, shopInfo.name)
   getList()
 }

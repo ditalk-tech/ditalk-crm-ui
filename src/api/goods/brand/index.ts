@@ -1,16 +1,28 @@
 import request from '@/utils/request';
 import { AxiosPromise } from 'axios';
-import { BrandVO, BrandForm, BrandQuery } from '@/api/goods/brand/types';
+import { BrandVO, BrandForm, BrandQuery, BrandOptionVO } from '@/api/goods/brand/types';
 
 /**
  * 查询商品品牌信息列表
  * @param query
  * @returns {*}
  */
-
 export const listBrand = (query?: BrandQuery): AxiosPromise<BrandVO[]> => {
   return request({
     url: '/goods/brand/list',
+    method: 'get',
+    params: query
+  });
+};
+
+/**
+ * 查询商品品牌信息列表
+ * @param query
+ * @returns {*}
+ */
+export const listBrandOption = (query?: BrandQuery): AxiosPromise<BrandOptionVO[]> => {
+  return request({
+    url: '/goods/brand/list/option',
     method: 'get',
     params: query
   });

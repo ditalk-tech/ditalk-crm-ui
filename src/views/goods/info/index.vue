@@ -226,8 +226,8 @@
 <script setup name="Info" lang="ts">
 import { listInfo, getInfo, delInfo, addInfo, updateInfo } from '@/api/goods/info';
 import { InfoVO, InfoQuery, InfoForm } from '@/api/goods/info/types';
-import { InfoVO as ShopInfoVO } from '@/api/shop/info/types';
-import { listInfo as listShopInfo } from '@/api/shop/info';
+import { InfoOptionVO as ShopInfoOptionVO } from '@/api/shop/info/types';
+import { listInfoOption as listShopInfoOption } from '@/api/shop/info';
 import { CategoryTreeVO, CategoryQuery } from '@/api/goods/category/types';
 import { getTreeSelect } from '@/api/goods/category';
 import { BrandVO } from '@/api/goods/brand/types';
@@ -246,7 +246,7 @@ const single = ref(true);
 const multiple = ref(true);
 const total = ref(0);
 const dateRangeCreateTime = ref<[DateModelType, DateModelType]>(['', '']);
-const shopInfoList = ref<ShopInfoVO[]>([]);
+const shopInfoList = ref<ShopInfoOptionVO[]>([]);
 const brandList = ref<BrandVO[]>([]);
 const categoryOptions = ref<CategoryTreeVO[]>([]);
 const formCategoryOptions = ref<CategoryTreeVO[]>([]);
@@ -454,7 +454,7 @@ onMounted(() => {
 });
 
 const getShopList = async () => {
-  const res = await listShopInfo();
+  const res = await listShopInfoOption();
   shopInfoList.value = res.rows;
 }
 

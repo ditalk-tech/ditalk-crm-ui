@@ -156,5 +156,20 @@ export interface BrandQuery extends PageQuery {
     params?: any;
 }
 
+export interface BrandOptionVO {
+  /**
+   * ID
+   */
+  id: string | number;
 
+  /**
+   * 名称
+   */
+  name: string;
+
+  /**
+   * 英文名称
+   */
+  englishName: string;
+}
 

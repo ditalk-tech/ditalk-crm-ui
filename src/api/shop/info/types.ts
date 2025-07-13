@@ -120,5 +120,15 @@ export interface InfoQuery extends PageQuery {
     params?: any;
 }
 
+export interface InfoOptionVO {
+  /**
+   * ID
+   */
+  id: string | number;
 
+  /**
+   * 名称
+   */
+  name: string;
+}
 

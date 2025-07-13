@@ -150,8 +150,8 @@
 <script setup name="SkuSpec" lang="ts">
 import { listSkuSpec, getSkuSpec, delSkuSpec, addSkuSpec, updateSkuSpec } from '@/api/goods/skuSpec';
 import { SkuSpecVO, SkuSpecQuery, SkuSpecForm } from '@/api/goods/skuSpec/types';
-import { InfoVO as ShopInfoVO } from '@/api/shop/info/types';
-import { listInfo as listShopInfo } from '@/api/shop/info';
+import { InfoOptionVO as ShopInfoOptionVO } from '@/api/shop/info/types';
+import { listInfoOption as listShopInfoOption } from '@/api/shop/info';
 import { CategoryTreeVO, CategoryQuery } from '@/api/goods/category/types';
 import { getTreeSelect } from '@/api/goods/category';
 
@@ -167,7 +167,7 @@ const single = ref(true);
 const multiple = ref(true);
 const total = ref(0);
 const dateRangeCreateTime = ref<[DateModelType, DateModelType]>(['', '']);
-const shopInfoList = ref<ShopInfoVO[]>([]);
+const shopInfoList = ref<ShopInfoOptionVO[]>([]);
 const categoryOptions = ref<CategoryTreeVO[]>([]); // 查询条件里的
 const formCategoryOptions = ref<CategoryTreeVO[]>([]); // 表单里的
 const specArray = ref<string[]>([]);
@@ -333,7 +333,7 @@ onMounted(() => {
 });
 
 const getShopList = async () => {
-  const res = await listShopInfo();
+  const res = await listShopInfoOption();
   shopInfoList.value = res.rows;
 }
 
