@@ -1,6 +1,6 @@
 import request from '@/utils/request';
 import { AxiosPromise } from 'axios';
-import { InfoVO, InfoForm, InfoQuery, InfoMiniVO, InfoOptionVO } from '@/api/goods/info/types';
+import { InfoVO, InfoForm, InfoQuery, InfoMiniVO, InfoOptionVO, InfoContentForm } from '@/api/goods/info/types';
 
 
 /**
@@ -85,5 +85,17 @@ export const listInfoOption = (query?: InfoQuery): AxiosPromise<InfoOptionVO[]> 
     url: '/goods/info/list/option',
     method: 'get',
     params: query
+  });
+};
+
+/**
+ * 修改商品信息Content
+ * @param data
+ */
+export const updateInfoContent = (data: InfoContentForm) => {
+  return request({
+    url: '/goods/info/content',
+    method: 'put',
+    data: data
   });
 };

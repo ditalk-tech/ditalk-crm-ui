@@ -332,3 +332,19 @@ export interface InfoOptionVO {
 
 }
 
+export interface InfoContentForm extends BaseEntity {
+  /**
+   * ID
+   */
+  id?: string | number;
+
+  /**
+   * 乐观锁
+   */
+  version?: number;
+
+  /**
+   * 商品说明
+   */
+  content?: string;
+}

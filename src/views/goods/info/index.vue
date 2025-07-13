@@ -135,104 +135,155 @@
       <pagination v-show="total > 0" :total="total" v-model:page="queryParams.pageNum" v-model:limit="queryParams.pageSize" @pagination="getList" />
     </el-card>
     <!-- 添加或修改商品信息对话框 -->
-    <el-dialog :title="dialog.title" v-model="dialog.visible" width="960px" append-to-body>
-      <el-form ref="infoFormRef" :model="form" :rules="rules" label-width="120px">
-        <el-form-item label="店铺" prop="shopId">
-          <el-select v-model="form.shopId" placeholder="请选择店铺" @change="onChangeShopInForm" filterable>
-            <el-option v-for="item in shopInfoList" :key="item.id" :label="item.name" :value="item.id" />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="分类" prop="categoryId">
-          <el-tree-select
-                v-model="form.categoryId"
-                :data="formCategoryOptions"
-                :props="{ value: 'id', label: 'label', children: 'children' } as any"
-                value-key="id"
-                placeholder="请选择分类"
-                check-strictly
-                filterable
-              />
-        </el-form-item>
-        <el-form-item label="编码" prop="spuCode">
-          <el-input v-model="form.spuCode" placeholder="请输入编码" />
-        </el-form-item>
-        <el-form-item label="名称" prop="name">
-          <el-input v-model="form.name" placeholder="请输入名称" />
-        </el-form-item>
-        <el-form-item label="副标题" prop="subtitle">
-          <el-input v-model="form.subtitle" placeholder="请输入副标题" />
-        </el-form-item>
-        <el-form-item label="主图" prop="mainPic">
-          <image-upload v-model="form.mainPic" :limit="1"/>
-        </el-form-item>
-        <el-form-item label="轮播图组" prop="subPics">
-          <image-upload v-model="form.subPics"/>
-        </el-form-item>
-        <el-form-item label="条形码" prop="barCode">
-          <el-input v-model="form.barCode" placeholder="请输入条形码" />
-        </el-form-item>
-        <el-form-item label="品牌" prop="brandId">
-          <el-select v-model="form.brandId" placeholder="请选择品牌" filterable>
-            <el-option v-for="item in brandList" :key="item.id" :label="item.name" :value="item.id" />
-          </el-select>
-        </el-form-item>
-        <!-- <el-form-item label="属性集" prop="attrJson">
-            <el-input v-model="form.attrJson" type="textarea" placeholder="请输入内容" />
-        </el-form-item> -->
-        <el-form-item label="属性集">
-          <el-input-tag v-model="attrArray" placeholder="输入后回车，格式 '属性名:属性值'" draggable @add-tag="addAttrTag"/>
-        </el-form-item>
-        <el-form-item label="规格集" prop="specJson">
-          <el-input v-model="form.specJson" type="textarea" placeholder="请输入规格集JSON" />
-        </el-form-item>
-        <el-form-item label="最低价" prop="minPrice">
-          <el-input-number v-model="minPrice" placeholder="请输入最低价" :min="0.01" :precision="2" />
-        </el-form-item>
-        <el-form-item label="总销量" prop="totalSales">
-          <el-input-number v-model="form.totalSales" placeholder="请输入总销量" :min="0" :precision="0" />
-        </el-form-item>
-        <el-form-item label="可用库存" prop="availableStock">
-          <el-input-number v-model="form.availableStock" placeholder="请输入可用库存" :min="0" :precision="0" />
-        </el-form-item>
-        <el-form-item label="综合评分" prop="overallScore">
-          <el-space>
-            <el-input-number v-model="form.overallScore" placeholder="请输入综合评分" :min="0" :max="10" :precision="0" />
-            <el-tooltip content="0-10 分" placement="top"><el-icon><QuestionFilled /></el-icon></el-tooltip>
-          </el-space>
-        </el-form-item>
-        <el-form-item label="排序" prop="sortOrder">
-          <el-input-number v-model="form.sortOrder" placeholder="请输入排序" :min="0" :max="99999999" :precision="0" />
-        </el-form-item>
-        <el-form-item label="状态" prop="state">
-          <el-radio-group v-model="form.state">
-            <el-radio
-              v-for="dict in ditalk_goods_state"
-              :key="dict.value"
-              :value="dict.value"
-            >{{dict.label}}</el-radio>
-          </el-radio-group>
-        </el-form-item>
-      </el-form>
-      <template #footer>
-        <div class="dialog-footer">
-          <el-button :loading="buttonLoading" type="primary" @click="submitForm">确 定</el-button>
-          <el-button @click="cancel">取 消</el-button>
-        </div>
+    <el-dialog v-model="dialog.visible" width="960px" append-to-body style="min-height: 92%;" :show-close="false">
+      <template #header>
+        <el-row align="middle">
+          <el-col :span="18">
+            <el-text tag="b" size="large">{{ dialog.title }}</el-text>
+          </el-col>
+          <el-col :span="6">
+            <el-button :loading="buttonLoading" type="primary" plain v-if="currentTab === 'tab0'" @click="saveInfo">保存并下一步</el-button>
+            <el-button :loading="buttonLoading" type="primary" plain v-if="currentTab === 'tab1'" @click="saveContent">保存并下一步</el-button>
+            <el-button :loading="buttonLoading" type="primary" plain v-if="currentTab === 'tab2'" @click="saveSku">保 存</el-button>
+            <el-button @click="cancel">关 闭</el-button>
+          </el-col>
+        </el-row>
       </template>
+      <el-tabs type="border-card" v-model="currentTab">
+        <el-tab-pane label="基础信息" name="tab0">
+          <el-form ref="infoFormRef" :model="form" :rules="rules" label-width="120px">
+            <el-form-item label="店铺" prop="shopId">
+              <el-select v-model="form.shopId" placeholder="请选择店铺" @change="onChangeShopInForm" filterable>
+                <el-option v-for="item in shopInfoList" :key="item.id" :label="item.name" :value="item.id" />
+              </el-select>
+            </el-form-item>
+            <el-form-item label="分类" prop="categoryId">
+              <el-tree-select
+                    v-model="form.categoryId"
+                    :data="formCategoryOptions"
+                    :props="{ value: 'id', label: 'label', children: 'children' } as any"
+                    value-key="id"
+                    placeholder="请选择分类"
+                    check-strictly
+                    filterable
+                  />
+            </el-form-item>
+            <el-form-item label="品牌" prop="brandId">
+              <el-select v-model="form.brandId" placeholder="请选择品牌" filterable>
+                <el-option v-for="item in brandList" :key="item.id" :label="item.name" :value="item.id" />
+              </el-select>
+            </el-form-item>
+            <el-row>
+              <el-col :span="12">
+                <el-form-item label="编码" prop="spuCode">
+                  <el-input v-model="form.spuCode" placeholder="请输入编码" />
+                </el-form-item>
+              </el-col>
+              <el-col :span="12">
+                <el-form-item label="条形码" prop="barCode">
+                  <el-input v-model="form.barCode" placeholder="请输入条形码" />
+                </el-form-item>
+              </el-col>
+            </el-row>
+            <el-form-item label="名称" prop="name">
+              <el-input v-model="form.name" placeholder="请输入名称" />
+            </el-form-item>
+            <el-form-item label="副标题" prop="subtitle">
+              <el-input v-model="form.subtitle" placeholder="请输入副标题" />
+            </el-form-item>
+            <el-form-item label="主图" prop="mainPic">
+              <image-upload v-model="form.mainPic" :limit="1"/>
+            </el-form-item>
+            <el-form-item label="轮播图组" prop="subPics">
+              <image-upload v-model="form.subPics"/>
+            </el-form-item>
+            <el-form-item label="属性集">
+              <el-input-tag v-model="attrArray" placeholder="输入后回车，格式 '属性名:属性值'" draggable @add-tag="addAttrTag" />
+            </el-form-item>
+            <el-form-item label="规格集" prop="specJson">
+              <template v-for="(v, index) in specKeyArray" :key="index">
+              <el-row>
+                <el-input v-model="specKeyArray[index]" placeholder="规格名称" style="width: 200px; margin-bottom: 3px; margin-right: 20px;" @blur="check4duplicateKeys(specKeyArray[index])" />
+                <el-button type="default" @click="delSpecRow(index)">删 除</el-button>
+              </el-row>
+              <el-input-tag v-model="specValueArray[index]" placeholder="规格选项" style="margin-bottom: 16px" draggable @add-tag="check4deplicateValues(index)" />
+              </template>
+              <el-button type="default" @click="addSpecRow">添加规格</el-button>
+            </el-form-item>
+            <el-form-item label="状态" prop="state">
+              <el-radio-group v-model="form.state">
+                <el-radio
+                  v-for="dict in ditalk_goods_state"
+                  :key="dict.value"
+                  :value="dict.value"
+                >{{dict.label}}</el-radio>
+              </el-radio-group>
+            </el-form-item>
+            <el-row>
+              <el-col :span="12">
+                <el-form-item label="最低价" prop="minPrice">
+                  <el-input-number v-model="minPrice" placeholder="请输入最低价" :min="0.01" :precision="2" />
+                </el-form-item>
+              </el-col>
+              <el-col :span="12">
+                <el-form-item label="总销量" prop="totalSales">
+                  <el-input-number v-model="form.totalSales" placeholder="请输入总销量" :min="0" :precision="0" />
+                </el-form-item>
+              </el-col>
+            </el-row>
+            <el-row>
+              <el-col :span="12">
+                <el-form-item label="可用库存" prop="availableStock">
+                  <el-input-number v-model="form.availableStock" placeholder="请输入可用库存" :min="0" :precision="0" />
+                </el-form-item>
+              </el-col>
+              <el-col :span="12">
+                <el-form-item label="综合评分" prop="overallScore">
+                  <el-space>
+                    <el-input-number v-model="form.overallScore" placeholder="请输入综合评分" :min="0" :max="10" :precision="0" />
+                    <el-tooltip content="0-10 分" placement="top"><el-icon><QuestionFilled /></el-icon></el-tooltip>
+                  </el-space>
+                </el-form-item>
+              </el-col>
+            </el-row>
+            <el-row>
+              <el-col :span="12">
+                <el-form-item label="排序" prop="sortOrder">
+                  <el-input-number v-model="form.sortOrder" placeholder="请输入排序" :min="0" :max="99999999" :precision="0" />
+                </el-form-item>
+              </el-col>
+              <el-col :span="12"></el-col>
+            </el-row>
+          </el-form>
+        </el-tab-pane>
+        <el-tab-pane label="详情描述" name="tab1">
+          <el-form ref="contentFormRef" :model="contentForm" :rules="contentRules" label-width="120px">
+            <el-form-item label="商品说明">
+              <editor v-model="contentForm.content" :min-height="680" />
+            </el-form-item>
+          </el-form>
+        </el-tab-pane>
+        <el-tab-pane label="SKU定义" name="tab2">
+          <el-form ref="skuFormRef" :model="skuForm" :rules="skuRules" label-width="120px">
+          </el-form>
+        </el-tab-pane>
+      </el-tabs>
     </el-dialog>
   </div>
 </template>
 
 <script setup name="Info" lang="ts">
-import { listInfo, getInfo, delInfo, addInfo, updateInfo } from '@/api/goods/info';
-import { InfoVO, InfoQuery, InfoForm } from '@/api/goods/info/types';
+import { listInfo, getInfo, delInfo, addInfo, updateInfo, updateInfoContent } from '@/api/goods/info';
+import { InfoVO, InfoQuery, InfoForm, InfoContentForm } from '@/api/goods/info/types';
+import { listSku, getSku, delSku, addSku, updateSku } from '@/api/goods/sku';
+import { SkuVO, SkuQuery, SkuForm } from '@/api/goods/sku/types';
 import { InfoOptionVO as ShopInfoOptionVO } from '@/api/shop/info/types';
 import { listInfoOption as listShopInfoOption } from '@/api/shop/info';
 import { CategoryTreeVO, CategoryQuery } from '@/api/goods/category/types';
 import { getTreeSelect } from '@/api/goods/category';
 import { BrandVO } from '@/api/goods/brand/types';
 import { listBrand } from '@/api/goods/brand';
-
+import * as handleRes from '@/utils/handleRes';
 
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 const { ditalk_goods_state } = toRefs<any>(proxy?.useDict('ditalk_goods_state'));
@@ -250,11 +301,17 @@ const shopInfoList = ref<ShopInfoOptionVO[]>([]);
 const brandList = ref<BrandVO[]>([]);
 const categoryOptions = ref<CategoryTreeVO[]>([]);
 const formCategoryOptions = ref<CategoryTreeVO[]>([]);
+const needRefresh = ref<Boolean>(false);
 
 const queryFormRef = ref<ElFormInstance>();
 const infoFormRef = ref<ElFormInstance>();
+const contentFormRef = ref<ElFormInstance>();
+const skuFormRef = ref<ElFormInstance>();
 const attrArray = ref<string[]>([]);
-
+const specKeyArray = ref<string[]>();
+const specValueArray = ref<string[][]>([]);
+const specArray = ref<any>({});
+const currentTab = ref<string>('tab0')
 const minPrice = ref<number>(0); // 用于提交时转换为分
 
 const dialog = reactive<DialogOption>({
@@ -317,28 +374,48 @@ const data = reactive<PageData<InfoForm, InfoQuery>>({
     mainPic: [
       { required: true, message: "主图不能为空", trigger: "blur" }
     ],
-    minPrice: [
-      { required: true, message: "最低价不能为空", trigger: "blur" }
-    ],
-    totalSales: [
-      { required: true, message: "总销量不能为空", trigger: "blur" }
-    ],
-    availableStock: [
-      { required: true, message: "可用库存不能为空", trigger: "blur" }
-    ],
-    overallScore: [
-      { required: true, message: "综合评分不能为空", trigger: "blur" }
-    ],
-    sortOrder: [
-      { required: true, message: "排序不能为空", trigger: "blur" }
-    ],
+    // minPrice: [
+    //   { required: true, message: "最低价不能为空", trigger: "blur" }
+    // ],
+    // totalSales: [
+    //   { required: true, message: "总销量不能为空", trigger: "blur" }
+    // ],
+    // availableStock: [
+    //   { required: true, message: "可用库存不能为空", trigger: "blur" }
+    // ],
+    // overallScore: [
+    //   { required: true, message: "综合评分不能为空", trigger: "blur" }
+    // ],
+    // sortOrder: [
+    //   { required: true, message: "排序不能为空", trigger: "blur" }
+    // ],
     state: [
       { required: true, message: "状态不能为空", trigger: "change" }
     ]
   }
 });
 
+const contentRules: ElFormRules = {
+  id: [
+    { required: true, message: "请先保存商品信息", trigger: "blur" }
+  ]
+}
+
+const skuRules: ElFormRules = {
+  id: [
+    { required: true, message: "ID不能为空", trigger: "blur" }
+  ]
+}
+
+const initContentFormData: InfoContentForm = {
+  id: undefined,
+  version: undefined,
+  content: undefined,
+}
+
 const { queryParams, form, rules } = toRefs(data);
+const contentForm = ref<InfoContentForm>() // contentForm 与 form 的 version 与 id 应该对应一致
+const skuForm = ref<SkuForm>()
 
 /** 查询商品信息列表 */
 const getList = async () => {
@@ -355,6 +432,12 @@ const getList = async () => {
 const cancel = () => {
   reset();
   dialog.visible = false;
+  //
+  if (needRefresh.value) {
+    getList();
+    needRefresh.value = false
+  }
+  currentTab.value = 'tab0' // 关闭 dialog 时重置 tab index
 }
 
 /** 表单重置 */
@@ -362,10 +445,16 @@ const reset = () => {
   //
   minPrice.value = undefined
   attrArray.value = []
+  specArray.value = {}
+  specKeyArray.value = []
+  specValueArray.value = []
+  //
   formCategoryOptions.value = []
   //
   form.value = {...initFormData};
+  contentForm.value = {...initContentFormData}
   infoFormRef.value?.resetFields();
+  contentFormRef.value?.resetFields();
 }
 
 /** 搜索按钮操作 */
@@ -404,30 +493,22 @@ const handleUpdate = async (row?: InfoVO) => {
   dialog.visible = true;
   dialog.title = "修改商品信息";
   //
-  attrArray.value = json2array(form.value.attrJson);
-  minPrice.value = form.value.minPrice / 100;
-  getFormCategoryTree(form.value.shopId);
-}
-
-/** 提交按钮 */
-const submitForm = () => {
-  //
-  form.value.attrJson = array2json(attrArray.value);
-  form.value.minPrice = minPrice.value * 100;
-  //
-  infoFormRef.value?.validate(async (valid: boolean) => {
-    if (valid) {
-      buttonLoading.value = true;
-      if (form.value.id) {
-        await updateInfo(form.value).finally(() =>  buttonLoading.value = false);
-      } else {
-        await addInfo(form.value).finally(() =>  buttonLoading.value = false);
-      }
-      proxy?.$modal.msgSuccess("操作成功");
-      dialog.visible = false;
-      await getList();
+  attrArray.value = json2array(form.value.attrJson); // 处理普通属性
+  specArray.value = JSON.parse(form.value.specJson || "{}") // 处理规格属性
+  for (const key in specArray.value) {
+    if (specArray.value.hasOwnProperty(key)) { // 可选：过滤掉继承的属性
+      specKeyArray.value.push(key)
+      specValueArray.value.push(specArray.value[key])
     }
-  });
+  }
+  // 处理金额单位
+  minPrice.value = form.value.minPrice / 100;
+  // get category tree
+  getFormCategoryTree(form.value.shopId);
+  // 初始化 contentForm
+  contentForm.value.id = form.value.id;
+  contentForm.value.version = form.value.version;
+  contentForm.value.content = form.value.content;
 }
 
 /** 删除按钮操作 */
@@ -564,6 +645,122 @@ const onChangeShopInForm = (shopId: number | string) => {
   form.value.categoryId = undefined // remove data form value
   if (shopId) {
     getFormCategoryTree(shopId);
+  }
+}
+
+const saveInfo = () => {
+  //
+  form.value.attrJson = array2json(attrArray.value);
+  form.value.specJson = buildSpecArray();
+  form.value.minPrice = minPrice.value * 100;
+  //
+  infoFormRef.value?.validate(async (valid: boolean) => {
+    if (valid) {
+      buttonLoading.value = true;
+      if (form.value.id) {
+        updateInfo(form.value).then((res) => {
+          if (handleRes.showMsg(res)) {
+            form.value.version = res.data.version; // 每次操作需要同步更新 version
+            contentForm.value.id = form.value.id
+            contentForm.value.version = res.data.version; // 每次操作需要同步更新 version
+            needRefresh.value = true
+            currentTab.value = "tab1"
+          }
+        }).finally(() => {
+          buttonLoading.value = false
+        })
+      } else {
+        addInfo(form.value).then((res) => {
+          if (handleRes.showMsg(res)) {
+            form.value.id = res.data.id;
+            form.value.version = res.data.version; // 每次操作需要同步更新 version
+            contentForm.value.id = res.data.id;
+            contentForm.value.version = res.data.version; // 每次操作需要同步更新 version
+            needRefresh.value = true
+            currentTab.value = "tab1"
+          }
+        }).finally(() => {
+          buttonLoading.value = false
+        })
+      }
+    }
+  });
+}
+
+const saveContent = async () => {
+  contentFormRef.value?.validate(async (valid: boolean) => {
+    if (valid) {
+      buttonLoading.value = true;
+      updateInfoContent(contentForm.value).then(res => {
+        if (handleRes.showMsg(res)) {
+          contentForm.value.version = res.data.version; // 每次操作需要同步更新 version
+          form.value.version = res.data.version; // 每次操作需要同步更新 version
+          // needRefresh.value = true 更新 content 不用更新表格
+          currentTab.value = "tab2"
+        }
+      }).finally(() => {
+        buttonLoading.value = false
+      });
+    }
+  })
+}
+
+const saveSku = () => {
+}
+
+/**
+ * @description: 构建规格数组的JSON字符串
+ * @return {string}
+ */
+const buildSpecArray = (): string => {
+  specArray.value = {}
+  for (let i = 0; i < specKeyArray.value.length; i++) {
+    if (!specKeyArray.value[i] || specKeyArray.value[i].trim() === '' || specValueArray.value[i].length == 0) { // 去除没有值的规格项
+      continue
+    }
+    specArray.value[specKeyArray.value[i]] = specValueArray.value[i]
+  }
+  return JSON.stringify(specArray.value)
+}
+
+/**
+ * 添加新的 规格项
+ */
+const addSpecRow = () => {
+  specKeyArray.value.push(undefined)
+  specValueArray.value.push([]);
+}
+
+/**
+ * 删除规格项集合中指定项
+ * @param index 
+ */
+const delSpecRow = (index: number) => {
+  specKeyArray.value.splice(index, 1)
+  specValueArray.value.splice(index, 1)
+}
+
+/**
+ * 在specKeyArray中排除最后一个项，检查若有与value相同值的忽略value
+ * @param value 
+ * @param index 
+ */
+const check4duplicateKeys = (value: string) => {
+  if (specKeyArray.value.slice(0, -1).indexOf(value) != -1) {
+    proxy?.$modal.msgError("规格名重复了");
+    specKeyArray.value.pop();
+  }
+}
+
+/**
+ * 检查specValueArray[index]中最后一个值是否已存在，存在则删除
+ * @param value 
+ * @param index 
+ */
+const check4deplicateValues = (index: number) => {
+  if (specValueArray.value[index].slice(0, -1).indexOf(specValueArray.value[index].at(-1)) != -1) {
+    proxy?.$modal.msgError("规格值重复了");
+    specValueArray.value[index].pop();
   }
 }
 
