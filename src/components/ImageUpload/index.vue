@@ -239,4 +239,16 @@ const listToString = (list: any[], separator?: string) => {
 :deep(.hide .el-upload--picture-card) {
   display: none;
 }
+
+// 20250715 weidixian 解决：上传时图片是出现闪烁、抖动的情况
+:deep .el-list-enter-active,
+:deep .el-list-leave-active {
+  transition: none;
+}
+:deep .el-list-enter,
+:deep .el-list-leave-active {
+  opacity: 0;
+}
+//////////////////////////////////////////////////////
+
 </style>
