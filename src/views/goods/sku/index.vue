@@ -259,9 +259,9 @@ const data = reactive<PageData<SkuForm, SkuQuery>>({
     goodsId: [
       { required: true, message: "商品ID不能为空", trigger: "blur" }
     ],
-    skuSn: [
-      { required: true, message: "SKU编码不能为空", trigger: "blur" }
-    ],
+    // skuSn: [
+    //   { required: true, message: "SKU编码不能为空", trigger: "blur" }
+    // ],
     salePrice: [
       { required: true, message: "售价不能为空", trigger: "blur" }
     ],

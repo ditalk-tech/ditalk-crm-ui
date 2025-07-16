@@ -61,3 +61,15 @@ export const delSkuSpec = (id: string | number | Array<string | number>) => {
     method: 'delete'
   });
 };
+
+/**
+ * 查询SKU规格详细
+ * @param shopId
+ * @param categoryId
+ */
+export const listSkuSpecByShopIdAndCategoryId = (shopId: string | number, categoryId: string | number): AxiosPromise<SkuSpecVO[]> => {
+  return request({
+    url: '/goods/skuSpec/' + shopId + '/' + categoryId,
+    method: 'get'
+  });
+};

@@ -135,7 +135,7 @@
       <pagination v-show="total > 0" :total="total" v-model:page="queryParams.pageNum" v-model:limit="queryParams.pageSize" @pagination="getList" />
     </el-card>
     <!-- 添加或修改商品信息对话框 -->
-    <el-dialog v-model="dialog.visible" width="960px" append-to-body style="min-height: 92%;" :show-close="false">
+    <el-dialog v-model="dialog.visible" width="1320px" append-to-body style="min-height: 92%;" :show-close="false" @close="resetDialogParams">
       <template #header>
         <el-row align="middle">
           <el-col :span="18">
@@ -204,11 +204,11 @@
               <template v-for="(v, index) in specKeyArray" :key="index">
               <el-row>
                 <el-input v-model="specKeyArray[index]" placeholder="规格名称" style="width: 200px; margin-bottom: 3px; margin-right: 20px;" @blur="check4duplicateKeys(specKeyArray[index])" />
-                <el-button type="default" @click="delSpecRow(index)">删 除</el-button>
+                <el-button type="info" plain @click="delSpecRow(index)">删 除</el-button>
               </el-row>
               <el-input-tag v-model="specValueArray[index]" placeholder="规格选项" style="margin-bottom: 16px" draggable @add-tag="check4deplicateValues(index)" />
               </template>
-              <el-button type="default" @click="addSpecRow">添加规格</el-button>
+              <el-button type="primary" plain @click="addSpecRow">添加规格</el-button>
             </el-form-item>
             <el-form-item label="状态" prop="state">
               <el-radio-group v-model="form.state">
@@ -264,8 +264,86 @@
           </el-form>
         </el-tab-pane>
         <el-tab-pane label="SKU定义" name="tab2">
-          <el-form ref="skuFormRef" :model="skuForm" :rules="skuRules" label-width="120px">
-          </el-form>
+          <!-- 展示 specArray 内容 -->
+          <el-row>
+            <el-col :span="2" align="right">
+              <b style="margin-right: 10px">规格集</b>
+            </el-col>
+            <el-col :span="22">
+              <template v-for="(v, index) in specKeyArray" :key="index">
+              <el-row>
+                <el-input v-model="specKeyArray[index]" placeholder="规格名称" style="width: 200px; margin-bottom: 3px; margin-right: 20px;" @blur="check4duplicateKeys(specKeyArray[index])" />
+                <el-button type="default" @click="delSpecRow(index)">删 除</el-button>
+              </el-row>
+              <el-input-tag v-model="specValueArray[index]" placeholder="规格选项" style="margin-bottom: 16px" draggable @add-tag="check4deplicateValues(index)" />
+              </template>
+              <el-button type="primary" plain @click="addSpecRow">添加规格</el-button>
+              <el-button type="success" plain @click="refreshSkuList">立即生成规格</el-button>
+              <el-button type="danger" plain @click="clearAllSkuForm">清空商品规格</el-button>
+            </el-col>
+          </el-row>
+          <!-- 展示已有的 GoodsSku 数据，并支持更新保存 -->
+          <el-row style="margin-top:20px">
+            <el-col :span="2" align="right">
+              <b style="margin-right: 10px">商品规格</b>
+            </el-col>
+            <el-col :span="22">
+              <el-table border :data="skuList">
+                <template v-for="(spec, index) in skuSpecTableHead" :key="index">
+                  <el-table-column :label="spec" align="center" prop="specObject" fixed="left">
+                    <template #default="scope">
+                      {{ scope.row.specObject[spec] }}
+                    </template>
+                  </el-table-column>
+                </template>
+                <el-table-column label="图片" align="center" v-if="showImageUploadColumn">
+                  <template #default="scope">
+                    <image-upload-one v-model="scope.row.mainPic" />
+                  </template>
+                </el-table-column>
+                <el-table-column label="售价" align="center" prop="salePrice" width="120">
+                  <template #default="scope">
+                    <el-input-number v-model="scope.row.salePrice" :min="0" :precision="2" :controls="false" style="width: 100%"></el-input-number>
+                  </template>
+                </el-table-column>
+                <el-table-column label="原价" align="center" prop="originalPrice" width="120">
+                  <template #default="scope">
+                    <el-input-number v-model="scope.row.originalPrice" :min="0" :precision="2" :controls="false" style="width: 100%"></el-input-number>
+                  </template>
+                </el-table-column>
+                <el-table-column label="成本价" align="center" prop="costPrice" width="120">
+                  <template #default="scope">
+                    <el-input-number v-model="scope.row.costPrice" :min="0" :precision="2" :controls="false" style="width: 100%"></el-input-number>
+                  </template>
+                </el-table-column>
+                <el-table-column label="重量(kg)" align="center" prop="weight" width="100">
+                  <template #default="scope">
+                    <el-input-number v-model="scope.row.weight" :min="0" :precision="2" :controls="false" style="width: 100%"></el-input-number>
+                  </template>
+                </el-table-column>
+                <el-table-column label="体积(m³)" align="center" prop="volume" width="120">
+                  <template #default="scope">
+                    <el-input-number v-model="scope.row.volume" :min="0" :precision="4" :controls="false" style="width: 100%"></el-input-number>
+                  </template>
+                </el-table-column>
+                <el-table-column label="可用库存" align="center" prop="availableStock" width="100">
+                  <template #default="scope">
+                    <el-input-number v-model="scope.row.availableStock" :min="0" :precision="0" :controls="false" style="width: 100%"></el-input-number>
+                  </template>
+                </el-table-column>
+                <el-table-column label="SKU编码" align="center" prop="skuSn" width="160">
+                  <template #default="scope">
+                    <el-input v-model="scope.row.skuSn"></el-input>
+                  </template>
+                </el-table-column>
+                <el-table-column label="操作" align="center" width="90" fixed="right">
+                  <template #default="scope">
+                    <el-button @click="skuList.splice(scope.$index, 1)">删 除</el-button>
+                  </template>
+                </el-table-column>
+              </el-table>
+            </el-col>
+          </el-row>
         </el-tab-pane>
       </el-tabs>
     </el-dialog>
@@ -273,10 +351,16 @@
 </template>
 
 <script setup name="Info" lang="ts">
+// InfoForm 处理 Goods 的基础信息，InfoContentForm 处理 Goods 的 content 内容，content 是从 InfoForm 复制到 InfoContentForm 的，来源同是 InfoVO。InfoForm 与 InfoConentForm 是同一个数据实体，所有 version 需要保持一致。
+// form 是处理 Goods 基础信息的，contentForm 是处理 content 内容的。skuForm 处理 SKU 相关定义的。
+// 本页面是 GoodsInfo 为主体，引入了 GoodsSku 的内容，目的是使入口统一到 GoodsInfo 身上。
+// attrArray 与 specArray 是 attrJson 与 specJson 的变量载体，用于页面数据双向绑定。最后提交后台时，attrArray 与 specArray 转型并传入到 form 中。
 import { listInfo, getInfo, delInfo, addInfo, updateInfo, updateInfoContent } from '@/api/goods/info';
 import { InfoVO, InfoQuery, InfoForm, InfoContentForm } from '@/api/goods/info/types';
-import { listSku, getSku, delSku, addSku, updateSku } from '@/api/goods/sku';
-import { SkuVO, SkuQuery, SkuForm } from '@/api/goods/sku/types';
+import { listSku, initSkuVO, skuVO2Form, batchUpdateSku } from '@/api/goods/sku';
+import { SkuVO, SkuQuery, SkuForm, SkuBatchForm } from '@/api/goods/sku/types';
+import { listSkuSpecByShopIdAndCategoryId } from '@/api/goods/skuSpec';
+import { SkuSpecVO } from '@/api/goods/skuSpec/types';
 import { InfoOptionVO as ShopInfoOptionVO } from '@/api/shop/info/types';
 import { listInfoOption as listShopInfoOption } from '@/api/shop/info';
 import { CategoryTreeVO, CategoryQuery } from '@/api/goods/category/types';
@@ -284,6 +368,7 @@ import { getTreeSelect } from '@/api/goods/category';
 import { BrandVO } from '@/api/goods/brand/types';
 import { listBrand } from '@/api/goods/brand';
 import * as handleRes from '@/utils/handleRes';
+import * as valueCheck from '@/utils/valueCheck';
 
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 const { ditalk_goods_state } = toRefs<any>(proxy?.useDict('ditalk_goods_state'));
@@ -299,20 +384,24 @@ const total = ref(0);
 const dateRangeCreateTime = ref<[DateModelType, DateModelType]>(['', '']);
 const shopInfoList = ref<ShopInfoOptionVO[]>([]);
 const brandList = ref<BrandVO[]>([]);
-const categoryOptions = ref<CategoryTreeVO[]>([]);
-const formCategoryOptions = ref<CategoryTreeVO[]>([]);
-const needRefresh = ref<Boolean>(false);
+const categoryOptions = ref<CategoryTreeVO[]>([]); // 页面查询条件的 category 选项集合
+const formCategoryOptions = ref<CategoryTreeVO[]>([]); // form表单中的 category 选项集合
+const needRefresh = ref<Boolean>(false); // 控制GoodsInfo列表刷新时机，管理当编辑对话框关闭时是否有需要刷新
 
 const queryFormRef = ref<ElFormInstance>();
 const infoFormRef = ref<ElFormInstance>();
 const contentFormRef = ref<ElFormInstance>();
-const skuFormRef = ref<ElFormInstance>();
-const attrArray = ref<string[]>([]);
-const specKeyArray = ref<string[]>();
-const specValueArray = ref<string[][]>([]);
-const specArray = ref<any>({});
-const currentTab = ref<string>('tab0')
+const currentTab = ref<string>('tab0'); // 对话框中 tab 值
+const attrArray = ref<string[]>([]); // 对应商品属性中的 attrJson
+const specArray = ref<any>({}); // 对应商品属性中的 specJson
+const specKeyArray = ref<string[]>(); // 规格名称数组
+const specValueArray = ref<string[][]>([]); // 规格名称对应的规格值集合
 const minPrice = ref<number>(0); // 用于提交时转换为分
+const skuList = ref<SkuVO[]>([]); // 页面展示的 Sku 列表数据
+const skuSpecArray = ref<string[][]>([]) // 通过预定义规格生成的 skuSpec 集合
+const skuFormList = ref<SkuForm[]>([]) // 用于保存skuForm的提交数据集合
+const skuSpecTableHead = ref<string[]>([])
+const showImageUploadColumn = ref<Boolean>(false) // 控制 Sku 表格 ImageUpload 最后加载，解决加载多次的问题
 
 const dialog = reactive<DialogOption>({
   visible: false,
@@ -401,12 +490,6 @@ const contentRules: ElFormRules = {
   ]
 }
 
-const skuRules: ElFormRules = {
-  id: [
-    { required: true, message: "ID不能为空", trigger: "blur" }
-  ]
-}
-
 const initContentFormData: InfoContentForm = {
   id: undefined,
   version: undefined,
@@ -415,7 +498,6 @@ const initContentFormData: InfoContentForm = {
 
 const { queryParams, form, rules } = toRefs(data);
 const contentForm = ref<InfoContentForm>() // contentForm 与 form 的 version 与 id 应该对应一致
-const skuForm = ref<SkuForm>()
 
 /** 查询商品信息列表 */
 const getList = async () => {
@@ -432,12 +514,6 @@ const getList = async () => {
 const cancel = () => {
   reset();
   dialog.visible = false;
-  //
-  if (needRefresh.value) {
-    getList();
-    needRefresh.value = false
-  }
-  currentTab.value = 'tab0' // 关闭 dialog 时重置 tab index
 }
 
 /** 表单重置 */
@@ -492,23 +568,51 @@ const handleUpdate = async (row?: InfoVO) => {
   Object.assign(form.value, res.data);
   dialog.visible = true;
   dialog.title = "修改商品信息";
-  //
-  attrArray.value = json2array(form.value.attrJson); // 处理普通属性
-  specArray.value = JSON.parse(form.value.specJson || "{}") // 处理规格属性
-  for (const key in specArray.value) {
+  // 读取分类树 列表选项使用
+  getFormCategoryTree(form.value.shopId);
+  // 处理金额单位
+  minPrice.value = form.value.minPrice / 100;
+  // 处理普通属性
+  attrArray.value = json2array(form.value.attrJson);
+  // 处理规格属性
+  if (form.value.specJson && form.value.specJson !== "{}" && form.value.specJson !== "") { // GoodsInfo 中有 specJson 内容，取 specJson 值进行展示
+    specArray.value = JSON.parse(form.value.specJson || "{}")
+  } else { // GoodsInfo 中没有 specJson 内容，取分类中预定义值
+    const goodsSkuSpecRes = await listSkuSpecByShopIdAndCategoryId(form.value.shopId, form.value.categoryId)
+    const goodsSkuSpecList: SkuSpecVO[] = goodsSkuSpecRes.data
+    // 把 goodsSkuSpecList 转成 specArray
+    if (!valueCheck.isEmptyArr(goodsSkuSpecList)) {
+      goodsSkuSpecList.forEach(skuSpec => {
+        specArray.value[skuSpec.name] = JSON.parse(skuSpec.specJson || "")
+      })
+    } else {
+      specArray.value = {}
+    }
+  }
+  for (const key in specArray.value) { // 把规格中的 key 与 values 分别取出到 specKeyArray 与 specValueArray，便后续处理
     if (specArray.value.hasOwnProperty(key)) { // 可选：过滤掉继承的属性
       specKeyArray.value.push(key)
       specValueArray.value.push(specArray.value[key])
     }
   }
-  // 处理金额单位
-  minPrice.value = form.value.minPrice / 100;
-  // get category tree
-  getFormCategoryTree(form.value.shopId);
-  // 初始化 contentForm
+  // 初始化 contentForm，需要与 form 相对应
   contentForm.value.id = form.value.id;
   contentForm.value.version = form.value.version;
   contentForm.value.content = form.value.content;
+  // 处理 SKU 数据
+  skuList.value = []
+  const skuQuery: SkuQuery = {
+    goodsId: form.value.id,
+    pageNum: 1,
+    pageSize: 1000,
+    state: "0",
+  }
+  const skuListRes = await listSku(skuQuery);
+  skuListRes.rows.forEach(row => {
+    row['specObject'] = JSON.parse(row.specJson)
+    skuList.value.push(row);
+  })
+  refreshSkuSpecTableHead() // SKU tabel 表单的动态表头
 }
 
 /** 删除按钮操作 */
@@ -706,6 +810,21 @@ const saveContent = async () => {
 }
 
 const saveSku = () => {
+  buttonLoading.value = true;
+  skuFormList.value = []
+  skuList.value.forEach(sku => {
+    skuFormList.value.push(skuVO2Form(sku))
+  })
+  const skuBatchForm: SkuBatchForm = {
+      goodsId: form.value.id,
+      shopId: form.value.shopId,
+      goodsSkuBos: skuFormList.value,
+  }
+  batchUpdateSku(skuBatchForm).then(res => {
+    handleRes.showMsg(res);
+  }).finally(() => {
+    buttonLoading.value = false
+  });
 }
 
 /**
@@ -764,4 +883,117 @@ const check4deplicateValues = (index: number) => {
   }
 }
 
+/**
+ * 刷新 SkuList 内容
+ */
+const refreshSkuList = () => {
+  buildSkuSpecArray()
+  refreshSkuSpecTableHead()
+  mergeIntoSkuList()
+}
+
+/**
+ * 把 skuSpecArray 存在 skuList 没有的，合并到 skuList，保留原来有的 skuList 内容
+ */
+const mergeIntoSkuList = () => {
+  // skuList.value = [] // 创建、合并到 skuList 中
+  skuSpecArray.value.forEach(spec => {
+    const specObject = Object.fromEntries( // 如把 ["颜色:白","产地:中国"] 转成 {颜色:白,产地:中国}
+        spec.map(item => item.split(':'))
+    );
+    // 判断 skuList 中有没有 specJson 等于 spec 的 sku
+    let sku = skuList.value.find(sku => valueCheck.isEqualObject(JSON.parse(sku.specJson), specObject));
+    if (sku) {
+      return // 有则跳过
+    } else {
+      sku = initSkuVO(); // 没有则创建
+      sku['specObject'] = specObject
+      // sku.specJson = JSON.stringify(spec); // 数组格式
+      sku.specJson = JSON.stringify(specObject); // 对象格式
+      sku.shopId = form.value.shopId; // 必要的 shopId 属性值
+      sku.goodsId = form.value.id; // 必要的 goodsId 属性值
+      sku.state = "0"; // 必要的状态属性值
+      skuList.value.push(sku);
+    }
+  })
+}
+
+/**
+ * 构建 skuSpecArray 数据
+ */
+const buildSkuSpecArray = () => {
+  skuSpecArray.value = cartesianProduct(
+    specKeyArray.value.map((key, index) => { // 将 specKey 与 specValue 合并成 key:value 的数组
+      return specValueArray.value[index].map(value => `${key}:${value}`);
+    })
+  )
+}
+
+/**
+ * 刷新 skuSpecTableHead 内容
+ */
+const refreshSkuSpecTableHead = () => {
+  // 构建 skuForm table 的 spec 表头部分
+  const specObjectArray = skuList.value.flatMap(sku => sku['specObject']) // 后台数据结果得出的对象集合
+  skuSpecTableHead.value = getObjectKeys(specObjectArray)
+  skuSpecTableHead.value = [...new Set([...skuSpecTableHead.value, ...specKeyArray.value])] // 定义集合与后台集合的合并结果
+  // !!! 特别处理：动态表头会使表单加载两次数据，对于 image-upload 要请求两次后台。这里把 image-upload 也放到动态表头中，使其只加载一次
+  showImageUploadColumn.value = true
+}
+
+/**
+ * 笛卡尔乘积
+ * @param arr 笛卡尔乘积的参数数组
+ * @returns 笛卡尔乘积的结果数组
+ */
+const cartesianProduct = <T>(arr: T[][]): T[][] => 
+  arr.reduce((acc: T[][], current: T[]) => {
+    if (acc.length === 0) {
+      return current.map(item => [item]);
+    }
+    return acc.flatMap(prev =>
+      current.map(currentItem => [...prev, currentItem])
+    );
+  }, [] as T[][])
+
+/**
+ * 从对象数组中提取所有唯一的属性名（包括所有对象的键）
+ * @typeparam T - 数组元素的类型，必须是对象类型
+ * @param arr - 要提取属性名的对象数组
+ * @returns 包含所有唯一属性名的字符串数组，顺序由首次出现决定
+ * @example
+ * const users = [{ name: 'Alice' }, { age: 30 }];
+ * const keys = getObjectKeys(users); // ['name', 'age']
+ */
+const getObjectKeys = <T extends object>(arr: T[]): string[] => {
+  return [...new Set(
+    arr.reduce((keys, obj) => [...keys, ...Object.keys(obj)], [] as string[])
+  )];
+};
+
+const clearAllSkuForm = () => {
+  skuSpecTableHead.value = []
+  skuList.value = []
+}
+
+const resetDialogParams = () => {
+  // 控制 GoodsInfo 列表刷新
+  if (needRefresh.value) {
+    getList();
+    needRefresh.value = false
+  }
+  // 重置 tab index
+  currentTab.value = 'tab0' 
+  // 重置 Sku 表格 ImageUpload 最后加载
+  showImageUploadColumn.value = false
+  // 重置对话框用到的变量
+  attrArray.value = []
+  specArray.value = {}
+  specKeyArray.value = []
+  specValueArray.value = []
+  skuList.value = []
+  skuSpecArray.value = []
+  skuFormList.value = []
+  skuSpecTableHead.value = []
+}
 </script>

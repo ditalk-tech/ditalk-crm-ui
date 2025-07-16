@@ -241,5 +241,17 @@ export interface SkuQuery extends PageQuery {
     params?: any;
 }
 
+export interface SkuBatchForm {
+  /**
+   * 店铺ID
+   */
+  shopId?: string | number;
 
+  /**
+   * 商品ID
+   */
+  goodsId?: string | number;
 
+  goodsSkuBos?: SkuForm[];
+
+}
