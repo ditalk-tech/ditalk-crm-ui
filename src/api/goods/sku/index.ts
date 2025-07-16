@@ -28,32 +28,6 @@ export const initSkuVO = (): SkuVO => {
   };
 };
 
-export const skuVO2Form = (skuVO: SkuVO): SkuForm => {
-  const skuForm = {
-    id: skuVO.id,
-    version: skuVO.version,
-    // shopId: skuVO.shopId,
-    // goodsId: skuVO.goodsId,
-    skuSn: skuVO.skuSn,
-    mainPic: skuVO.mainPic,
-    // mainPicUrl: skuVO.mainPicUrl,
-    specJson: skuVO.specJson,
-    salePrice: skuVO.salePrice,
-    originalPrice: skuVO.originalPrice,
-    costPrice: skuVO.costPrice,
-    weight: skuVO.weight,
-    volume: skuVO.volume,
-    availableStock: skuVO.availableStock,
-    // reservedStock: skuVO.reservedStock,
-    // allocatedStock: skuVO.allocatedStock,
-    // unavailableStock: skuVO.unavailableStock,
-    // totalStock: skuVO.totalStock,
-    // totalSales: skuVO.totalSales,
-    // state: skuVO.state
-  };
-  return skuForm;
-}
-
 /**
  * 查询商品SKU列表
  * @param query

@@ -31,7 +31,7 @@ export const getInfo = (id: string | number): AxiosPromise<InfoVO> => {
  * 新增商品信息
  * @param data
  */
-export const addInfo = (data: InfoForm) => {
+export const addInfo = (data: InfoForm): AxiosPromise<InfoVO> => {
   return request({
     url: '/goods/info',
     method: 'post',
@@ -43,7 +43,7 @@ export const addInfo = (data: InfoForm) => {
  * 修改商品信息
  * @param data
  */
-export const updateInfo = (data: InfoForm) => {
+export const updateInfo = (data: InfoForm): AxiosPromise<InfoVO> => {
   return request({
     url: '/goods/info',
     method: 'put',

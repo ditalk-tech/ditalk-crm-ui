@@ -1,3 +1,6 @@
+/**
+ * 处理响应结果工具类
+ */
 import { ElMessage } from 'element-plus';
 
 export const showMsg = (res: any) => {
