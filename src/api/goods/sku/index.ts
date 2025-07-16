@@ -28,6 +28,12 @@ export const initSkuVO = (): SkuVO => {
   };
 };
 
+export const copySkuForm = (skuForm: SkuForm): SkuForm => {
+  return {
+    ...skuForm
+  };
+};
+
 /**
  * 查询商品SKU列表
  * @param query

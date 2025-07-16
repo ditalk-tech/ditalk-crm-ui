@@ -183,7 +183,7 @@
 </template>
 
 <script setup name="Sku" lang="ts">
-import { listSku, getSku, delSku, addSku, updateSku } from '@/api/goods/sku';
+import { listSku, getSku, delSku, addSku, updateSku, copySkuForm } from '@/api/goods/sku';
 import { SkuVO, SkuQuery, SkuForm } from '@/api/goods/sku/types';
 import { InfoOptionVO as ShopInfoOptionVO } from '@/api/shop/info/types';
 import { listInfoOption as listShopInfoOption } from '@/api/shop/info';
@@ -288,6 +288,13 @@ const getList = async () => {
   queryParams.value.params = {};
   proxy?.addDateRange(queryParams.value, dateRangeCreateTime.value, 'CreateTime');
   const res = await listSku(queryParams.value);
+  res.rows.forEach(row => {
+    row.salePrice = row.salePrice / 100;
+    row.originalPrice = row.originalPrice / 100;
+    row.costPrice = row.costPrice / 100;
+    row.weight = row.weight / 100;
+    row.volume = row.volume / 10000;
+  })
   skuList.value = res.rows;
   total.value = res.total;
   loading.value = false;
@@ -337,6 +344,13 @@ const handleUpdate = async (row?: SkuVO) => {
   reset();
   const _id = row?.id || ids.value[0]
   const res = await getSku(_id);
+  // Convert units
+  res.data.salePrice = res.data.salePrice / 100;
+  res.data.originalPrice = res.data.originalPrice / 100;
+  res.data.costPrice = res.data.costPrice / 100;
+  res.data.weight = res.data.weight / 100;
+  res.data.volume = res.data.volume / 10000;
+  //
   Object.assign(form.value, res.data);
   dialog.visible = true;
   dialog.title = "修改商品SKU";
@@ -347,10 +361,18 @@ const submitForm = () => {
   skuFormRef.value?.validate(async (valid: boolean) => {
     if (valid) {
       buttonLoading.value = true;
-      if (form.value.id) {
-        await updateSku(form.value).finally(() =>  buttonLoading.value = false);
+      const subForm = copySkuForm(form.value);
+      // Convert units
+      subForm.salePrice = subForm.salePrice * 100;
+      subForm.originalPrice = subForm.originalPrice * 100;
+      subForm.costPrice = subForm.costPrice * 100;
+      subForm.weight = subForm.weight * 100;
+      subForm.volume = subForm.volume * 10000;
+      //
+      if (subForm.id) {
+        await updateSku(subForm).finally(() =>  buttonLoading.value = false);
       } else {
-        await addSku(form.value).finally(() =>  buttonLoading.value = false);
+        await addSku(subForm).finally(() =>  buttonLoading.value = false);
       }
       proxy?.$modal.msgSuccess("操作成功");
       dialog.visible = false;

@@ -1038,12 +1038,12 @@ const handleSkuList = async () => {
   }
   const skuListRes = await listSku(skuQuery);
   skuListRes.rows.forEach(row => {
-    row.salePrice = row.salePrice / 100,
-    row.originalPrice = row.originalPrice / 100,
-    row.costPrice = row.costPrice / 100,
-    row.weight = row.weight / 100,
-    row.volume = row.volume / 10000,
-    row['specObject'] = JSON.parse(row.specJson)
+    row.salePrice = row.salePrice / 100;
+    row.originalPrice = row.originalPrice / 100;
+    row.costPrice = row.costPrice / 100;
+    row.weight = row.weight / 100;
+    row.volume = row.volume / 10000;
+    row['specObject'] = JSON.parse(row.specJson);
     skuList.value.push(row);
   })
 }
