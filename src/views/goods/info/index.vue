@@ -86,8 +86,8 @@
         <el-table-column type="selection" width="55" align="center" fixed="left" />
         <el-table-column label="ID" align="center" prop="id" v-if="true" />
         <el-table-column label="创建时间" align="center" prop="createTime" width="180" />
-        <el-table-column label="店铺ID" align="center" prop="shopId" />
-        <el-table-column label="分类ID" align="center" prop="categoryId" />
+        <el-table-column label="店铺" align="center" prop="shopName" />
+        <el-table-column label="分类" align="center" prop="categoryName" />
         <el-table-column label="编码" align="center" prop="spuCode" />
         <el-table-column label="名称" align="center" prop="name" />
         <el-table-column label="属性集" align="center" prop="attrJson" width="120" show-overflow-tooltip />
@@ -104,7 +104,7 @@
           </template>
         </el-table-column>
         <el-table-column label="条形码" align="center" prop="barCode" />
-        <el-table-column label="品牌ID" align="center" prop="brandId" />
+        <el-table-column label="品牌" align="center" prop="brandName" />
         <!-- <el-table-column label="商品说明" align="center" prop="content" /> -->
         <el-table-column label="最低价" align="center" prop="minPrice" >
           <template #default="scope">
@@ -220,7 +220,7 @@
                 >{{dict.label}}</el-radio>
               </el-radio-group>
             </el-form-item>
-            <el-row>
+            <!-- <el-row>
               <el-col :span="12">
                 <el-form-item label="最低价" prop="minPrice">
                   <el-input-number v-model="minPrice" placeholder="请输入最低价" :min="0.01" :precision="2" />
@@ -254,7 +254,7 @@
                 </el-form-item>
               </el-col>
               <el-col :span="12"></el-col>
-            </el-row>
+            </el-row> -->
           </el-form>
         </el-tab-pane>
         <el-tab-pane label="详情描述" name="tab1">

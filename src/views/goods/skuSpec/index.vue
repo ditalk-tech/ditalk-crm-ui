@@ -75,8 +75,8 @@
         <el-table-column type="selection" width="55" align="center" fixed="left" />
         <el-table-column label="ID" align="center" prop="id" v-if="true" />
         <el-table-column label="创建时间" align="center" prop="createTime" width="180" />
-        <el-table-column label="店铺ID" align="center" prop="shopId" />
-        <el-table-column label="类目ID" align="center" prop="categoryId" />
+        <el-table-column label="店铺" align="center" prop="shopName" />
+        <el-table-column label="类目" align="center" prop="categoryName" />
         <el-table-column label="规格名称" align="center" prop="name" />
         <el-table-column label="规格集" align="center" prop="specJson" />
         <el-table-column label="排序" align="center" prop="sortOrder" />
@@ -209,10 +209,10 @@ const data = reactive<PageData<SkuSpecForm, SkuSpecQuery>>({
       { required: true, message: "ID不能为空", trigger: "blur" }
     ],
     shopId: [
-      { required: true, message: "店铺ID不能为空", trigger: "blur" }
+      { required: true, message: "店铺不能为空", trigger: "blur" }
     ],
     categoryId: [
-      { required: true, message: "类目ID不能为空", trigger: "blur" }
+      { required: true, message: "类目不能为空", trigger: "blur" }
     ],
     name: [
       { required: true, message: "规格名称不能为空", trigger: "blur" }
