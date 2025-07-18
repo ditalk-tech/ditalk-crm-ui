@@ -99,7 +99,7 @@ export const delSku = (id: string | number | Array<string | number>) => {
  */
 export const batchUpdateSku = (data: SkuBatchForm) => {
   return request({
-    url: '/goods/sku/batch',
+    url: '/app/goods/sku',
     method: 'put',
     data: data
   });
