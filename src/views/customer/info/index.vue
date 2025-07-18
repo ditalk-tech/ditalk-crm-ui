@@ -22,7 +22,7 @@
               <el-input v-model="queryParams.name" placeholder="请输入客户名称" clearable @keyup.enter="handleQuery" />
             </el-form-item>
             <el-form-item label="客户类型" prop="type">
-              <el-select v-model="queryParams.type" placeholder="请选择客户类型" clearable >
+              <el-select v-model="queryParams.type" placeholder="请选择客户类型" clearable>
                 <el-option v-for="dict in ditalk_customer_type" :key="dict.value" :label="dict.label" :value="dict.value"/>
               </el-select>
             </el-form-item>
@@ -171,7 +171,7 @@
           </el-radio-group>
         </el-form-item>
         <el-form-item label="来源渠道" prop="source">
-          <el-select v-model="form.source" placeholder="请选择来源渠道" filterable>
+          <el-select v-model="form.source" placeholder="请选择来源渠道" filterable clearable>
             <el-option
                 v-for="dict in ditalk_customer_source"
                 :key="dict.value"
@@ -181,7 +181,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="所属行业" prop="industry">
-          <el-select v-model="form.industry" placeholder="请选择所属行业" filterable>
+          <el-select v-model="form.industry" placeholder="请选择所属行业" filterable clearable>
             <el-option
                 v-for="dict in ditalk_customer_industry"
                 :key="dict.value"
@@ -191,7 +191,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="客户级别" prop="tier">
-          <el-select v-model="form.tier" placeholder="请选择客户级别" filterable>
+          <el-select v-model="form.tier" placeholder="请选择客户级别" filterable clearable>
             <el-option
                 v-for="dict in ditalk_customer_tier"
                 :key="dict.value"
@@ -207,7 +207,15 @@
           <el-input v-model="form.address" placeholder="请输入地址" />
         </el-form-item>
         <el-form-item label="分配到" prop="assignedTo">
-          <el-input v-model="form.assignedTo" placeholder="请输入分配到" />
+          <el-select v-model="form.assignedTo" placeholder="请选择用户" filterable clearable style="width: 70%;">
+            <el-option
+                v-for="item in userOptionList"
+                :key="item.userId"
+                :label="item.userName + ' - ' + item.nickName"
+                :value="item.userId"
+            ></el-option>
+          </el-select>
+          <el-button @click="assignToMe" type="info" plain>给 我</el-button>
         </el-form-item>
         <el-form-item label="备注信息" prop="remark">
             <el-input v-model="form.remark" type="textarea" placeholder="请输入内容" />
@@ -258,6 +266,8 @@
 <script setup name="Info" lang="ts">
 import { listInfo, getInfo, delInfo, addInfo, updateInfo } from '@/api/customer/info';
 import { InfoVO, InfoQuery, InfoForm } from '@/api/customer/info/types';
+import { listOption, getMyInfo } from '@/api/app/sys/user';
+import { UserOption } from '@/api/app/sys/user/types';
 
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 const { ditalk_customer_source, ditalk_customer_industry, ditalk_lead_state, ditalk_customer_state, ditalk_customer_type, ditalk_customer_tier } = toRefs<any>(proxy?.useDict('ditalk_customer_source', 'ditalk_customer_industry', 'ditalk_lead_state', 'ditalk_customer_state', 'ditalk_customer_type', 'ditalk_customer_tier'));
@@ -274,6 +284,8 @@ const dateRangeCreateTime = ref<[DateModelType, DateModelType]>(['', '']);
 
 const queryFormRef = ref<ElFormInstance>();
 const infoFormRef = ref<ElFormInstance>();
+
+const userOptionList = ref<UserOption[]>([]);
 
 const dialog = reactive<DialogOption>({
   visible: false,
@@ -365,6 +377,8 @@ const cancel = () => {
 const reset = () => {
   form.value = {...initFormData};
   infoFormRef.value?.resetFields();
+  //
+  userOptionList.value = [];
 }
 
 /** 搜索按钮操作 */
@@ -392,7 +406,8 @@ const handleAdd = () => {
   reset();
   dialog.visible = true;
   dialog.title = "添加客户信息";
-}
+  //
+  getUserOptionList()}
 
 /** 修改按钮操作 */
 const handleUpdate = async (row?: InfoVO) => {
@@ -402,6 +417,8 @@ const handleUpdate = async (row?: InfoVO) => {
   Object.assign(form.value, res.data);
   dialog.visible = true;
   dialog.title = "修改客户信息";
+  //
+  getUserOptionList()
 }
 
 /** 提交按钮 */
@@ -440,4 +457,19 @@ const handleExport = () => {
 onMounted(() => {
   getList();
 });
+
+const getUserOptionList = async () => {
+  await listOption({
+    pageNum: 1,
+    pageSize: 100
+  }).then((res: { data: any; }) => {
+    userOptionList.value = res.data;
+  })
+}
+
+const assignToMe = () => {
+  getMyInfo().then(res => {
+    form.value.assignedTo = Number(res.data.userId)
+  })
+}
 </script>
