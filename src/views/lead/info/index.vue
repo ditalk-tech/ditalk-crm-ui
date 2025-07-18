@@ -98,17 +98,17 @@
             <dict-tag :options="ditalk_customer_type" :value="scope.row.type"/>
           </template>
         </el-table-column>
-        <el-table-column label="来源渠道" align="center" prop="source">
+        <el-table-column label="来源渠道" align="center" prop="source" width="120">
           <template #default="scope">
             <dict-tag :options="ditalk_customer_source" :value="scope.row.source ?? ''"/>
           </template>
         </el-table-column>
-        <el-table-column label="所属行业" align="center" prop="industry">
+        <el-table-column label="所属行业" align="center" prop="industry" width="120">
           <template #default="scope">
             <dict-tag :options="ditalk_customer_industry" :value="scope.row.industry ?? ''"/>
           </template>
         </el-table-column>
-        <el-table-column label="客户级别" align="center" prop="tier">
+        <el-table-column label="客户级别" align="center" prop="tier" width="120">
           <template #default="scope">
             <dict-tag :options="ditalk_customer_tier" :value="scope.row.tier ?? ''"/>
           </template>
@@ -116,7 +116,7 @@
         <el-table-column label="公司官网" align="center" prop="website" />
         <el-table-column label="地址" align="center" prop="address" />
         <el-table-column label="分配到" align="center" prop="assignedTo" />
-        <el-table-column label="备注信息" align="center" prop="remark" />
+        <!-- <el-table-column label="备注信息" align="center" prop="remark" /> -->
         <!-- <el-table-column label="主联系人ID" align="center" prop="contactId" /> -->
         <!-- <el-table-column label="客户状态" align="center" prop="state">
           <template #default="scope">
@@ -381,7 +381,7 @@
 </template>
 
 <script setup name="Info" lang="ts">
-import { listInfo, getInfo, delInfo, addCustomerContact, updateCustomerContact } from '@/api/lead/info';
+import { listInfo, getInfo, delInfo, addLeadContact, updateLeadContact } from '@/api/lead/info';
 import { InfoVO, InfoQuery, InfoForm, LeadContactForm } from '@/api/lead/info/types';
 import { listOption, getMyInfo } from '@/api/app/sys/user';
 import { UserOption } from '@/api/app/sys/user/types';
@@ -549,8 +549,6 @@ const reset = () => {
   contactForm.value = {...initContactFormData};
   infoFormRef.value?.resetFields();
   contactFormRef.value?.resetFields();
-  //
-  userOptionList.value = [];
 }
 
 /** 搜索按钮操作 */
@@ -614,9 +612,9 @@ const submitForm = async () => {
     }
     buttonLoading.value = true;
     if (form.value.id) {
-      await updateCustomerContact(leadContactForm).finally(() =>  buttonLoading.value = false);
+      await updateLeadContact(leadContactForm).finally(() =>  buttonLoading.value = false);
     } else {
-      await addCustomerContact(leadContactForm).finally(() =>  buttonLoading.value = false);
+      await addLeadContact(leadContactForm).finally(() =>  buttonLoading.value = false);
     }
     proxy?.$modal.msgSuccess("操作成功");
     dialog.visible = false;

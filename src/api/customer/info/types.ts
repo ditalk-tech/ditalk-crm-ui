@@ -1,3 +1,5 @@
+import { InfoForm as ContactForm, InfoVO as ContactInfoVO } from '@/api/contact/info/types';
+
 export interface InfoVO {
   /**
    * ID
@@ -83,6 +85,11 @@ export interface InfoVO {
    * 线索状态
    */
   leadState: string;
+
+  /**
+   * 主联系人
+   */
+  contactInfo: ContactInfoVO;
 
 }
 
@@ -247,5 +254,7 @@ export interface InfoQuery extends PageQuery {
   params?: any;
 }
 
-
-
+export interface CustomerContactForm {
+  customerInfoBo?: InfoForm;
+  contactInfoBo?: ContactForm;
+}

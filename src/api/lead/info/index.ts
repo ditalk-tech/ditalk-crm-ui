@@ -64,26 +64,26 @@ export const delInfo = (id: string | number | Array<string | number>) => {
 };
 
 /**
- * 更新客户及联系人信息
+ * 更新客户线索及联系人信息
  * @param data 
  * @returns 
  */
-export const updateCustomerContact = (data: LeadContactForm) => {
+export const updateLeadContact = (data: LeadContactForm) => {
   return request({
-    url: '/app/lead/info/customerContact',
+    url: '/app/lead/info',
     method: 'put',
     data: data
   });
 };
 
 /**
- * 新增客户及联系人信息
+ * 新增客户线索及联系人信息
  * @param data 
  * @returns 
  */
-export const addCustomerContact = (data: LeadContactForm) => {
+export const addLeadContact = (data: LeadContactForm) => {
   return request({
-    url: '/app/lead/info/customerContact',
+    url: '/app/lead/info',
     method: 'post',
     data: data
   });
