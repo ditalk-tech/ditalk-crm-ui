@@ -1,6 +1,7 @@
 import request from '@/utils/request';
 import { AxiosPromise } from 'axios';
-import { InfoVO, InfoForm, InfoQuery } from '@/api/lead/info/types';
+import { InfoVO, InfoForm, InfoQuery, LeadContactForm } from '@/api/lead/info/types';
+
 
 /**
  * 查询线索信息列表
@@ -59,5 +60,31 @@ export const delInfo = (id: string | number | Array<string | number>) => {
   return request({
     url: '/lead/info/' + id,
     method: 'delete'
+  });
+};
+
+/**
+ * 更新客户及联系人信息
+ * @param data 
+ * @returns 
+ */
+export const updateCustomerContact = (data: LeadContactForm) => {
+  return request({
+    url: '/app/lead/info/customerContact',
+    method: 'put',
+    data: data
+  });
+};
+
+/**
+ * 新增客户及联系人信息
+ * @param data 
+ * @returns 
+ */
+export const addCustomerContact = (data: LeadContactForm) => {
+  return request({
+    url: '/app/lead/info/customerContact',
+    method: 'post',
+    data: data
   });
 };

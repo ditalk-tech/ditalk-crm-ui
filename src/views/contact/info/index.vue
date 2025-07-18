@@ -41,6 +41,7 @@
             <el-form-item label="联系电话" prop="phone">
               <el-input v-model="queryParams.phone" placeholder="请输入联系电话" clearable @keyup.enter="handleQuery" />
             </el-form-item>
+            <template v-if="showMoreConditions">
             <el-form-item label="职位" prop="position">
               <el-input v-model="queryParams.position" placeholder="请输入职位" clearable @keyup.enter="handleQuery" />
             </el-form-item>
@@ -106,6 +107,7 @@
             <el-form-item label="Facebook" prop="facebook">
               <el-input v-model="queryParams.facebook" placeholder="请输入Facebook" clearable @keyup.enter="handleQuery" />
             </el-form-item>
+            </template>
             <el-form-item label="状态" prop="state">
               <el-select v-model="queryParams.state" placeholder="请选择状态" clearable >
                 <el-option v-for="dict in ditalk_contact_state" :key="dict.value" :label="dict.label" :value="dict.value"/>
@@ -114,6 +116,7 @@
             <el-form-item>
               <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
               <el-button icon="Refresh" @click="resetQuery">重置</el-button>
+              <el-button icon="more" @click="showMoreConditions = !showMoreConditions">更多搜索条件</el-button>
             </el-form-item>
           </el-form>
         </el-card>
@@ -154,7 +157,7 @@
         <el-table-column label="姓名拼音" align="center" prop="pinyin" />
         <el-table-column label="性别" align="center" prop="gender">
           <template #default="scope">
-            <dict-tag :options="sys_user_sex" :value="scope.row.gender"/>
+            <dict-tag :options="sys_user_sex" :value="scope.row.gender ?? ''"/>
           </template>
         </el-table-column>
         <el-table-column label="电子邮箱" align="center" prop="email" />
@@ -167,14 +170,14 @@
         <el-table-column label="毕业学校" align="center" prop="graduationSchool" />
         <el-table-column label="学历" align="center" prop="qualification">
           <template #default="scope">
-            <dict-tag :options="ditalk_educational_qualification" :value="scope.row.qualification"/>
+            <dict-tag :options="ditalk_educational_qualification" :value="scope.row.qualification ?? ''"/>
           </template>
         </el-table-column>
         <el-table-column label="社会角色" align="center" prop="socialRole" />
         <el-table-column label="最近接触时间" align="center" prop="lastContactTime" width="180" />
         <el-table-column label="接触频率" align="center" prop="contactFrequency">
           <template #default="scope">
-            <dict-tag :options="ditalk_contact_frequency" :value="scope.row.contactFrequency"/>
+            <dict-tag :options="ditalk_contact_frequency" :value="scope.row.contactFrequency ?? ''"/>
           </template>
         </el-table-column>
         <el-table-column label="微信" align="center" prop="wechat" />
@@ -348,6 +351,8 @@ const dateRangeLastContactTime = ref<[DateModelType, DateModelType]>(['', '']);
 
 const queryFormRef = ref<ElFormInstance>();
 const infoFormRef = ref<ElFormInstance>();
+
+const showMoreConditions = ref<Boolean>(false);
 
 const dialog = reactive<DialogOption>({
   visible: false,
