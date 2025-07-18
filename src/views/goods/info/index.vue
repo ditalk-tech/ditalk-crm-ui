@@ -742,8 +742,9 @@ const saveInfo = () => {
         res = await addInfo(form.value)
       }
       handleRes.showMsg(res)
+      form.value.id = res.data.id;
       form.value.version = res.data.version; // 每次操作需要同步更新 version
-      contentForm.value.id = form.value.id
+      contentForm.value.id = res.data.id;
       contentForm.value.version = res.data.version; // 每次操作需要同步更新 version
       needRefresh.value = true
       currentTab.value = "tab1"
