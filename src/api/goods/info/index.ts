@@ -2,7 +2,6 @@ import request from '@/utils/request';
 import { AxiosPromise } from 'axios';
 import { InfoVO, InfoForm, InfoQuery, InfoMiniVO, InfoOptionVO, InfoContentForm } from '@/api/goods/info/types';
 
-
 /**
  * 查询商品信息列表
  * @param query

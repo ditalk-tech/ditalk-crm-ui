@@ -38,7 +38,6 @@ export interface AuthConfigVO {
    * 备注信息
    */
   remark: string;
-
 }
 
 export interface AuthConfigForm extends BaseEntity {
@@ -76,11 +75,9 @@ export interface AuthConfigForm extends BaseEntity {
    * 备注信息
    */
   remark?: string;
-
 }
 
 export interface AuthConfigQuery extends PageQuery {
-
   /**
    * ID
    */
@@ -106,11 +103,8 @@ export interface AuthConfigQuery extends PageQuery {
    */
   state?: string;
 
-    /**
-     * 日期范围参数
-     */
-    params?: any;
+  /**
+   * 日期范围参数
+   */
+  params?: any;
 }
-
-
-

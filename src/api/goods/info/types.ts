@@ -111,7 +111,6 @@ export interface InfoVO {
    * 状态
    */
   state: string;
-
 }
 
 export interface InfoForm extends BaseEntity {
@@ -214,11 +213,9 @@ export interface InfoForm extends BaseEntity {
    * 状态
    */
   state?: string;
-
 }
 
 export interface InfoQuery extends PageQuery {
-
   /**
    * ID
    */
@@ -268,7 +265,6 @@ export interface InfoQuery extends PageQuery {
    * 日期范围参数
    */
   params?: any;
-
 }
 
 export interface InfoMiniVO {
@@ -316,7 +312,6 @@ export interface InfoMiniVO {
    * 综合评分
    */
   overallScore: number;
-
 }
 
 export interface InfoOptionVO {
@@ -329,7 +324,6 @@ export interface InfoOptionVO {
    * 名称
    */
   name: string;
-
 }
 
 export interface InfoContentForm extends BaseEntity {

@@ -37,7 +37,6 @@ export interface MomentVO {
    * 状态
    */
   state: string;
-
 }
 
 export interface MomentForm extends BaseEntity {
@@ -70,11 +69,9 @@ export interface MomentForm extends BaseEntity {
    * 状态
    */
   state?: string;
-
 }
 
 export interface MomentQuery extends PageQuery {
-
   /**
    * ID
    */
@@ -95,11 +92,8 @@ export interface MomentQuery extends PageQuery {
    */
   state?: string;
 
-    /**
-     * 日期范围参数
-     */
-    params?: any;
+  /**
+   * 日期范围参数
+   */
+  params?: any;
 }
-
-
-

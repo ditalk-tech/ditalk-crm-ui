@@ -23,22 +23,22 @@
             </el-form-item>
             <el-form-item label="客户类型" prop="type">
               <el-select v-model="queryParams.type" placeholder="请选择客户类型" clearable>
-                <el-option v-for="dict in ditalk_customer_type" :key="dict.value" :label="dict.label" :value="dict.value"/>
+                <el-option v-for="dict in ditalk_customer_type" :key="dict.value" :label="dict.label" :value="dict.value" />
               </el-select>
             </el-form-item>
             <el-form-item label="来源渠道" prop="source">
               <el-select v-model="queryParams.source" placeholder="请选择来源渠道" clearable filterable>
-                <el-option v-for="dict in ditalk_customer_source" :key="dict.value" :label="dict.label" :value="dict.value"/>
+                <el-option v-for="dict in ditalk_customer_source" :key="dict.value" :label="dict.label" :value="dict.value" />
               </el-select>
             </el-form-item>
             <el-form-item label="所属行业" prop="industry">
               <el-select v-model="queryParams.industry" placeholder="请选择所属行业" clearable filterable>
-                <el-option v-for="dict in ditalk_customer_industry" :key="dict.value" :label="dict.label" :value="dict.value"/>
+                <el-option v-for="dict in ditalk_customer_industry" :key="dict.value" :label="dict.label" :value="dict.value" />
               </el-select>
             </el-form-item>
             <el-form-item label="客户级别" prop="tier">
               <el-select v-model="queryParams.tier" placeholder="请选择客户级别" clearable filterable>
-                <el-option v-for="dict in ditalk_customer_tier" :key="dict.value" :label="dict.label" :value="dict.value"/>
+                <el-option v-for="dict in ditalk_customer_tier" :key="dict.value" :label="dict.label" :value="dict.value" />
               </el-select>
             </el-form-item>
             <el-form-item label="地址" prop="address">
@@ -48,16 +48,16 @@
               <!-- <el-input v-model="queryParams.assignedTo" placeholder="请输入分配到" clearable @keyup.enter="handleQuery" /> -->
               <el-select v-model="queryParams.assignedTo" placeholder="请选择用户" filterable clearable>
                 <el-option
-                    v-for="item in userOptionList"
-                    :key="item.userId"
-                    :label="item.userName + ' - ' + item.nickName"
-                    :value="item.userId"
+                  v-for="item in userOptionList"
+                  :key="item.userId"
+                  :label="item.userName + ' - ' + item.nickName"
+                  :value="item.userId"
                 ></el-option>
               </el-select>
             </el-form-item>
             <el-form-item label="线索状态" prop="leadState">
-              <el-select v-model="queryParams.leadState" placeholder="请选择线索状态" clearable >
-                <el-option v-for="dict in ditalk_lead_state" :key="dict.value" :label="dict.label" :value="dict.value"/>
+              <el-select v-model="queryParams.leadState" placeholder="请选择线索状态" clearable>
+                <el-option v-for="dict in ditalk_lead_state" :key="dict.value" :label="dict.label" :value="dict.value" />
               </el-select>
             </el-form-item>
             <el-form-item>
@@ -79,7 +79,9 @@
             <el-button type="success" plain icon="Edit" :disabled="single" @click="handleUpdate()" v-hasPermi="['lead:info:edit']">修改</el-button>
           </el-col>
           <el-col :span="1.5">
-            <el-button type="danger" plain icon="Delete" :disabled="multiple" @click="handleDelete()" v-hasPermi="['lead:info:remove']">删除</el-button>
+            <el-button type="danger" plain icon="Delete" :disabled="multiple" @click="handleDelete()" v-hasPermi="['lead:info:remove']"
+              >删除</el-button
+            >
           </el-col>
           <el-col :span="1.5">
             <el-button type="warning" plain icon="Download" @click="handleExport" v-hasPermi="['lead:info:export']">导出</el-button>
@@ -95,22 +97,22 @@
         <el-table-column label="客户名称" align="center" prop="name" />
         <el-table-column label="客户类型" align="center" prop="type">
           <template #default="scope">
-            <dict-tag :options="ditalk_customer_type" :value="scope.row.type"/>
+            <dict-tag :options="ditalk_customer_type" :value="scope.row.type" />
           </template>
         </el-table-column>
         <el-table-column label="来源渠道" align="center" prop="source" width="120">
           <template #default="scope">
-            <dict-tag :options="ditalk_customer_source" :value="scope.row.source ?? ''"/>
+            <dict-tag :options="ditalk_customer_source" :value="scope.row.source ?? ''" />
           </template>
         </el-table-column>
         <el-table-column label="所属行业" align="center" prop="industry" width="120">
           <template #default="scope">
-            <dict-tag :options="ditalk_customer_industry" :value="scope.row.industry ?? ''"/>
+            <dict-tag :options="ditalk_customer_industry" :value="scope.row.industry ?? ''" />
           </template>
         </el-table-column>
         <el-table-column label="客户级别" align="center" prop="tier" width="120">
           <template #default="scope">
-            <dict-tag :options="ditalk_customer_tier" :value="scope.row.tier ?? ''"/>
+            <dict-tag :options="ditalk_customer_tier" :value="scope.row.tier ?? ''" />
           </template>
         </el-table-column>
         <el-table-column label="公司官网" align="center" prop="website" />
@@ -127,7 +129,7 @@
         <!-- <el-table-column label="转换人" align="center" prop="convertedBy" /> -->
         <el-table-column label="线索状态" align="center" prop="leadState">
           <template #default="scope">
-            <dict-tag :options="ditalk_lead_state" :value="scope.row.leadState"/>
+            <dict-tag :options="ditalk_lead_state" :value="scope.row.leadState" />
           </template>
         </el-table-column>
         <el-table-column label="操作" align="center" class-name="small-padding fixed-width" fixed="right">
@@ -154,7 +156,7 @@
           <el-text tag="b" size="large">联系人</el-text>
         </el-col>
       </el-row>
-      <el-row style="margin-top: 20px;">
+      <el-row style="margin-top: 20px">
         <el-col :span="12">
           <el-form ref="infoFormRef" :model="form" :rules="rules" label-width="120px">
             <el-form-item label="客户名称" prop="name">
@@ -162,41 +164,22 @@
             </el-form-item>
             <el-form-item label="客户类型" prop="type">
               <el-radio-group v-model="form.type">
-                <el-radio
-                  v-for="dict in ditalk_customer_type"
-                  :key="dict.value"
-                  :value="dict.value"
-                >{{dict.label}}</el-radio>
+                <el-radio v-for="dict in ditalk_customer_type" :key="dict.value" :value="dict.value">{{ dict.label }}</el-radio>
               </el-radio-group>
             </el-form-item>
             <el-form-item label="来源渠道" prop="source">
               <el-select v-model="form.source" placeholder="请选择来源渠道" filterable clearable>
-                <el-option
-                    v-for="dict in ditalk_customer_source"
-                    :key="dict.value"
-                    :label="dict.label"
-                    :value="dict.value"
-                ></el-option>
+                <el-option v-for="dict in ditalk_customer_source" :key="dict.value" :label="dict.label" :value="dict.value"></el-option>
               </el-select>
             </el-form-item>
             <el-form-item label="所属行业" prop="industry">
               <el-select v-model="form.industry" placeholder="请选择所属行业" filterable clearable>
-                <el-option
-                    v-for="dict in ditalk_customer_industry"
-                    :key="dict.value"
-                    :label="dict.label"
-                    :value="dict.value"
-                ></el-option>
+                <el-option v-for="dict in ditalk_customer_industry" :key="dict.value" :label="dict.label" :value="dict.value"></el-option>
               </el-select>
             </el-form-item>
             <el-form-item label="客户级别" prop="tier">
               <el-select v-model="form.tier" placeholder="请选择客户级别" filterable clearable>
-                <el-option
-                    v-for="dict in ditalk_customer_tier"
-                    :key="dict.value"
-                    :label="dict.label"
-                    :value="dict.value"
-                ></el-option>
+                <el-option v-for="dict in ditalk_customer_tier" :key="dict.value" :label="dict.label" :value="dict.value"></el-option>
               </el-select>
             </el-form-item>
             <el-form-item label="公司官网" prop="website">
@@ -206,18 +189,18 @@
               <el-input v-model="form.address" placeholder="请输入地址" />
             </el-form-item>
             <el-form-item label="分配到" prop="assignedTo">
-              <el-select v-model="form.assignedTo" placeholder="请选择用户" filterable clearable style="width: 70%;">
+              <el-select v-model="form.assignedTo" placeholder="请选择用户" filterable clearable style="width: 70%">
                 <el-option
-                    v-for="item in userOptionList"
-                    :key="item.userId"
-                    :label="item.userName + ' - ' + item.nickName"
-                    :value="item.userId"
+                  v-for="item in userOptionList"
+                  :key="item.userId"
+                  :label="item.userName + ' - ' + item.nickName"
+                  :value="item.userId"
                 ></el-option>
               </el-select>
               <el-button @click="assignToMe" type="info" plain>给 我</el-button>
             </el-form-item>
             <el-form-item label="备注信息" prop="remark">
-                <el-input v-model="form.remark" type="textarea" placeholder="请输入内容" />
+              <el-input v-model="form.remark" type="textarea" placeholder="请输入内容" />
             </el-form-item>
             <!-- <el-form-item label="主联系人ID" prop="contactId">
               <el-input v-model="form.contactId" placeholder="请输入主联系人ID" />
@@ -244,11 +227,7 @@
             </el-form-item> -->
             <el-form-item label="线索状态" prop="leadState">
               <el-radio-group v-model="form.leadState">
-                <el-radio
-                  v-for="dict in ditalk_lead_state"
-                  :key="dict.value"
-                  :value="dict.value"
-                >{{dict.label}}</el-radio>
+                <el-radio v-for="dict in ditalk_lead_state" :key="dict.value" :value="dict.value">{{ dict.label }}</el-radio>
               </el-radio-group>
             </el-form-item>
           </el-form>
@@ -262,27 +241,19 @@
               <el-input v-model="contactForm.firstName" placeholder="请输入名称" />
             </el-form-item>
             <el-form-item label="头像" prop="avatar">
-              <image-upload v-model="contactForm.avatar" :limit="1"/>
+              <image-upload v-model="contactForm.avatar" :limit="1" />
             </el-form-item>
             <el-form-item label="姓名拼音" prop="pinyin">
               <el-input v-model="contactForm.pinyin" placeholder="请输入姓名拼音" />
             </el-form-item>
             <el-form-item label="性别" prop="gender">
               <el-radio-group v-model="contactForm.gender">
-                <el-radio
-                  v-for="dict in sys_user_sex"
-                  :key="dict.value"
-                  :value="dict.value"
-                >{{dict.label}}</el-radio>
+                <el-radio v-for="dict in sys_user_sex" :key="dict.value" :value="dict.value">{{ dict.label }}</el-radio>
               </el-radio-group>
             </el-form-item>
             <el-form-item label="状态" prop="state">
               <el-radio-group v-model="contactForm.state">
-                <el-radio
-                  v-for="dict in ditalk_contact_state"
-                  :key="dict.value"
-                  :value="dict.value"
-                >{{dict.label}}</el-radio>
+                <el-radio v-for="dict in ditalk_contact_state" :key="dict.value" :value="dict.value">{{ dict.label }}</el-radio>
               </el-radio-group>
             </el-form-item>
             <el-form-item label="电子邮箱" prop="email">
@@ -295,7 +266,7 @@
               <el-input v-model="contactForm.position" placeholder="请输入职位" />
             </el-form-item>
             <el-form-item label="备注信息" prop="remark">
-                <el-input v-model="contactForm.remark" type="textarea" placeholder="请输入内容" />
+              <el-input v-model="contactForm.remark" type="textarea" placeholder="请输入内容" />
             </el-form-item>
             <el-collapse expand-icon-position="left">
               <el-collapse-item title="填写更多">
@@ -318,11 +289,13 @@
                   <el-input v-model="contactForm.facebook" placeholder="请输入Facebook" />
                 </el-form-item>
                 <el-form-item label="生日" prop="birthday">
-                  <el-date-picker clearable
+                  <el-date-picker
+                    clearable
                     v-model="contactForm.birthday"
                     type="datetime"
                     value-format="YYYY-MM-DD HH:mm:ss"
-                    placeholder="请选择生日">
+                    placeholder="请选择生日"
+                  >
                   </el-date-picker>
                 </el-form-item>
                 <el-form-item label="户籍" prop="placeOfOrigin">
@@ -336,33 +309,25 @@
                 </el-form-item>
                 <el-form-item label="学历" prop="qualification">
                   <el-select v-model="contactForm.qualification" placeholder="请选择学历" clearable>
-                    <el-option
-                        v-for="dict in ditalk_educational_qualification"
-                        :key="dict.value"
-                        :label="dict.label"
-                        :value="dict.value"
-                    ></el-option>
+                    <el-option v-for="dict in ditalk_educational_qualification" :key="dict.value" :label="dict.label" :value="dict.value"></el-option>
                   </el-select>
                 </el-form-item>
                 <el-form-item label="社会角色" prop="socialRole">
                   <el-input v-model="contactForm.socialRole" placeholder="请输入社会角色" />
                 </el-form-item>
                 <el-form-item label="最近接触时间" prop="lastContactTime">
-                  <el-date-picker clearable
+                  <el-date-picker
+                    clearable
                     v-model="contactForm.lastContactTime"
                     type="datetime"
                     value-format="YYYY-MM-DD HH:mm:ss"
-                    placeholder="请选择最近接触时间">
+                    placeholder="请选择最近接触时间"
+                  >
                   </el-date-picker>
                 </el-form-item>
                 <el-form-item label="接触频率" prop="contactFrequency">
                   <el-select v-model="contactForm.contactFrequency" placeholder="请选择接触频率" clearable>
-                    <el-option
-                        v-for="dict in ditalk_contact_frequency"
-                        :key="dict.value"
-                        :label="dict.label"
-                        :value="dict.value"
-                    ></el-option>
+                    <el-option v-for="dict in ditalk_contact_frequency" :key="dict.value" :label="dict.label" :value="dict.value"></el-option>
                   </el-select>
                 </el-form-item>
               </el-collapse-item>
@@ -389,8 +354,20 @@ import { InfoForm as ContactInfoForm } from '@/api/contact/info/types';
 import * as valueCheck from '@/utils/valueCheck';
 
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
-const { ditalk_customer_source, ditalk_customer_industry, ditalk_lead_state, ditalk_customer_state, ditalk_customer_type, ditalk_customer_tier } = toRefs<any>(proxy?.useDict('ditalk_customer_source', 'ditalk_customer_industry', 'ditalk_lead_state', 'ditalk_customer_state', 'ditalk_customer_type', 'ditalk_customer_tier'));
-const { ditalk_educational_qualification, ditalk_contact_frequency, ditalk_contact_state, sys_user_sex } = toRefs<any>(proxy?.useDict('ditalk_educational_qualification', 'ditalk_contact_frequency', 'ditalk_contact_state', 'sys_user_sex'));
+const { ditalk_customer_source, ditalk_customer_industry, ditalk_lead_state, ditalk_customer_state, ditalk_customer_type, ditalk_customer_tier } =
+  toRefs<any>(
+    proxy?.useDict(
+      'ditalk_customer_source',
+      'ditalk_customer_industry',
+      'ditalk_lead_state',
+      'ditalk_customer_state',
+      'ditalk_customer_type',
+      'ditalk_customer_tier'
+    )
+  );
+const { ditalk_educational_qualification, ditalk_contact_frequency, ditalk_contact_state, sys_user_sex } = toRefs<any>(
+  proxy?.useDict('ditalk_educational_qualification', 'ditalk_contact_frequency', 'ditalk_contact_state', 'sys_user_sex')
+);
 
 const infoList = ref<InfoVO[]>([]);
 const buttonLoading = ref(false);
@@ -430,9 +407,9 @@ const initFormData: InfoForm = {
   convertedTime: undefined,
   convertedBy: undefined,
   leadState: 'NEW'
-}
+};
 const data = reactive<PageData<InfoForm, InfoQuery>>({
-  form: {...initFormData},
+  form: { ...initFormData },
   queryParams: {
     pageNum: 1,
     pageSize: 10,
@@ -450,28 +427,16 @@ const data = reactive<PageData<InfoForm, InfoQuery>>({
     convertedBy: undefined,
     leadState: undefined,
     params: {
-      createTime: undefined,
+      createTime: undefined
     }
   },
   rules: {
-    id: [
-      { required: true, message: "ID不能为空", trigger: "blur" }
-    ],
-    name: [
-      { required: true, message: "客户名称不能为空", trigger: "blur" }
-    ],
-    type: [
-      { required: true, message: "客户类型不能为空", trigger: "change" }
-    ],
-    contactId: [
-      { required: true, message: "主联系人ID不能为空", trigger: "blur" }
-    ],
-    state: [
-      { required: true, message: "客户状态不能为空", trigger: "change" }
-    ],
-    leadState: [
-      { required: true, message: "线索状态不能为空", trigger: "change" }
-    ]
+    id: [{ required: true, message: 'ID不能为空', trigger: 'blur' }],
+    name: [{ required: true, message: '客户名称不能为空', trigger: 'blur' }],
+    type: [{ required: true, message: '客户类型不能为空', trigger: 'change' }],
+    contactId: [{ required: true, message: '主联系人ID不能为空', trigger: 'blur' }],
+    state: [{ required: true, message: '客户状态不能为空', trigger: 'change' }],
+    leadState: [{ required: true, message: '线索状态不能为空', trigger: 'change' }]
   }
 });
 
@@ -504,27 +469,18 @@ const initContactFormData: ContactInfoForm = {
   whatsApp: undefined,
   facebook: undefined,
   state: 'ACTIVE'
-}
+};
 
 const contactRules = ref({
-  id: [
-    { required: true, message: "ID不能为空", trigger: "blur" }
-  ],
-  customerId: [
-    { required: true, message: "客户ID不能为空", trigger: "blur" }
-  ],
-  firstName: [
-    { required: true, message: "名称不能为空", trigger: "blur" }
-  ],
-  state: [
-    { required: true, message: "状态不能为空", trigger: "change" }
-  ]
-})
+  id: [{ required: true, message: 'ID不能为空', trigger: 'blur' }],
+  customerId: [{ required: true, message: '客户ID不能为空', trigger: 'blur' }],
+  firstName: [{ required: true, message: '名称不能为空', trigger: 'blur' }],
+  state: [{ required: true, message: '状态不能为空', trigger: 'change' }]
+});
 
 const contactForm = ref<ContactInfoForm>({
   ...initContactFormData
-})
-
+});
 
 /** 查询线索信息列表 */
 const getList = async () => {
@@ -535,60 +491,59 @@ const getList = async () => {
   infoList.value = res.rows;
   total.value = res.total;
   loading.value = false;
-}
+};
 
 /** 取消按钮 */
 const cancel = () => {
   reset();
   dialog.visible = false;
-}
+};
 
 /** 表单重置 */
 const reset = () => {
-  form.value = {...initFormData};
-  contactForm.value = {...initContactFormData};
+  form.value = { ...initFormData };
+  contactForm.value = { ...initContactFormData };
   infoFormRef.value?.resetFields();
   contactFormRef.value?.resetFields();
-}
+};
 
 /** 搜索按钮操作 */
 const handleQuery = () => {
   queryParams.value.pageNum = 1;
   getList();
-}
+};
 
 /** 重置按钮操作 */
 const resetQuery = () => {
   dateRangeCreateTime.value = ['', ''];
   queryFormRef.value?.resetFields();
   handleQuery();
-}
+};
 
 /** 多选框选中数据 */
 const handleSelectionChange = (selection: InfoVO[]) => {
-  ids.value = selection.map(item => item.id);
+  ids.value = selection.map((item) => item.id);
   single.value = selection.length != 1;
   multiple.value = !selection.length;
-}
+};
 
 /** 新增按钮操作 */
 const handleAdd = () => {
   reset();
   dialog.visible = true;
-  dialog.title = "添加线索信息";
-}
+  dialog.title = '添加线索信息';
+};
 
 /** 修改按钮操作 */
 const handleUpdate = async (row?: InfoVO) => {
   reset();
-  const _id = row?.id || ids.value[0]
+  const _id = row?.id || ids.value[0];
   const res = await getInfo(_id);
   Object.assign(form.value, res.data);
-  if (res.data)
-    Object.assign(contactForm.value, res.data.contactInfo);
+  if (res.data) Object.assign(contactForm.value, res.data.contactInfo);
   dialog.visible = true;
-  dialog.title = "修改线索信息";
-}
+  dialog.title = '修改线索信息';
+};
 
 /** 提交按钮 */
 const submitForm = async () => {
@@ -604,42 +559,46 @@ const submitForm = async () => {
   });
   contactFormRef.value?.validate((valid: boolean) => {
     flag = flag && valid;
-  })
+  });
   if (flag) {
     const leadContactForm: LeadContactForm = {
       leadInfoBo: form.value,
       contactInfoBo: contactForm.value
-    }
+    };
     buttonLoading.value = true;
     if (form.value.id) {
-      await updateLeadContact(leadContactForm).finally(() =>  buttonLoading.value = false);
+      await updateLeadContact(leadContactForm).finally(() => (buttonLoading.value = false));
     } else {
-      await addLeadContact(leadContactForm).finally(() =>  buttonLoading.value = false);
+      await addLeadContact(leadContactForm).finally(() => (buttonLoading.value = false));
     }
-    proxy?.$modal.msgSuccess("操作成功");
+    proxy?.$modal.msgSuccess('操作成功');
     dialog.visible = false;
     await getList();
   }
-}
+};
 
 /** 删除按钮操作 */
 const handleDelete = async (row?: InfoVO) => {
   const _ids = row?.id || ids.value;
-  await proxy?.$modal.confirm('是否确认删除线索信息编号为"' + _ids + '"的数据项？').finally(() => loading.value = false);
+  await proxy?.$modal.confirm('是否确认删除线索信息编号为"' + _ids + '"的数据项？').finally(() => (loading.value = false));
   await delInfo(_ids);
-  proxy?.$modal.msgSuccess("删除成功");
+  proxy?.$modal.msgSuccess('删除成功');
   await getList();
-}
+};
 
 /** 导出按钮操作 */
 const handleExport = () => {
-  proxy?.download('lead/info/export', {
-    ...queryParams.value
-  }, `info_${new Date().getTime()}.xlsx`)
-}
+  proxy?.download(
+    'lead/info/export',
+    {
+      ...queryParams.value
+    },
+    `info_${new Date().getTime()}.xlsx`
+  );
+};
 
 onMounted(() => {
-  getUserOptionList()
+  getUserOptionList();
   getList();
 });
 
@@ -647,14 +606,14 @@ const getUserOptionList = async () => {
   await listOption({
     pageNum: 1,
     pageSize: 100
-  }).then((res: { data: any; }) => {
+  }).then((res: { data: any }) => {
     userOptionList.value = res.data;
-  })
-}
+  });
+};
 
 const assignToMe = () => {
-  getMyInfo().then(res => {
-    form.value.assignedTo = Number(res.data.userId)
-  })
-}
+  getMyInfo().then((res) => {
+    form.value.assignedTo = Number(res.data.userId);
+  });
+};
 </script>

@@ -64,8 +64,8 @@ export const delInfo = (id: string | number | Array<string | number>) => {
 
 /**
  * 更新客户及联系人信息
- * @param data 
- * @returns 
+ * @param data
+ * @returns
  */
 export const updateCustomerContact = (data: CustomerContactForm) => {
   return request({
@@ -77,8 +77,8 @@ export const updateCustomerContact = (data: CustomerContactForm) => {
 
 /**
  * 新增客户及联系人信息
- * @param data 
- * @returns 
+ * @param data
+ * @returns
  */
 export const addCustomerContact = (data: CustomerContactForm) => {
   return request({

@@ -43,7 +43,6 @@ export interface SkuSpecVO {
    * 状态
    */
   state: string;
-
 }
 
 export interface SkuSpecForm extends BaseEntity {
@@ -86,11 +85,9 @@ export interface SkuSpecForm extends BaseEntity {
    * 状态
    */
   state?: string;
-
 }
 
 export interface SkuSpecQuery extends PageQuery {
-
   /**
    * ID
    */
@@ -121,11 +118,8 @@ export interface SkuSpecQuery extends PageQuery {
    */
   state?: string;
 
-    /**
-     * 日期范围参数
-     */
-    params?: any;
+  /**
+   * 日期范围参数
+   */
+  params?: any;
 }
-
-
-

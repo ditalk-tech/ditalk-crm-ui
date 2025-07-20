@@ -10,7 +10,7 @@ export const getMyInfo = (): AxiosPromise<UserOption> => {
   return request({
     url: '/app/sys/user/getMyInfo',
     method: 'get'
-  })
+  });
 };
 
 /**

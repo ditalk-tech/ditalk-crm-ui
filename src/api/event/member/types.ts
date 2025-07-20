@@ -38,7 +38,6 @@ export interface MemberVO {
    * 状态
    */
   state: string;
-
 }
 
 export interface MemberForm extends BaseEntity {
@@ -76,11 +75,9 @@ export interface MemberForm extends BaseEntity {
    * 状态
    */
   state?: string;
-
 }
 
 export interface MemberQuery extends PageQuery {
-
   /**
    * ID
    */
@@ -106,11 +103,8 @@ export interface MemberQuery extends PageQuery {
    */
   state?: string;
 
-    /**
-     * 日期范围参数
-     */
-    params?: any;
+  /**
+   * 日期范围参数
+   */
+  params?: any;
 }
-
-
-

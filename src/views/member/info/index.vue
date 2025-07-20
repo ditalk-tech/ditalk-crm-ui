@@ -19,8 +19,8 @@
               />
             </el-form-item>
             <el-form-item label="状态" prop="state">
-              <el-select v-model="queryParams.state" placeholder="请选择状态" clearable >
-                <el-option v-for="dict in sys_normal_disable" :key="dict.value" :label="dict.label" :value="dict.value"/>
+              <el-select v-model="queryParams.state" placeholder="请选择状态" clearable>
+                <el-option v-for="dict in sys_normal_disable" :key="dict.value" :label="dict.label" :value="dict.value" />
               </el-select>
             </el-form-item>
             <!-- <el-form-item label="部门ID" prop="deptId">
@@ -42,8 +42,8 @@
               <el-input v-model="queryParams.phoneNumber" placeholder="请输入手机号码" clearable @keyup.enter="handleQuery" />
             </el-form-item>
             <el-form-item label="性别" prop="sex">
-              <el-select v-model="queryParams.sex" placeholder="请选择性别" clearable >
-                <el-option v-for="dict in sys_user_sex" :key="dict.value" :label="dict.label" :value="dict.value"/>
+              <el-select v-model="queryParams.sex" placeholder="请选择性别" clearable>
+                <el-option v-for="dict in sys_user_sex" :key="dict.value" :label="dict.label" :value="dict.value" />
               </el-select>
             </el-form-item>
             <!-- <el-form-item label="最后登录IP" prop="loginIp">
@@ -72,8 +72,8 @@
               />
             </el-form-item>
             <el-form-item label="婚姻状况" prop="maritalStatus">
-              <el-select v-model="queryParams.maritalStatus" placeholder="请选择婚姻状况" clearable >
-                <el-option v-for="dict in ditalk_marital_status" :key="dict.value" :label="dict.label" :value="dict.value"/>
+              <el-select v-model="queryParams.maritalStatus" placeholder="请选择婚姻状况" clearable>
+                <el-option v-for="dict in ditalk_marital_status" :key="dict.value" :label="dict.label" :value="dict.value" />
               </el-select>
             </el-form-item>
             <!-- <el-form-item label="身高" prop="tall">
@@ -92,8 +92,8 @@
               <el-input v-model="queryParams.hobby" placeholder="请输入爱好" clearable @keyup.enter="handleQuery" />
             </el-form-item>
             <el-form-item label="开放状态" prop="openState">
-              <el-select v-model="queryParams.openState" placeholder="请选择开放状态" clearable >
-                <el-option v-for="dict in ditalk_member_open_state" :key="dict.value" :label="dict.label" :value="dict.value"/>
+              <el-select v-model="queryParams.openState" placeholder="请选择开放状态" clearable>
+                <el-option v-for="dict in ditalk_member_open_state" :key="dict.value" :label="dict.label" :value="dict.value" />
               </el-select>
             </el-form-item>
             <el-form-item>
@@ -115,7 +115,9 @@
             <el-button type="success" plain icon="Edit" :disabled="single" @click="handleUpdate()" v-hasPermi="['member:info:edit']">修改</el-button>
           </el-col>
           <el-col :span="1.5">
-            <el-button type="danger" plain icon="Delete" :disabled="multiple" @click="handleDelete()" v-hasPermi="['member:info:remove']">删除</el-button>
+            <el-button type="danger" plain icon="Delete" :disabled="multiple" @click="handleDelete()" v-hasPermi="['member:info:remove']"
+              >删除</el-button
+            >
           </el-col>
           <el-col :span="1.5">
             <el-button type="warning" plain icon="Download" @click="handleExport" v-hasPermi="['member:info:export']">导出</el-button>
@@ -130,12 +132,12 @@
         <el-table-column label="创建时间" align="center" prop="createTime" width="180" />
         <el-table-column label="状态" align="center" prop="state">
           <template #default="scope">
-            <dict-tag :options="sys_normal_disable" :value="scope.row.state"/>
+            <dict-tag :options="sys_normal_disable" :value="scope.row.state" />
           </template>
         </el-table-column>
         <el-table-column label="头像ID" align="center" prop="avatarUrl" width="100">
           <template #default="scope">
-            <image-preview :src="scope.row.avatarUrl" :width="50" :height="50"/>
+            <image-preview :src="scope.row.avatarUrl" :width="50" :height="50" />
           </template>
         </el-table-column>
         <!-- <el-table-column label="小程序头像" align="center" prop="xcxAvatar" /> -->
@@ -148,7 +150,7 @@
         <el-table-column label="手机号码" align="center" prop="phoneNumber" />
         <el-table-column label="性别" align="center" prop="sex">
           <template #default="scope">
-            <dict-tag :options="sys_user_sex" :value="scope.row.sex"/>
+            <dict-tag :options="sys_user_sex" :value="scope.row.sex" />
           </template>
         </el-table-column>
         <el-table-column label="生日" align="center" prop="birthday" width="180">
@@ -158,7 +160,7 @@
         </el-table-column>
         <el-table-column label="婚姻状况" align="center" prop="maritalStatus">
           <template #default="scope">
-            <dict-tag :options="ditalk_marital_status" :value="scope.row.maritalStatus || 'unknow'"/>
+            <dict-tag :options="ditalk_marital_status" :value="scope.row.maritalStatus || 'unknow'" />
           </template>
         </el-table-column>
         <el-table-column label="身高" align="center" prop="tall" />
@@ -169,7 +171,7 @@
         <el-table-column label="简介" align="center" prop="profile" />
         <el-table-column label="开放状态" align="center" prop="openState">
           <template #default="scope">
-            <dict-tag :options="ditalk_member_open_state" :value="scope.row.openState"/>
+            <dict-tag :options="ditalk_member_open_state" :value="scope.row.openState" />
           </template>
         </el-table-column>
         <el-table-column label="最后登录IP" align="center" prop="loginIp" />
@@ -201,7 +203,7 @@
           <el-input v-model="form.deptId" placeholder="请输入部门ID" />
         </el-form-item> -->
         <el-form-item label="账号" prop="userName">
-          <el-input v-model="form.userName" placeholder="请输入账号"/>
+          <el-input v-model="form.userName" placeholder="请输入账号" />
         </el-form-item>
         <el-form-item label="昵称" prop="nickName">
           <el-input v-model="form.nickName" placeholder="请输入昵称" />
@@ -223,30 +225,16 @@
         </el-form-item>
         <el-form-item label="性别" prop="sex">
           <el-select v-model="form.sex" placeholder="请选择性别">
-            <el-option
-                v-for="dict in sys_user_sex"
-                :key="dict.value"
-                :label="dict.label"
-                :value="dict.value"
-            ></el-option>
+            <el-option v-for="dict in sys_user_sex" :key="dict.value" :label="dict.label" :value="dict.value"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="生日" prop="birthday">
-          <el-date-picker clearable
-            v-model="form.birthday"
-            type="datetime"
-            value-format="YYYY-MM-DD HH:mm:ss"
-            placeholder="请选择生日">
+          <el-date-picker clearable v-model="form.birthday" type="datetime" value-format="YYYY-MM-DD HH:mm:ss" placeholder="请选择生日">
           </el-date-picker>
         </el-form-item>
         <el-form-item label="婚姻状况" prop="maritalStatus">
           <el-select v-model="form.maritalStatus" placeholder="请选择婚姻状况">
-            <el-option
-                v-for="dict in ditalk_marital_status"
-                :key="dict.value"
-                :label="dict.label"
-                :value="dict.value"
-            ></el-option>
+            <el-option v-for="dict in ditalk_marital_status" :key="dict.value" :label="dict.label" :value="dict.value"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="身高" prop="tall">
@@ -265,16 +253,11 @@
           <el-input v-model="form.hobby" placeholder="请输入爱好" />
         </el-form-item>
         <el-form-item label="简介" prop="profile">
-            <el-input v-model="form.profile" type="textarea" placeholder="请输入内容" />
+          <el-input v-model="form.profile" type="textarea" placeholder="请输入内容" />
         </el-form-item>
         <el-form-item label="开放状态" prop="openState">
           <el-select v-model="form.openState" placeholder="请选择开放状态">
-            <el-option
-                v-for="dict in ditalk_member_open_state"
-                :key="dict.value"
-                :label="dict.label"
-                :value="dict.value"
-            ></el-option>
+            <el-option v-for="dict in ditalk_member_open_state" :key="dict.value" :label="dict.label" :value="dict.value"></el-option>
           </el-select>
         </el-form-item>
         <!-- <el-form-item label="最后登录IP" prop="loginIp">
@@ -296,12 +279,7 @@
         </el-form-item> -->
         <el-form-item label="状态" prop="state">
           <el-select v-model="form.state" placeholder="请选择状态">
-            <el-option
-                v-for="dict in sys_normal_disable"
-                :key="dict.value"
-                :label="dict.label"
-                :value="dict.value"
-            ></el-option>
+            <el-option v-for="dict in sys_normal_disable" :key="dict.value" :label="dict.label" :value="dict.value"></el-option>
           </el-select>
         </el-form-item>
       </el-form>
@@ -320,7 +298,9 @@ import { listInfo, getInfo, delInfo, addInfo, updateInfo } from '@/api/member/in
 import { InfoVO, InfoQuery, InfoForm } from '@/api/member/info/types';
 
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
-const { sys_user_sex, sys_normal_disable, ditalk_member_open_state, ditalk_marital_status } = toRefs<any>(proxy?.useDict('sys_user_sex', 'sys_normal_disable', 'ditalk_member_open_state', 'ditalk_marital_status'));
+const { sys_user_sex, sys_normal_disable, ditalk_member_open_state, ditalk_marital_status } = toRefs<any>(
+  proxy?.useDict('sys_user_sex', 'sys_normal_disable', 'ditalk_member_open_state', 'ditalk_marital_status')
+);
 
 const infoList = ref<InfoVO[]>([]);
 const buttonLoading = ref(false);
@@ -368,9 +348,9 @@ const initFormData: InfoForm = {
   openState: undefined,
   remark: undefined,
   exInfo: undefined
-}
+};
 const data = reactive<PageData<InfoForm, InfoQuery>>({
-  form: {...initFormData},
+  form: { ...initFormData },
   queryParams: {
     pageNum: 1,
     pageSize: 10,
@@ -394,22 +374,14 @@ const data = reactive<PageData<InfoForm, InfoQuery>>({
     params: {
       createTime: undefined,
       loginDate: undefined,
-      birthday: undefined,
+      birthday: undefined
     }
   },
   rules: {
-    id: [
-      { required: true, message: "ID不能为空", trigger: "blur" }
-    ],
-    state: [
-      { required: true, message: "状态不能为空", trigger: "change" }
-    ],
-    userName: [
-      { required: true, message: "账号不能为空", trigger: "blur" }
-    ],
-    nickName: [
-      { required: true, message: "昵称不能为空", trigger: "blur" }
-    ],
+    id: [{ required: true, message: 'ID不能为空', trigger: 'blur' }],
+    state: [{ required: true, message: '状态不能为空', trigger: 'change' }],
+    userName: [{ required: true, message: '账号不能为空', trigger: 'blur' }],
+    nickName: [{ required: true, message: '昵称不能为空', trigger: 'blur' }]
     // userType: [
     //   { required: true, message: "用户类型不能为空", trigger: "blur" }
     // ],
@@ -429,25 +401,25 @@ const getList = async () => {
   infoList.value = res.rows;
   total.value = res.total;
   loading.value = false;
-}
+};
 
 /** 取消按钮 */
 const cancel = () => {
   reset();
   dialog.visible = false;
-}
+};
 
 /** 表单重置 */
 const reset = () => {
-  form.value = {...initFormData};
+  form.value = { ...initFormData };
   infoFormRef.value?.resetFields();
-}
+};
 
 /** 搜索按钮操作 */
 const handleQuery = () => {
   queryParams.value.pageNum = 1;
   getList();
-}
+};
 
 /** 重置按钮操作 */
 const resetQuery = () => {
@@ -456,31 +428,31 @@ const resetQuery = () => {
   dateRangeBirthday.value = ['', ''];
   queryFormRef.value?.resetFields();
   handleQuery();
-}
+};
 
 /** 多选框选中数据 */
 const handleSelectionChange = (selection: InfoVO[]) => {
-  ids.value = selection.map(item => item.id);
+  ids.value = selection.map((item) => item.id);
   single.value = selection.length != 1;
   multiple.value = !selection.length;
-}
+};
 
 /** 新增按钮操作 */
 const handleAdd = () => {
   reset();
   dialog.visible = true;
-  dialog.title = "添加会员信息";
-}
+  dialog.title = '添加会员信息';
+};
 
 /** 修改按钮操作 */
 const handleUpdate = async (row?: InfoVO) => {
   reset();
-  const _id = row?.id || ids.value[0]
+  const _id = row?.id || ids.value[0];
   const res = await getInfo(_id);
   Object.assign(form.value, res.data);
   dialog.visible = true;
-  dialog.title = "修改会员信息";
-}
+  dialog.title = '修改会员信息';
+};
 
 /** 提交按钮 */
 const submitForm = () => {
@@ -488,32 +460,36 @@ const submitForm = () => {
     if (valid) {
       buttonLoading.value = true;
       if (form.value.id) {
-        await updateInfo(form.value).finally(() =>  buttonLoading.value = false);
+        await updateInfo(form.value).finally(() => (buttonLoading.value = false));
       } else {
-        await addInfo(form.value).finally(() =>  buttonLoading.value = false);
+        await addInfo(form.value).finally(() => (buttonLoading.value = false));
       }
-      proxy?.$modal.msgSuccess("操作成功");
+      proxy?.$modal.msgSuccess('操作成功');
       dialog.visible = false;
       await getList();
     }
   });
-}
+};
 
 /** 删除按钮操作 */
 const handleDelete = async (row?: InfoVO) => {
   const _ids = row?.id || ids.value;
-  await proxy?.$modal.confirm('是否确认删除会员信息编号为"' + _ids + '"的数据项？').finally(() => loading.value = false);
+  await proxy?.$modal.confirm('是否确认删除会员信息编号为"' + _ids + '"的数据项？').finally(() => (loading.value = false));
   await delInfo(_ids);
-  proxy?.$modal.msgSuccess("删除成功");
+  proxy?.$modal.msgSuccess('删除成功');
   await getList();
-}
+};
 
 /** 导出按钮操作 */
 const handleExport = () => {
-  proxy?.download('member/info/export', {
-    ...queryParams.value
-  }, `info_${new Date().getTime()}.xlsx`)
-}
+  proxy?.download(
+    'member/info/export',
+    {
+      ...queryParams.value
+    },
+    `info_${new Date().getTime()}.xlsx`
+  );
+};
 
 onMounted(() => {
   getList();

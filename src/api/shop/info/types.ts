@@ -46,7 +46,6 @@ export interface InfoVO {
    * 店铺状态
    */
   state: string;
-
 }
 
 export interface InfoForm extends BaseEntity {
@@ -84,11 +83,9 @@ export interface InfoForm extends BaseEntity {
    * 店铺状态
    */
   state?: string;
-
 }
 
 export interface InfoQuery extends PageQuery {
-
   /**
    * ID
    */
@@ -114,10 +111,10 @@ export interface InfoQuery extends PageQuery {
    */
   state?: string;
 
-    /**
-     * 日期范围参数
-     */
-    params?: any;
+  /**
+   * 日期范围参数
+   */
+  params?: any;
 }
 
 export interface InfoOptionVO {
@@ -131,4 +128,3 @@ export interface InfoOptionVO {
    */
   name: string;
 }
-

@@ -22,8 +22,8 @@
               <el-input v-model="queryParams.memberId" placeholder="请输入会员ID" clearable @keyup.enter="handleQuery" />
             </el-form-item>
             <el-form-item label="状态" prop="state">
-              <el-select v-model="queryParams.state" placeholder="请选择状态" clearable >
-                <el-option v-for="dict in sys_normal_disable" :key="dict.value" :label="dict.label" :value="dict.value"/>
+              <el-select v-model="queryParams.state" placeholder="请选择状态" clearable>
+                <el-option v-for="dict in sys_normal_disable" :key="dict.value" :label="dict.label" :value="dict.value" />
               </el-select>
             </el-form-item>
             <el-form-item>
@@ -45,7 +45,9 @@
             <el-button type="success" plain icon="Edit" :disabled="single" @click="handleUpdate()" v-hasPermi="['member:photo:edit']">修改</el-button>
           </el-col>
           <el-col :span="1.5">
-            <el-button type="danger" plain icon="Delete" :disabled="multiple" @click="handleDelete()" v-hasPermi="['member:photo:remove']">删除</el-button>
+            <el-button type="danger" plain icon="Delete" :disabled="multiple" @click="handleDelete()" v-hasPermi="['member:photo:remove']"
+              >删除</el-button
+            >
           </el-col>
           <el-col :span="1.5">
             <el-button type="warning" plain icon="Download" @click="handleExport" v-hasPermi="['member:photo:export']">导出</el-button>
@@ -60,14 +62,14 @@
         <el-table-column label="创建时间" align="center" prop="createTime" width="180" />
         <el-table-column label="照片" align="center" prop="photoUrl" width="100">
           <template #default="scope">
-            <image-preview :src="scope.row.photoUrl" :width="50" :height="50"/>
+            <image-preview :src="scope.row.photoUrl" :width="50" :height="50" />
           </template>
         </el-table-column>
         <el-table-column label="会员ID" align="center" prop="memberId" />
         <el-table-column label="图片描述" align="center" prop="caption" />
         <el-table-column label="状态" align="center" prop="state">
           <template #default="scope">
-            <dict-tag :options="sys_normal_disable" :value="scope.row.state"/>
+            <dict-tag :options="sys_normal_disable" :value="scope.row.state" />
           </template>
         </el-table-column>
         <el-table-column label="操作" align="center" class-name="small-padding fixed-width" fixed="right">
@@ -94,16 +96,11 @@
           <el-input v-model="form.memberId" placeholder="请输入会员ID" />
         </el-form-item>
         <el-form-item label="图片描述" prop="caption">
-            <el-input v-model="form.caption" type="textarea" placeholder="请输入内容" />
+          <el-input v-model="form.caption" type="textarea" placeholder="请输入内容" />
         </el-form-item>
         <el-form-item label="状态" prop="state">
           <el-select v-model="form.state" placeholder="请选择状态">
-            <el-option
-                v-for="dict in sys_normal_disable"
-                :key="dict.value"
-                :label="dict.label"
-                :value="dict.value"
-            ></el-option>
+            <el-option v-for="dict in sys_normal_disable" :key="dict.value" :label="dict.label" :value="dict.value"></el-option>
           </el-select>
         </el-form-item>
       </el-form>
@@ -149,9 +146,9 @@ const initFormData: PhotoForm = {
   memberId: undefined,
   caption: undefined,
   state: undefined
-}
+};
 const data = reactive<PageData<PhotoForm, PhotoQuery>>({
-  form: {...initFormData},
+  form: { ...initFormData },
   queryParams: {
     pageNum: 1,
     pageSize: 10,
@@ -159,22 +156,14 @@ const data = reactive<PageData<PhotoForm, PhotoQuery>>({
     memberId: undefined,
     state: undefined,
     params: {
-      createTime: undefined,
+      createTime: undefined
     }
   },
   rules: {
-    id: [
-      { required: true, message: "ID不能为空", trigger: "blur" }
-    ],
-    photoId: [
-      { required: true, message: "照片不能为空", trigger: "blur" }
-    ],
-    memberId: [
-      { required: true, message: "会员ID不能为空", trigger: "blur" }
-    ],
-    state: [
-      { required: true, message: "状态不能为空", trigger: "change" }
-    ]
+    id: [{ required: true, message: 'ID不能为空', trigger: 'blur' }],
+    photoId: [{ required: true, message: '照片不能为空', trigger: 'blur' }],
+    memberId: [{ required: true, message: '会员ID不能为空', trigger: 'blur' }],
+    state: [{ required: true, message: '状态不能为空', trigger: 'change' }]
   }
 });
 
@@ -189,56 +178,56 @@ const getList = async () => {
   photoList.value = res.rows;
   total.value = res.total;
   loading.value = false;
-}
+};
 
 /** 取消按钮 */
 const cancel = () => {
   reset();
   dialog.visible = false;
-}
+};
 
 /** 表单重置 */
 const reset = () => {
-  form.value = {...initFormData};
+  form.value = { ...initFormData };
   photoFormRef.value?.resetFields();
-}
+};
 
 /** 搜索按钮操作 */
 const handleQuery = () => {
   queryParams.value.pageNum = 1;
   getList();
-}
+};
 
 /** 重置按钮操作 */
 const resetQuery = () => {
   dateRangeCreateTime.value = ['', ''];
   queryFormRef.value?.resetFields();
   handleQuery();
-}
+};
 
 /** 多选框选中数据 */
 const handleSelectionChange = (selection: PhotoVO[]) => {
-  ids.value = selection.map(item => item.id);
+  ids.value = selection.map((item) => item.id);
   single.value = selection.length != 1;
   multiple.value = !selection.length;
-}
+};
 
 /** 新增按钮操作 */
 const handleAdd = () => {
   reset();
   dialog.visible = true;
-  dialog.title = "添加会员照片";
-}
+  dialog.title = '添加会员照片';
+};
 
 /** 修改按钮操作 */
 const handleUpdate = async (row?: PhotoVO) => {
   reset();
-  const _id = row?.id || ids.value[0]
+  const _id = row?.id || ids.value[0];
   const res = await getPhoto(_id);
   Object.assign(form.value, res.data);
   dialog.visible = true;
-  dialog.title = "修改会员照片";
-}
+  dialog.title = '修改会员照片';
+};
 
 /** 提交按钮 */
 const submitForm = () => {
@@ -246,32 +235,36 @@ const submitForm = () => {
     if (valid) {
       buttonLoading.value = true;
       if (form.value.id) {
-        await updatePhoto(form.value).finally(() =>  buttonLoading.value = false);
+        await updatePhoto(form.value).finally(() => (buttonLoading.value = false));
       } else {
-        await addPhoto(form.value).finally(() =>  buttonLoading.value = false);
+        await addPhoto(form.value).finally(() => (buttonLoading.value = false));
       }
-      proxy?.$modal.msgSuccess("操作成功");
+      proxy?.$modal.msgSuccess('操作成功');
       dialog.visible = false;
       await getList();
     }
   });
-}
+};
 
 /** 删除按钮操作 */
 const handleDelete = async (row?: PhotoVO) => {
   const _ids = row?.id || ids.value;
-  await proxy?.$modal.confirm('是否确认删除会员照片编号为"' + _ids + '"的数据项？').finally(() => loading.value = false);
+  await proxy?.$modal.confirm('是否确认删除会员照片编号为"' + _ids + '"的数据项？').finally(() => (loading.value = false));
   await delPhoto(_ids);
-  proxy?.$modal.msgSuccess("删除成功");
+  proxy?.$modal.msgSuccess('删除成功');
   await getList();
-}
+};
 
 /** 导出按钮操作 */
 const handleExport = () => {
-  proxy?.download('member/photo/export', {
-    ...queryParams.value
-  }, `photo_${new Date().getTime()}.xlsx`)
-}
+  proxy?.download(
+    'member/photo/export',
+    {
+      ...queryParams.value
+    },
+    `photo_${new Date().getTime()}.xlsx`
+  );
+};
 
 onMounted(() => {
   getList();

@@ -50,8 +50,8 @@
               </el-select>
             </el-form-item>
             <el-form-item label="状态" prop="state">
-              <el-select v-model="queryParams.state" placeholder="请选择状态" clearable >
-                <el-option v-for="dict in ditalk_goods_state" :key="dict.value" :label="dict.label" :value="dict.value"/>
+              <el-select v-model="queryParams.state" placeholder="请选择状态" clearable>
+                <el-option v-for="dict in ditalk_goods_state" :key="dict.value" :label="dict.label" :value="dict.value" />
               </el-select>
             </el-form-item>
             <el-form-item>
@@ -73,7 +73,9 @@
             <el-button type="success" plain icon="Edit" :disabled="single" @click="handleUpdate()" v-hasPermi="['goods:info:edit']">修改</el-button>
           </el-col>
           <el-col :span="1.5">
-            <el-button type="danger" plain icon="Delete" :disabled="multiple" @click="handleDelete()" v-hasPermi="['goods:info:remove']">删除</el-button>
+            <el-button type="danger" plain icon="Delete" :disabled="multiple" @click="handleDelete()" v-hasPermi="['goods:info:remove']"
+              >删除</el-button
+            >
           </el-col>
           <el-col :span="1.5">
             <el-button type="warning" plain icon="Download" @click="handleExport" v-hasPermi="['goods:info:export']">导出</el-button>
@@ -95,20 +97,20 @@
         <el-table-column label="副标题" align="center" prop="subtitle" width="120" show-overflow-tooltip />
         <el-table-column label="主图" align="center" prop="mainPicUrl" width="100">
           <template #default="scope">
-            <image-preview :src="scope.row.mainPicUrl" :width="50" :height="50"/>
+            <image-preview :src="scope.row.mainPicUrl" :width="50" :height="50" />
           </template>
         </el-table-column>
         <el-table-column label="轮播图组" align="center" prop="subPicsUrl" width="180">
           <template #default="scope">
-            <multiple-image-preview :src="scope.row.subPicsUrl" :width="30" :height="30"/>
+            <multiple-image-preview :src="scope.row.subPicsUrl" :width="30" :height="30" />
           </template>
         </el-table-column>
         <el-table-column label="条形码" align="center" prop="barCode" />
         <el-table-column label="品牌" align="center" prop="brandName" />
         <!-- <el-table-column label="商品说明" align="center" prop="content" /> -->
-        <el-table-column label="最低价" align="center" prop="minPrice" >
+        <el-table-column label="最低价" align="center" prop="minPrice">
           <template #default="scope">
-            {{scope.row.minPrice / 100}}
+            {{ scope.row.minPrice / 100 }}
           </template>
         </el-table-column>
         <el-table-column label="总销量" align="center" prop="totalSales" />
@@ -117,7 +119,7 @@
         <el-table-column label="排序" align="center" prop="sortOrder" />
         <el-table-column label="状态" align="center" prop="state">
           <template #default="scope">
-            <dict-tag :options="ditalk_goods_state" :value="scope.row.state"/>
+            <dict-tag :options="ditalk_goods_state" :value="scope.row.state" />
           </template>
         </el-table-column>
         <el-table-column label="操作" align="center" class-name="small-padding fixed-width" fixed="right">
@@ -135,7 +137,7 @@
       <pagination v-show="total > 0" :total="total" v-model:page="queryParams.pageNum" v-model:limit="queryParams.pageSize" @pagination="getList" />
     </el-card>
     <!-- 添加或修改商品信息对话框 -->
-    <el-dialog v-model="dialog.visible" width="1320px" append-to-body style="min-height: 92%;" :show-close="false" @close="onCloseDialog">
+    <el-dialog v-model="dialog.visible" width="1320px" append-to-body style="min-height: 92%" :show-close="false" @close="onCloseDialog">
       <template #header>
         <el-row align="middle">
           <el-col :span="18">
@@ -159,15 +161,15 @@
             </el-form-item>
             <el-form-item label="分类" prop="categoryId">
               <el-tree-select
-                    v-model="form.categoryId"
-                    :data="formCategoryOptions"
-                    :props="{ value: 'id', label: 'label', children: 'children' } as any"
-                    value-key="id"
-                    placeholder="请选择分类"
-                    check-strictly
-                    filterable
-                    @change="onChangeCategory"
-                  />
+                v-model="form.categoryId"
+                :data="formCategoryOptions"
+                :props="{ value: 'id', label: 'label', children: 'children' } as any"
+                value-key="id"
+                placeholder="请选择分类"
+                check-strictly
+                filterable
+                @change="onChangeCategory"
+              />
             </el-form-item>
             <el-form-item label="品牌" prop="brandId">
               <el-select v-model="form.brandId" placeholder="请选择品牌" filterable>
@@ -193,31 +195,38 @@
               <el-input v-model="form.subtitle" placeholder="请输入副标题" />
             </el-form-item>
             <el-form-item label="主图" prop="mainPic">
-              <image-upload v-model="form.mainPic" :limit="1"/>
+              <image-upload v-model="form.mainPic" :limit="1" />
             </el-form-item>
             <el-form-item label="轮播图组" prop="subPics">
-              <image-upload v-model="form.subPics"/>
+              <image-upload v-model="form.subPics" />
             </el-form-item>
             <el-form-item label="属性集">
               <el-input-tag v-model="attrArray" placeholder="输入后回车，格式 '属性名:属性值'" draggable @add-tag="addAttrTag" />
             </el-form-item>
             <el-form-item label="规格集" prop="specJson">
               <template v-for="(v, index) in specKeyArray" :key="index">
-              <el-row>
-                <el-input v-model="specKeyArray[index]" placeholder="规格名称" style="width: 200px; margin-bottom: 3px; margin-right: 20px;" @blur="checkForDuplicateKeys(specKeyArray[index])" />
-                <el-button type="info" plain @click="delSpecRow(index)">删 除</el-button>
-              </el-row>
-              <el-input-tag v-model="specValueArray[index]" placeholder="规格选项" style="margin-bottom: 16px" draggable @add-tag="checkForDeplicateValues(index)" />
+                <el-row>
+                  <el-input
+                    v-model="specKeyArray[index]"
+                    placeholder="规格名称"
+                    style="width: 200px; margin-bottom: 3px; margin-right: 20px"
+                    @blur="checkForDuplicateKeys(specKeyArray[index])"
+                  />
+                  <el-button type="info" plain @click="delSpecRow(index)">删 除</el-button>
+                </el-row>
+                <el-input-tag
+                  v-model="specValueArray[index]"
+                  placeholder="规格选项"
+                  style="margin-bottom: 16px"
+                  draggable
+                  @add-tag="checkForDeplicateValues(index)"
+                />
               </template>
               <el-button type="primary" plain @click="addSpecRow">添加规格</el-button>
             </el-form-item>
             <el-form-item label="状态" prop="state">
               <el-radio-group v-model="form.state">
-                <el-radio
-                  v-for="dict in ditalk_goods_state"
-                  :key="dict.value"
-                  :value="dict.value"
-                >{{dict.label}}</el-radio>
+                <el-radio v-for="dict in ditalk_goods_state" :key="dict.value" :value="dict.value">{{ dict.label }}</el-radio>
               </el-radio-group>
             </el-form-item>
             <!-- <el-row>
@@ -272,11 +281,22 @@
             </el-col>
             <el-col :span="22">
               <template v-for="(v, index) in specKeyArray" :key="index">
-              <el-row>
-                <el-input v-model="specKeyArray[index]" placeholder="规格名称" style="width: 200px; margin-bottom: 3px; margin-right: 20px;" @blur="checkForDuplicateKeys(specKeyArray[index])" />
-                <el-button type="default" @click="delSpecRow(index)">删 除</el-button>
-              </el-row>
-              <el-input-tag v-model="specValueArray[index]" placeholder="规格选项" style="margin-bottom: 16px" draggable @add-tag="checkForDeplicateValues(index)" />
+                <el-row>
+                  <el-input
+                    v-model="specKeyArray[index]"
+                    placeholder="规格名称"
+                    style="width: 200px; margin-bottom: 3px; margin-right: 20px"
+                    @blur="checkForDuplicateKeys(specKeyArray[index])"
+                  />
+                  <el-button type="default" @click="delSpecRow(index)">删 除</el-button>
+                </el-row>
+                <el-input-tag
+                  v-model="specValueArray[index]"
+                  placeholder="规格选项"
+                  style="margin-bottom: 16px"
+                  draggable
+                  @add-tag="checkForDeplicateValues(index)"
+                />
               </template>
               <el-button type="primary" plain @click="addSpecRow">添加规格</el-button>
               <el-button type="success" plain @click="refreshSkuList">立即生成规格</el-button>
@@ -284,7 +304,7 @@
             </el-col>
           </el-row>
           <!-- 展示已有的 GoodsSku 数据，并支持更新保存 -->
-          <el-row style="margin-top:20px">
+          <el-row style="margin-top: 20px">
             <el-col :span="2" align="right">
               <b style="margin-right: 10px">商品规格</b>
             </el-col>
@@ -309,7 +329,13 @@
                 </el-table-column>
                 <el-table-column label="原价" align="center" prop="originalPrice" width="120">
                   <template #default="scope">
-                    <el-input-number v-model="scope.row.originalPrice" :min="0" :precision="2" :controls="false" style="width: 100%"></el-input-number>
+                    <el-input-number
+                      v-model="scope.row.originalPrice"
+                      :min="0"
+                      :precision="2"
+                      :controls="false"
+                      style="width: 100%"
+                    ></el-input-number>
                   </template>
                 </el-table-column>
                 <el-table-column label="成本价" align="center" prop="costPrice" width="120">
@@ -329,7 +355,13 @@
                 </el-table-column>
                 <el-table-column label="可用库存" align="center" prop="availableStock" width="100">
                   <template #default="scope">
-                    <el-input-number v-model="scope.row.availableStock" :min="0" :precision="0" :controls="false" style="width: 100%"></el-input-number>
+                    <el-input-number
+                      v-model="scope.row.availableStock"
+                      :min="0"
+                      :precision="0"
+                      :controls="false"
+                      style="width: 100%"
+                    ></el-input-number>
                   </template>
                 </el-table-column>
                 <el-table-column label="SKU编码" align="center" prop="skuSn" width="160">
@@ -392,16 +424,16 @@ const queryFormRef = ref<ElFormInstance>();
 const infoFormRef = ref<ElFormInstance>();
 const contentFormRef = ref<ElFormInstance>();
 const currentTab = ref<string>('tab0'); // 对话框中 tab 默认值
-const needRefresh = ref<Boolean>(false); // 控制GoodsInfo列表刷新时机，管理当编辑对话框关闭时是否有需要刷新
+const needRefresh = ref<boolean>(false); // 控制GoodsInfo列表刷新时机，管理当编辑对话框关闭时是否有需要刷新
 const attrArray = ref<string[]>([]); // 对应商品属性中的 attrJson
 const specArray = ref<any>({}); // 对应商品属性中的 specJson
 const specKeyArray = ref<string[]>(); // 规格名称数组
 const specValueArray = ref<string[][]>([]); // 规格名称对应的规格值集合
 const skuList = ref<SkuVO[]>([]); // 页面展示的 Sku 列表数据，也作为 skuFormList 中的数据准备
-const skuSpecArray = ref<string[][]>([]) // 通过预定义规格生成的 skuSpec 集合，格式为 [["颜色:白","产地:中国"],["颜色:白","产地:USA"],["颜色:金","产地:中国"],["颜色:金","产地:USA"]]
-const skuFormList = ref<SkuForm[]>([]) // 管理 sku 提交的数据集合，从 skuList 中获取数据
-const skuSpecTableHead = ref<string[]>([]) // 在 SkuForm 数据表格中管理动态表头
-const showImageUploadColumn = ref<Boolean>(false) // 使 SkuForm 数据表格 ImageUpload 在最后加载，解决会加载多次，多个请求后台的问题
+const skuSpecArray = ref<string[][]>([]); // 通过预定义规格生成的 skuSpec 集合，格式为 [["颜色:白","产地:中国"],["颜色:白","产地:USA"],["颜色:金","产地:中国"],["颜色:金","产地:USA"]]
+const skuFormList = ref<SkuForm[]>([]); // 管理 sku 提交的数据集合，从 skuList 中获取数据
+const skuSpecTableHead = ref<string[]>([]); // 在 SkuForm 数据表格中管理动态表头
+const showImageUploadColumn = ref<boolean>(false); // 使 SkuForm 数据表格 ImageUpload 在最后加载，解决会加载多次，多个请求后台的问题
 // 单位转换
 const minPrice = ref<number>(0); // 用于提交时转换为分
 
@@ -430,10 +462,10 @@ const initFormData: InfoForm = {
   sortOrder: undefined,
   attrJson: undefined,
   specJson: undefined,
-  state: "off_shelf"
-}
+  state: 'off_shelf'
+};
 const data = reactive<PageData<InfoForm, InfoQuery>>({
-  form: {...initFormData},
+  form: { ...initFormData },
   queryParams: {
     pageNum: 1,
     pageSize: 10,
@@ -446,45 +478,31 @@ const data = reactive<PageData<InfoForm, InfoQuery>>({
     brandId: undefined,
     state: undefined,
     params: {
-      createTime: undefined,
+      createTime: undefined
     }
   },
   rules: {
-    id: [
-      { required: true, message: "ID不能为空", trigger: "blur" }
-    ],
-    shopId: [
-      { required: true, message: "店铺不能为空", trigger: "blur" }
-    ],
-    categoryId: [
-      { required: true, message: "分类不能为空", trigger: "blur" }
-    ],
-    name: [
-      { required: true, message: "名称不能为空", trigger: "blur" }
-    ],
-    mainPic: [
-      { required: true, message: "主图不能为空", trigger: "blur" }
-    ],
-    state: [
-      { required: true, message: "状态不能为空", trigger: "change" }
-    ]
+    id: [{ required: true, message: 'ID不能为空', trigger: 'blur' }],
+    shopId: [{ required: true, message: '店铺不能为空', trigger: 'blur' }],
+    categoryId: [{ required: true, message: '分类不能为空', trigger: 'blur' }],
+    name: [{ required: true, message: '名称不能为空', trigger: 'blur' }],
+    mainPic: [{ required: true, message: '主图不能为空', trigger: 'blur' }],
+    state: [{ required: true, message: '状态不能为空', trigger: 'change' }]
   }
 });
 
 const contentRules: ElFormRules = {
-  id: [
-    { required: true, message: "请先保存商品信息", trigger: "blur" }
-  ]
-}
+  id: [{ required: true, message: '请先保存商品信息', trigger: 'blur' }]
+};
 
 const initContentFormData: InfoContentForm = {
   id: undefined,
   version: undefined,
-  content: undefined,
-}
+  content: undefined
+};
 
 const { queryParams, form, rules } = toRefs(data);
-const contentForm = ref<InfoContentForm>() // contentForm 与 form 的 version 与 id 应该对应一致
+const contentForm = ref<InfoContentForm>(); // contentForm 与 form 的 version 与 id 应该对应一致
 
 /** 查询商品信息列表 */
 const getList = async () => {
@@ -495,112 +513,116 @@ const getList = async () => {
   infoList.value = res.rows;
   total.value = res.total;
   loading.value = false;
-}
+};
 
 /** 取消按钮 */
 const cancel = () => {
   reset();
   dialog.visible = false;
-}
+};
 
 /** 表单重置 */
 const reset = () => {
   // 控制 GoodsInfo 列表刷新
   if (needRefresh.value) {
     getList();
-    needRefresh.value = false
+    needRefresh.value = false;
   }
   // 重置 tab index
-  currentTab.value = 'tab0' 
+  currentTab.value = 'tab0';
   // GoodsInfo 列表刷新标记
-  needRefresh.value = false
+  needRefresh.value = false;
   // 重置 Sku 表格 ImageUpload 最后加载
-  showImageUploadColumn.value = false
+  showImageUploadColumn.value = false;
   // 重置 form 中的 category 选项
-  formCategoryOptions.value = []
+  formCategoryOptions.value = [];
   // 重置对话框用到的变量
-  attrArray.value = []
-  specArray.value = {}
-  specKeyArray.value = []
-  specValueArray.value = []
-  skuList.value = []
-  skuSpecArray.value = []
-  skuFormList.value = []
-  skuSpecTableHead.value = []
+  attrArray.value = [];
+  specArray.value = {};
+  specKeyArray.value = [];
+  specValueArray.value = [];
+  skuList.value = [];
+  skuSpecArray.value = [];
+  skuFormList.value = [];
+  skuSpecTableHead.value = [];
   // 重置 goods infoForm 表单
-  form.value = {...initFormData};
+  form.value = { ...initFormData };
   // 重置 goods contentForm 表单
-  contentForm.value = {...initContentFormData}
+  contentForm.value = { ...initContentFormData };
   infoFormRef.value?.resetFields();
   contentFormRef.value?.resetFields();
-}
+};
 
 /** 搜索按钮操作 */
 const handleQuery = () => {
   queryParams.value.pageNum = 1;
   getList();
-}
+};
 
 /** 重置按钮操作 */
 const resetQuery = () => {
   dateRangeCreateTime.value = ['', ''];
   queryFormRef.value?.resetFields();
   handleQuery();
-}
+};
 
 /** 多选框选中数据 */
 const handleSelectionChange = (selection: InfoVO[]) => {
-  ids.value = selection.map(item => item.id);
+  ids.value = selection.map((item) => item.id);
   single.value = selection.length != 1;
   multiple.value = !selection.length;
-}
+};
 
 /** 新增按钮操作 */
 const handleAdd = () => {
   reset();
   dialog.visible = true;
-  dialog.title = "添加商品信息";
-}
+  dialog.title = '添加商品信息';
+};
 
 /** 修改按钮操作 */
 const handleUpdate = async (row?: InfoVO) => {
   reset();
-  const _id = row?.id || ids.value[0]
+  const _id = row?.id || ids.value[0];
   const res = await getInfo(_id);
   Object.assign(form.value, res.data);
   dialog.visible = true;
-  dialog.title = "修改商品信息";
+  dialog.title = '修改商品信息';
   // 读取分类树 列表选项使用
   await getFormCategoryTree(form.value.shopId);
   // 处理单位转换
   minPrice.value = form.value.minPrice / 100;
   // 初始化contentForm，需要与form相对应，同步form到contentForm
-  syncFormToContentForm()
+  syncFormToContentForm();
   // 处理普通属性
-  handleAttrArray()
+  handleAttrArray();
   // 处理规格属性
-  await handleSpecArray()
+  await handleSpecArray();
   // 加载 SKU 列表数据
-  await handleSkuList()
+  await handleSkuList();
   // 构建 SKU 表格动态表头
-  buildSkuSpecTableHead()
-}
+  buildSkuSpecTableHead();
+};
 
 /** 删除按钮操作 */
 const handleDelete = async (row?: InfoVO) => {
   const _ids = row?.id || ids.value;
-  await proxy?.$modal.confirm('是否确认删除商品信息编号为"' + _ids + '"的数据项？').finally(() => loading.value = false);
+  await proxy?.$modal.confirm('是否确认删除商品信息编号为"' + _ids + '"的数据项？').finally(() => (loading.value = false));
   await delInfo(_ids);
-  proxy?.$modal.msgSuccess("删除成功");
+  proxy?.$modal.msgSuccess('删除成功');
   await getList();
-}
+};
 
 /** 导出按钮操作 */
 const handleExport = () => {
-  proxy?.download('goods/info/export', {
-    ...queryParams.value
-  }, `info_${new Date().getTime()}.xlsx`);
-}
+  proxy?.download(
+    'goods/info/export',
+    {
+      ...queryParams.value
+    },
+    `info_${new Date().getTime()}.xlsx`
+  );
+};
 
 onMounted(() => {
   getShopList();
@@ -611,12 +633,12 @@ onMounted(() => {
 const getShopList = async () => {
   const res = await listShopInfoOption();
   shopInfoList.value = res.rows;
-}
+};
 
 const getBrandList = async () => {
   const res = await listBrand();
   brandList.value = res.rows;
-}
+};
 
 /**
  * @description: json字符串转数组
@@ -631,7 +653,7 @@ const json2array = (json: string): string[] => {
     console.error('Error parsing attrJson:', error);
     return [];
   }
-}
+};
 
 /**
  * @description: 与 json2array 相反的操作
@@ -650,11 +672,11 @@ const array2json = (array: string[]): string => {
     console.error('Error parsing attrJson:', error);
     return '';
   }
-}
+};
 
 /**
  * @description: 新增属性标签，格式要求 属性名:属性值。
- * @param value 
+ * @param value
  */
 const addAttrTag = (value: string) => {
   // 组件默认会值进行 trim 操作
@@ -666,61 +688,61 @@ const addAttrTag = (value: string) => {
   }
   // 值中需要有一个:符号 同时 :符号两边不能为空字符串
   if (value.indexOf(':') == -1 || value.indexOf(':') == 0 || value.indexOf(':') == value.length - 1) {
-    proxy?.$modal.msgError("请输入 属性名:属性值 格式");
+    proxy?.$modal.msgError('请输入 属性名:属性值 格式');
     attrArray.value.pop();
     return;
   }
   // 不能有多个:符号
   if (value.split(':').length > 2) {
-    proxy?.$modal.msgError("请输入 属性名:属性值 格式，不能有多个:符号");
+    proxy?.$modal.msgError('请输入 属性名:属性值 格式，不能有多个:符号');
     attrArray.value.pop();
     return;
   }
   // 如果attrArray中排除最后一个数据，有与value相同值忽略value
   if (attrArray.value.slice(0, -1).indexOf(value) != -1) {
-    proxy?.$modal.msgError("标签重复了");
+    proxy?.$modal.msgError('标签重复了');
     attrArray.value.pop();
     return;
   }
-}
+};
 
 /** 获取查询条件分类下拉树结构 */
 const getCategoryTree = async (shopId: number | string) => {
-  const query: CategoryQuery = {}
+  const query: CategoryQuery = {};
   if (!shopId) {
-    return
+    return;
   }
-  query.shopId = shopId
-  const res = await getTreeSelect(query)
-  categoryOptions.value = res.data
+  query.shopId = shopId;
+  const res = await getTreeSelect(query);
+  categoryOptions.value = res.data;
 };
 
 const onChangeShop = (shopId: number | string) => {
-  categoryOptions.value = []
-  queryParams.value.categoryId = undefined // remove query form value
+  categoryOptions.value = [];
+  queryParams.value.categoryId = undefined; // remove query form value
   if (shopId) {
     getCategoryTree(shopId);
   }
-}
+};
 
 /** 获取Form中的分类下拉树结构 */
 const getFormCategoryTree = async (shopId: number | string) => {
-  const query: CategoryQuery = {}
+  const query: CategoryQuery = {};
   if (!shopId) {
-    return
+    return;
   }
-  query.shopId = shopId
-  const res = await getTreeSelect(query)
-  formCategoryOptions.value = res.data
+  query.shopId = shopId;
+  const res = await getTreeSelect(query);
+  formCategoryOptions.value = res.data;
 };
 
 const onChangeShopInForm = (shopId: number | string) => {
-  formCategoryOptions.value = []
-  form.value.categoryId = undefined // remove data form value
+  formCategoryOptions.value = [];
+  form.value.categoryId = undefined; // remove data form value
   if (shopId) {
     getFormCategoryTree(shopId);
   }
-}
+};
 
 /**
  * 保存Goods的详情信息
@@ -737,21 +759,21 @@ const saveInfo = () => {
       buttonLoading.value = true;
       let res: any;
       if (form.value.id) {
-        res = await updateInfo(form.value)
+        res = await updateInfo(form.value);
       } else {
-        res = await addInfo(form.value)
+        res = await addInfo(form.value);
       }
-      handleRes.showMsg(res)
+      handleRes.showMsg(res);
       form.value.id = res.data.id;
       form.value.version = res.data.version; // 每次操作需要同步更新 version
       contentForm.value.id = res.data.id;
       contentForm.value.version = res.data.version; // 每次操作需要同步更新 version
-      needRefresh.value = true
-      currentTab.value = "tab1"
-      buttonLoading.value = false
+      needRefresh.value = true;
+      currentTab.value = 'tab1';
+      buttonLoading.value = false;
     }
   });
-}
+};
 
 /**
  * 保存Goods的内容描述
@@ -760,19 +782,21 @@ const saveContent = async () => {
   contentFormRef.value?.validate(async (valid: boolean) => {
     if (valid) {
       buttonLoading.value = true;
-      updateInfoContent(contentForm.value).then(res => {
-        if (handleRes.showMsg(res)) {
-          contentForm.value.version = res.data.version; // 每次操作需要同步更新 version
-          form.value.version = res.data.version; // 每次操作需要同步更新 version
-          // needRefresh.value = true 更新 content 不用更新表格
-          currentTab.value = "tab2"
-        }
-      }).finally(() => {
-        buttonLoading.value = false
-      });
+      updateInfoContent(contentForm.value)
+        .then((res) => {
+          if (handleRes.showMsg(res)) {
+            contentForm.value.version = res.data.version; // 每次操作需要同步更新 version
+            form.value.version = res.data.version; // 每次操作需要同步更新 version
+            // needRefresh.value = true 更新 content 不用更新表格
+            currentTab.value = 'tab2';
+          }
+        })
+        .finally(() => {
+          buttonLoading.value = false;
+        });
     }
-  })
-}
+  });
+};
 
 /**
  * 保存 SKU 信息
@@ -781,14 +805,14 @@ const saveSku = () => {
   // 表单校验
   for (const sku of skuList.value) {
     if (valueCheck.isNullOrUndefined(sku.mainPic) || sku.mainPic === 0) {
-      proxy?.$modal.msgError("请上传SKU主图");
-      return
+      proxy?.$modal.msgError('请上传SKU主图');
+      return;
     }
   }
   buttonLoading.value = true;
   // skuList 转换到 skuFormList
-  skuFormList.value = []
-  skuList.value.forEach(sku => {
+  skuFormList.value = [];
+  skuList.value.forEach((sku) => {
     skuFormList.value.push({
       id: sku.id,
       version: sku.version,
@@ -800,152 +824,155 @@ const saveSku = () => {
       costPrice: sku.costPrice * 100,
       weight: sku.weight * 100,
       volume: sku.volume * 10000,
-      availableStock: sku.availableStock,
-    })
-  })
+      availableStock: sku.availableStock
+    });
+  });
   // 提交保存
   const skuBatchForm: SkuBatchForm = {
-      goodsId: form.value.id,
-      shopId: form.value.shopId,
-      goodsSkuBos: skuFormList.value,
-  }
-  batchUpdateSku(skuBatchForm).then(res => {
-    handleRes.showMsg(res);
-  }).finally(() => {
-    buttonLoading.value = false
-  });
-}
+    goodsId: form.value.id,
+    shopId: form.value.shopId,
+    goodsSkuBos: skuFormList.value
+  };
+  batchUpdateSku(skuBatchForm)
+    .then((res) => {
+      handleRes.showMsg(res);
+    })
+    .finally(() => {
+      buttonLoading.value = false;
+    });
+};
 
 /**
  * @description: 构建规格数组的JSON字符串
  * @return {string}
  */
 const buildSpecArray = (): string => {
-  specArray.value = {}
+  specArray.value = {};
   for (let i = 0; i < specKeyArray.value.length; i++) {
-    if (!specKeyArray.value[i] || specKeyArray.value[i].trim() === '' || specValueArray.value[i].length == 0) { // 去除没有值的规格项
-      continue
+    if (!specKeyArray.value[i] || specKeyArray.value[i].trim() === '' || specValueArray.value[i].length == 0) {
+      // 去除没有值的规格项
+      continue;
     }
-    specArray.value[specKeyArray.value[i]] = specValueArray.value[i]
+    specArray.value[specKeyArray.value[i]] = specValueArray.value[i];
   }
-  return JSON.stringify(specArray.value)
-}
+  return JSON.stringify(specArray.value);
+};
 
 /**
  * 添加新的 规格项
  */
 const addSpecRow = () => {
-  specKeyArray.value.push(undefined)
+  specKeyArray.value.push(undefined);
   specValueArray.value.push([]);
-}
+};
 
 /**
  * 删除规格项集合中指定项
- * @param index 
+ * @param index
  */
 const delSpecRow = (index: number) => {
-  specKeyArray.value.splice(index, 1)
-  specValueArray.value.splice(index, 1)
-}
+  specKeyArray.value.splice(index, 1);
+  specValueArray.value.splice(index, 1);
+};
 
 /**
  * 在specKeyArray中排除最后一个项，检查若有与value相同值的忽略value
- * @param value 
- * @param index 
+ * @param value
+ * @param index
  */
 const checkForDuplicateKeys = (value: string) => {
   if (specKeyArray.value.slice(0, -1).indexOf(value) != -1) {
-    proxy?.$modal.msgError("规格名重复了");
+    proxy?.$modal.msgError('规格名重复了');
     specKeyArray.value.pop();
   }
-}
+};
 
 /**
  * 检查specValueArray[index]中最后一个值是否已存在，存在则删除
- * @param value 
- * @param index 
+ * @param value
+ * @param index
  */
 const checkForDeplicateValues = (index: number) => {
   if (specValueArray.value[index].slice(0, -1).indexOf(specValueArray.value[index].at(-1)) != -1) {
-    proxy?.$modal.msgError("规格值重复了");
+    proxy?.$modal.msgError('规格值重复了');
     specValueArray.value[index].pop();
   }
-}
+};
 
 /**
  * 刷新 SkuList 内容
  */
 const refreshSkuList = () => {
-  buildSkuSpecArray()
-  buildSkuSpecTableHead()
-  mergeIntoSkuList()
-}
+  buildSkuSpecArray();
+  buildSkuSpecTableHead();
+  mergeIntoSkuList();
+};
 
 /**
  * 把 skuSpecArray 存在 skuList 没有的，合并到 skuList，保留原来有的 skuList 内容
  */
 const mergeIntoSkuList = () => {
   // skuList.value = [] // 创建、合并到 skuList 中
-  skuSpecArray.value.forEach(spec => {
-    const specObject = Object.fromEntries( // 如把 ["颜色:白","产地:中国"] 转成 {颜色:白,产地:中国}
-        spec.map(item => item.split(':'))
+  skuSpecArray.value.forEach((spec) => {
+    const specObject = Object.fromEntries(
+      // 如把 ["颜色:白","产地:中国"] 转成 {颜色:白,产地:中国}
+      spec.map((item) => item.split(':'))
     );
     // 判断 skuList 中有没有 specJson 等于 spec 的 sku
-    let sku = skuList.value.find(sku => valueCheck.isEqualObject(JSON.parse(sku.specJson), specObject));
+    let sku = skuList.value.find((sku) => valueCheck.isEqualObject(JSON.parse(sku.specJson), specObject));
     if (sku) {
-      return // 有则跳过
+      return; // 有则跳过
     } else {
       sku = initSkuVO(); // 没有则创建
-      sku['specObject'] = specObject
+      sku['specObject'] = specObject;
       // sku.specJson = JSON.stringify(spec); // 数组格式
       sku.specJson = JSON.stringify(specObject); // 对象格式
       sku.shopId = form.value.shopId; // 必要的 shopId 属性值
       sku.goodsId = form.value.id; // 必要的 goodsId 属性值
-      sku.state = "0"; // 必要的状态属性值
+      sku.state = '0'; // 必要的状态属性值
       skuList.value.push(sku);
     }
-  })
-}
+  });
+};
 
 /**
  * 构建 skuSpecArray 数据
  */
 const buildSkuSpecArray = () => {
   skuSpecArray.value = cartesianProduct(
-    specKeyArray.value.map((key, index) => { // 将 specKey 与 specValue 合并成 key:value 的数组
-      return specValueArray.value[index].map(value => `${key}:${value}`);
+    specKeyArray.value.map((key, index) => {
+      // 将 specKey 与 specValue 合并成 key:value 的数组
+      return specValueArray.value[index].map((value) => `${key}:${value}`);
     })
-  )
-}
+  );
+};
 
 /**
  * 构建 SKU 表格动态表头
  */
 const buildSkuSpecTableHead = () => {
   // 如果现存 SKU 后台记录，从 SKU 后台记录构建出 spec 对象集合
-  const specObjectArray: Object[] = skuList.value.flatMap(sku => sku['specObject']) // 格式：[{颜色:白,产地:中国},{颜色:红,产地:中国}]
+  const specObjectArray: Object[] = skuList.value.flatMap((sku) => sku['specObject']); // 格式：[{颜色:白,产地:中国},{颜色:红,产地:中国}]
   // 【1】从后台记录构建动态表头
-  skuSpecTableHead.value = getObjectKeys(specObjectArray)
+  skuSpecTableHead.value = getObjectKeys(specObjectArray);
   // 【2】从定义集合构建动态表头，并与【1】后台记录合并成全量表头
-  skuSpecTableHead.value = [...new Set([...skuSpecTableHead.value, ...specKeyArray.value])]
+  skuSpecTableHead.value = [...new Set([...skuSpecTableHead.value, ...specKeyArray.value])];
   // !!! 特别处理：动态表头会使表单加载两次数据，对于 image-upload 要请求两次后台。这里把 image-upload 也放到动态表头中，使其只加载一次
-  showImageUploadColumn.value = true
-}
+  showImageUploadColumn.value = true;
+};
 
 /**
  * 笛卡尔乘积
  * @param arr 笛卡尔乘积的参数数组
  * @returns 笛卡尔乘积的结果数组
  */
-const cartesianProduct = <T>(arr: T[][]): T[][] => 
+const cartesianProduct = <T,>(arr: T[][]): T[][] =>
   arr.reduce((acc: T[][], current: T[]) => {
     if (acc.length === 0) {
-      return current.map(item => [item]);
+      return current.map((item) => [item]);
     }
-    return acc.flatMap(prev =>
-      current.map(currentItem => [...prev, currentItem])
-    );
-  }, [] as T[][])
+    return acc.flatMap((prev) => current.map((currentItem) => [...prev, currentItem]));
+  }, [] as T[][]);
 
 /**
  * 从对象数组中提取所有唯一的属性名（包括所有对象的键）
@@ -957,64 +984,66 @@ const cartesianProduct = <T>(arr: T[][]): T[][] =>
  * const keys = getObjectKeys(users); // ['name', 'age']
  */
 const getObjectKeys = <T extends object>(arr: T[]): string[] => {
-  return [...new Set(
-    arr.reduce((keys, obj) => [...keys, ...Object.keys(obj)], [] as string[])
-  )];
+  return [...new Set(arr.reduce((keys, obj) => [...keys, ...Object.keys(obj)], [] as string[]))];
 };
 
 /**
  * 清除 Sku 表格数据
  */
 const clearSkuForm = () => {
-  skuSpecTableHead.value = []
-  skuList.value = []
-}
+  skuSpecTableHead.value = [];
+  skuList.value = [];
+};
 
 /**
  * 关闭对话框
  */
 const onCloseDialog = () => {
-  reset()
-}
+  reset();
+};
 
 /**
  * 处理普通属性
  */
 const handleAttrArray = () => {
   attrArray.value = json2array(form.value.attrJson);
-}
+};
 
 /**
  * 处理规格属性
- * 
+ *
  * GoodsInfo 中有 specJson 内容，取 specJson 值进行展示；
  * GoodsInfo 中没有 specJson 内容，取分类中预定义值。
  */
 const handleSpecArray = async () => {
-  specArray.value = []
-  specKeyArray.value = []
-  specValueArray.value = []
-  if (form.value.specJson && form.value.specJson !== "{}" && form.value.specJson !== "") { // GoodsInfo 中有 specJson 内容，取 specJson 值进行展示
-    specArray.value = JSON.parse(form.value.specJson || "{}")
-  } else { // GoodsInfo 中没有 specJson 内容，取分类中预定义值
-    const goodsSkuSpecRes = await listSkuSpecByShopIdAndCategoryId(form.value.shopId, form.value.categoryId)
-    const goodsSkuSpecList: SkuSpecVO[] = goodsSkuSpecRes.data
+  specArray.value = [];
+  specKeyArray.value = [];
+  specValueArray.value = [];
+  if (form.value.specJson && form.value.specJson !== '{}' && form.value.specJson !== '') {
+    // GoodsInfo 中有 specJson 内容，取 specJson 值进行展示
+    specArray.value = JSON.parse(form.value.specJson || '{}');
+  } else {
+    // GoodsInfo 中没有 specJson 内容，取分类中预定义值
+    const goodsSkuSpecRes = await listSkuSpecByShopIdAndCategoryId(form.value.shopId, form.value.categoryId);
+    const goodsSkuSpecList: SkuSpecVO[] = goodsSkuSpecRes.data;
     // 把 goodsSkuSpecList 转成 specArray
     if (!valueCheck.isEmptyArr(goodsSkuSpecList)) {
-      goodsSkuSpecList.forEach(skuSpec => {
-        specArray.value[skuSpec.name] = JSON.parse(skuSpec.specJson || "")
-      })
+      goodsSkuSpecList.forEach((skuSpec) => {
+        specArray.value[skuSpec.name] = JSON.parse(skuSpec.specJson || '');
+      });
     } else {
-      specArray.value = {}
+      specArray.value = {};
     }
   }
-  for (const key in specArray.value) { // 把规格中的 key 与 values 分别取出到 specKeyArray 与 specValueArray，便后续处理
-    if (specArray.value.hasOwnProperty(key)) { // 可选：过滤掉继承的属性
-      specKeyArray.value.push(key)
-      specValueArray.value.push(specArray.value[key])
+  for (const key in specArray.value) {
+    // 把规格中的 key 与 values 分别取出到 specKeyArray 与 specValueArray，便后续处理
+    if (specArray.value.hasOwnProperty(key)) {
+      // 可选：过滤掉继承的属性
+      specKeyArray.value.push(key);
+      specValueArray.value.push(specArray.value[key]);
     }
   }
-}
+};
 
 /**
  * 同步 form 到 contentForm
@@ -1023,22 +1052,22 @@ const syncFormToContentForm = () => {
   contentForm.value.id = form.value.id;
   contentForm.value.version = form.value.version;
   contentForm.value.content = form.value.content;
-}
+};
 
 /**
  * 加载数据到 skuList
  */
 const handleSkuList = async () => {
-  skuList.value = []
+  skuList.value = [];
   const skuQuery: SkuQuery = {
     shopId: form.value.shopId,
     goodsId: form.value.id,
     pageNum: 1,
     pageSize: 1000,
-    state: "0",
-  }
+    state: '0'
+  };
   const skuListRes = await listSku(skuQuery);
-  skuListRes.rows.forEach(row => {
+  skuListRes.rows.forEach((row) => {
     row.salePrice = row.salePrice / 100;
     row.originalPrice = row.originalPrice / 100;
     row.costPrice = row.costPrice / 100;
@@ -1046,14 +1075,13 @@ const handleSkuList = async () => {
     row.volume = row.volume / 10000;
     row['specObject'] = JSON.parse(row.specJson);
     skuList.value.push(row);
-  })
-}
+  });
+};
 
 /**
  * 分类改变处理
  */
 const onChangeCategory = () => {
-  handleSpecArray()
-}
-
+  handleSpecArray();
+};
 </script>

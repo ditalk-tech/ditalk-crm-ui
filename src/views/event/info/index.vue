@@ -58,8 +58,8 @@
               <el-input v-model="queryParams.location" placeholder="请输入地点" clearable @keyup.enter="handleQuery" />
             </el-form-item>
             <el-form-item label="状态" prop="state">
-              <el-select v-model="queryParams.state" placeholder="请选择状态" clearable >
-                <el-option v-for="dict in sys_normal_disable" :key="dict.value" :label="dict.label" :value="dict.value"/>
+              <el-select v-model="queryParams.state" placeholder="请选择状态" clearable>
+                <el-option v-for="dict in sys_normal_disable" :key="dict.value" :label="dict.label" :value="dict.value" />
               </el-select>
             </el-form-item>
             <el-form-item>
@@ -81,7 +81,9 @@
             <el-button type="success" plain icon="Edit" :disabled="single" @click="handleUpdate()" v-hasPermi="['event:info:edit']">修改</el-button>
           </el-col>
           <el-col :span="1.5">
-            <el-button type="danger" plain icon="Delete" :disabled="multiple" @click="handleDelete()" v-hasPermi="['event:info:remove']">删除</el-button>
+            <el-button type="danger" plain icon="Delete" :disabled="multiple" @click="handleDelete()" v-hasPermi="['event:info:remove']"
+              >删除</el-button
+            >
           </el-col>
           <el-col :span="1.5">
             <el-button type="warning" plain icon="Download" @click="handleExport" v-hasPermi="['event:info:export']">导出</el-button>
@@ -96,7 +98,7 @@
         <el-table-column label="创建时间" align="center" prop="createTime" width="120" />
         <el-table-column label="封面图片" align="center" prop="coverImageUrl" width="100">
           <template #default="scope">
-            <image-preview :src="scope.row.coverImageUrl" :width="50" :height="50"/>
+            <image-preview :src="scope.row.coverImageUrl" :width="50" :height="50" />
           </template>
         </el-table-column>
         <el-table-column label="标题" align="center" prop="title" />
@@ -111,7 +113,7 @@
         <!-- <el-table-column label="扩展信息" align="center" prop="exInfo" /> -->
         <el-table-column label="状态" align="center" prop="state">
           <template #default="scope">
-            <dict-tag :options="sys_normal_disable" :value="scope.row.state"/>
+            <dict-tag :options="sys_normal_disable" :value="scope.row.state" />
           </template>
         </el-table-column>
         <el-table-column label="操作" align="center" class-name="small-padding fixed-width" fixed="right">
@@ -138,27 +140,21 @@
           <el-input v-model="form.title" placeholder="请输入标题" />
         </el-form-item>
         <el-form-item label="发布时间" prop="publishTime">
-          <el-date-picker clearable
-            v-model="form.publishTime"
-            type="datetime"
-            value-format="YYYY-MM-DD HH:mm:ss"
-            placeholder="请选择发布时间">
+          <el-date-picker clearable v-model="form.publishTime" type="datetime" value-format="YYYY-MM-DD HH:mm:ss" placeholder="请选择发布时间">
           </el-date-picker>
         </el-form-item>
         <el-form-item label="报名截止" prop="applicationDeadline">
-          <el-date-picker clearable
+          <el-date-picker
+            clearable
             v-model="form.applicationDeadline"
             type="datetime"
             value-format="YYYY-MM-DD HH:mm:ss"
-            placeholder="请选择报名截止">
+            placeholder="请选择报名截止"
+          >
           </el-date-picker>
         </el-form-item>
         <el-form-item label="开始时间" prop="startTime">
-          <el-date-picker clearable
-            v-model="form.startTime"
-            type="datetime"
-            value-format="YYYY-MM-DD HH:mm:ss"
-            placeholder="请选择开始时间">
+          <el-date-picker clearable v-model="form.startTime" type="datetime" value-format="YYYY-MM-DD HH:mm:ss" placeholder="请选择开始时间">
           </el-date-picker>
         </el-form-item>
         <el-form-item label="名额" prop="quota">
@@ -168,25 +164,20 @@
           <el-input v-model="form.location" placeholder="请输入地点" />
         </el-form-item>
         <el-form-item label="活动安排" prop="arrangement">
-            <el-input v-model="form.arrangement" type="textarea" placeholder="请输入内容" />
+          <el-input v-model="form.arrangement" type="textarea" placeholder="请输入内容" />
         </el-form-item>
         <el-form-item label="报名会员快照" prop="members">
-            <el-input v-model="form.members" type="textarea" placeholder="请输入内容" />
+          <el-input v-model="form.members" type="textarea" placeholder="请输入内容" />
         </el-form-item>
         <el-form-item label="备注信息">
-          <editor v-model="form.remark" :min-height="192"/>
+          <editor v-model="form.remark" :min-height="192" />
         </el-form-item>
         <el-form-item label="扩展信息" prop="exInfo">
-            <el-input v-model="form.exInfo" type="textarea" placeholder="请输入内容" />
+          <el-input v-model="form.exInfo" type="textarea" placeholder="请输入内容" />
         </el-form-item>
         <el-form-item label="状态" prop="state">
           <el-select v-model="form.state" placeholder="请选择状态">
-            <el-option
-                v-for="dict in sys_normal_disable"
-                :key="dict.value"
-                :label="dict.label"
-                :value="dict.value"
-            ></el-option>
+            <el-option v-for="dict in sys_normal_disable" :key="dict.value" :label="dict.label" :value="dict.value"></el-option>
           </el-select>
         </el-form-item>
       </el-form>
@@ -243,9 +234,9 @@ const initFormData: InfoForm = {
   remark: undefined,
   exInfo: undefined,
   state: undefined
-}
+};
 const data = reactive<PageData<InfoForm, InfoQuery>>({
-  form: {...initFormData},
+  form: { ...initFormData },
   queryParams: {
     pageNum: 1,
     pageSize: 10,
@@ -257,40 +248,20 @@ const data = reactive<PageData<InfoForm, InfoQuery>>({
       createTime: undefined,
       publishTime: undefined,
       applicationDeadline: undefined,
-      startTime: undefined,
+      startTime: undefined
     }
   },
   rules: {
-    id: [
-      { required: true, message: "ID不能为空", trigger: "blur" }
-    ],
-    coverImage: [
-      { required: true, message: "封面图片不能为空", trigger: "blur" }
-    ],
-    title: [
-      { required: true, message: "标题不能为空", trigger: "blur" }
-    ],
-    publishTime: [
-      { required: true, message: "发布时间不能为空", trigger: "blur" }
-    ],
-    applicationDeadline: [
-      { required: true, message: "报名截止不能为空", trigger: "blur" }
-    ],
-    startTime: [
-      { required: true, message: "开始时间不能为空", trigger: "blur" }
-    ],
-    quota: [
-      { required: true, message: "名额不能为空", trigger: "blur" }
-    ],
-    location: [
-      { required: true, message: "地点不能为空", trigger: "blur" }
-    ],
-    arrangement: [
-      { required: true, message: "活动安排不能为空", trigger: "blur" }
-    ],
-    state: [
-      { required: true, message: "状态不能为空", trigger: "change" }
-    ]
+    id: [{ required: true, message: 'ID不能为空', trigger: 'blur' }],
+    coverImage: [{ required: true, message: '封面图片不能为空', trigger: 'blur' }],
+    title: [{ required: true, message: '标题不能为空', trigger: 'blur' }],
+    publishTime: [{ required: true, message: '发布时间不能为空', trigger: 'blur' }],
+    applicationDeadline: [{ required: true, message: '报名截止不能为空', trigger: 'blur' }],
+    startTime: [{ required: true, message: '开始时间不能为空', trigger: 'blur' }],
+    quota: [{ required: true, message: '名额不能为空', trigger: 'blur' }],
+    location: [{ required: true, message: '地点不能为空', trigger: 'blur' }],
+    arrangement: [{ required: true, message: '活动安排不能为空', trigger: 'blur' }],
+    state: [{ required: true, message: '状态不能为空', trigger: 'change' }]
   }
 });
 
@@ -308,25 +279,25 @@ const getList = async () => {
   infoList.value = res.rows;
   total.value = res.total;
   loading.value = false;
-}
+};
 
 /** 取消按钮 */
 const cancel = () => {
   reset();
   dialog.visible = false;
-}
+};
 
 /** 表单重置 */
 const reset = () => {
-  form.value = {...initFormData};
+  form.value = { ...initFormData };
   infoFormRef.value?.resetFields();
-}
+};
 
 /** 搜索按钮操作 */
 const handleQuery = () => {
   queryParams.value.pageNum = 1;
   getList();
-}
+};
 
 /** 重置按钮操作 */
 const resetQuery = () => {
@@ -336,31 +307,31 @@ const resetQuery = () => {
   dateRangeStartTime.value = ['', ''];
   queryFormRef.value?.resetFields();
   handleQuery();
-}
+};
 
 /** 多选框选中数据 */
 const handleSelectionChange = (selection: InfoVO[]) => {
-  ids.value = selection.map(item => item.id);
+  ids.value = selection.map((item) => item.id);
   single.value = selection.length != 1;
   multiple.value = !selection.length;
-}
+};
 
 /** 新增按钮操作 */
 const handleAdd = () => {
   reset();
   dialog.visible = true;
-  dialog.title = "添加活动信息";
-}
+  dialog.title = '添加活动信息';
+};
 
 /** 修改按钮操作 */
 const handleUpdate = async (row?: InfoVO) => {
   reset();
-  const _id = row?.id || ids.value[0]
+  const _id = row?.id || ids.value[0];
   const res = await getInfo(_id);
   Object.assign(form.value, res.data);
   dialog.visible = true;
-  dialog.title = "修改活动信息";
-}
+  dialog.title = '修改活动信息';
+};
 
 /** 提交按钮 */
 const submitForm = () => {
@@ -368,32 +339,36 @@ const submitForm = () => {
     if (valid) {
       buttonLoading.value = true;
       if (form.value.id) {
-        await updateInfo(form.value).finally(() =>  buttonLoading.value = false);
+        await updateInfo(form.value).finally(() => (buttonLoading.value = false));
       } else {
-        await addInfo(form.value).finally(() =>  buttonLoading.value = false);
+        await addInfo(form.value).finally(() => (buttonLoading.value = false));
       }
-      proxy?.$modal.msgSuccess("操作成功");
+      proxy?.$modal.msgSuccess('操作成功');
       dialog.visible = false;
       await getList();
     }
   });
-}
+};
 
 /** 删除按钮操作 */
 const handleDelete = async (row?: InfoVO) => {
   const _ids = row?.id || ids.value;
-  await proxy?.$modal.confirm('是否确认删除活动信息编号为"' + _ids + '"的数据项？').finally(() => loading.value = false);
+  await proxy?.$modal.confirm('是否确认删除活动信息编号为"' + _ids + '"的数据项？').finally(() => (loading.value = false));
   await delInfo(_ids);
-  proxy?.$modal.msgSuccess("删除成功");
+  proxy?.$modal.msgSuccess('删除成功');
   await getList();
-}
+};
 
 /** 导出按钮操作 */
 const handleExport = () => {
-  proxy?.download('event/info/export', {
-    ...queryParams.value
-  }, `info_${new Date().getTime()}.xlsx`)
-}
+  proxy?.download(
+    'event/info/export',
+    {
+      ...queryParams.value
+    },
+    `info_${new Date().getTime()}.xlsx`
+  );
+};
 
 onMounted(() => {
   getList();

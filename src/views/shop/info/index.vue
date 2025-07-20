@@ -22,8 +22,8 @@
               <el-input v-model="queryParams.name" placeholder="请输入名称" clearable @keyup.enter="handleQuery" />
             </el-form-item>
             <el-form-item label="店铺状态" prop="state">
-              <el-select v-model="queryParams.state" placeholder="请选择店铺状态" clearable >
-                <el-option v-for="dict in sys_normal_disable" :key="dict.value" :label="dict.label" :value="dict.value"/>
+              <el-select v-model="queryParams.state" placeholder="请选择店铺状态" clearable>
+                <el-option v-for="dict in sys_normal_disable" :key="dict.value" :label="dict.label" :value="dict.value" />
               </el-select>
             </el-form-item>
             <el-form-item>
@@ -45,7 +45,9 @@
             <el-button type="success" plain icon="Edit" :disabled="single" @click="handleUpdate()" v-hasPermi="['shop:info:edit']">修改</el-button>
           </el-col>
           <el-col :span="1.5">
-            <el-button type="danger" plain icon="Delete" :disabled="multiple" @click="handleDelete()" v-hasPermi="['shop:info:remove']">删除</el-button>
+            <el-button type="danger" plain icon="Delete" :disabled="multiple" @click="handleDelete()" v-hasPermi="['shop:info:remove']"
+              >删除</el-button
+            >
           </el-col>
           <el-col :span="1.5">
             <el-button type="warning" plain icon="Download" @click="handleExport" v-hasPermi="['shop:info:export']">导出</el-button>
@@ -61,12 +63,12 @@
         <el-table-column label="名称" align="center" prop="name" />
         <el-table-column label="商标" align="center" prop="logoUrl" width="100">
           <template #default="scope">
-            <image-preview :src="scope.row.logoUrl" :width="50" :height="50"/>
+            <image-preview :src="scope.row.logoUrl" :width="50" :height="50" />
           </template>
         </el-table-column>
         <el-table-column label="主图" align="center" prop="mainPicUrl" width="100">
           <template #default="scope">
-            <image-preview :src="scope.row.mainPicUrl" :width="50" :height="50"/>
+            <image-preview :src="scope.row.mainPicUrl" :width="50" :height="50" />
           </template>
         </el-table-column>
         <el-table-column label="店铺评分" align="center" width="280">
@@ -76,7 +78,7 @@
         </el-table-column>
         <el-table-column label="店铺状态" align="center" prop="state">
           <template #default="scope">
-            <dict-tag :options="sys_normal_disable" :value="scope.row.state"/>
+            <dict-tag :options="sys_normal_disable" :value="scope.row.state" />
           </template>
         </el-table-column>
         <el-table-column label="操作" align="center" class-name="small-padding fixed-width" fixed="right">
@@ -103,22 +105,19 @@
           <image-upload v-model="form.logo" :limit="1" />
         </el-form-item>
         <el-form-item label="主图" prop="mainPic">
-          <image-upload v-model="form.mainPic" :limit="1"/>
+          <image-upload v-model="form.mainPic" :limit="1" />
         </el-form-item>
         <el-form-item label="店铺评分" prop="rating">
           <el-space>
             <el-input-number v-model="form.rating" placeholder="请输入店铺评分" :min="0" :max="10" :precision="0" />
-            <el-tooltip content="0-10 分" placement="top"><el-icon><QuestionFilled /></el-icon></el-tooltip>
+            <el-tooltip content="0-10 分" placement="top"
+              ><el-icon><QuestionFilled /></el-icon
+            ></el-tooltip>
           </el-space>
         </el-form-item>
         <el-form-item label="店铺状态" prop="state">
           <el-select v-model="form.state" placeholder="请选择店铺状态">
-            <el-option
-                v-for="dict in sys_normal_disable"
-                :key="dict.value"
-                :label="dict.label"
-                :value="dict.value"
-            ></el-option>
+            <el-option v-for="dict in sys_normal_disable" :key="dict.value" :label="dict.label" :value="dict.value"></el-option>
           </el-select>
         </el-form-item>
       </el-form>
@@ -164,10 +163,10 @@ const initFormData: InfoForm = {
   logo: undefined,
   mainPic: undefined,
   rating: undefined,
-  state: "0"
-}
+  state: '0'
+};
 const data = reactive<PageData<InfoForm, InfoQuery>>({
-  form: {...initFormData},
+  form: { ...initFormData },
   queryParams: {
     pageNum: 1,
     pageSize: 10,
@@ -176,22 +175,14 @@ const data = reactive<PageData<InfoForm, InfoQuery>>({
     rating: undefined,
     state: undefined,
     params: {
-      createTime: undefined,
+      createTime: undefined
     }
   },
   rules: {
-    id: [
-      { required: true, message: "ID不能为空", trigger: "blur" }
-    ],
-    name: [
-      { required: true, message: "名称不能为空", trigger: "blur" }
-    ],
-    rating: [
-      { required: true, message: "店铺评分不能为空", trigger: "blur" }
-    ],
-    state: [
-      { required: true, message: "店铺状态不能为空", trigger: "change" }
-    ]
+    id: [{ required: true, message: 'ID不能为空', trigger: 'blur' }],
+    name: [{ required: true, message: '名称不能为空', trigger: 'blur' }],
+    rating: [{ required: true, message: '店铺评分不能为空', trigger: 'blur' }],
+    state: [{ required: true, message: '店铺状态不能为空', trigger: 'change' }]
   }
 });
 
@@ -206,56 +197,56 @@ const getList = async () => {
   infoList.value = res.rows;
   total.value = res.total;
   loading.value = false;
-}
+};
 
 /** 取消按钮 */
 const cancel = () => {
   reset();
   dialog.visible = false;
-}
+};
 
 /** 表单重置 */
 const reset = () => {
-  form.value = {...initFormData};
+  form.value = { ...initFormData };
   infoFormRef.value?.resetFields();
-}
+};
 
 /** 搜索按钮操作 */
 const handleQuery = () => {
   queryParams.value.pageNum = 1;
   getList();
-}
+};
 
 /** 重置按钮操作 */
 const resetQuery = () => {
   dateRangeCreateTime.value = ['', ''];
   queryFormRef.value?.resetFields();
   handleQuery();
-}
+};
 
 /** 多选框选中数据 */
 const handleSelectionChange = (selection: InfoVO[]) => {
-  ids.value = selection.map(item => item.id);
+  ids.value = selection.map((item) => item.id);
   single.value = selection.length != 1;
   multiple.value = !selection.length;
-}
+};
 
 /** 新增按钮操作 */
 const handleAdd = () => {
   reset();
   dialog.visible = true;
-  dialog.title = "添加店铺信息";
-}
+  dialog.title = '添加店铺信息';
+};
 
 /** 修改按钮操作 */
 const handleUpdate = async (row?: InfoVO) => {
   reset();
-  const _id = row?.id || ids.value[0]
+  const _id = row?.id || ids.value[0];
   const res = await getInfo(_id);
   Object.assign(form.value, res.data);
   dialog.visible = true;
-  dialog.title = "修改店铺信息";
-}
+  dialog.title = '修改店铺信息';
+};
 
 /** 提交按钮 */
 const submitForm = () => {
@@ -263,32 +254,36 @@ const submitForm = () => {
     if (valid) {
       buttonLoading.value = true;
       if (form.value.id) {
-        await updateInfo(form.value).finally(() =>  buttonLoading.value = false);
+        await updateInfo(form.value).finally(() => (buttonLoading.value = false));
       } else {
-        await addInfo(form.value).finally(() =>  buttonLoading.value = false);
+        await addInfo(form.value).finally(() => (buttonLoading.value = false));
       }
-      proxy?.$modal.msgSuccess("操作成功");
+      proxy?.$modal.msgSuccess('操作成功');
       dialog.visible = false;
       await getList();
     }
   });
-}
+};
 
 /** 删除按钮操作 */
 const handleDelete = async (row?: InfoVO) => {
   const _ids = row?.id || ids.value;
-  await proxy?.$modal.confirm('是否确认删除店铺信息编号为"' + _ids + '"的数据项？').finally(() => loading.value = false);
+  await proxy?.$modal.confirm('是否确认删除店铺信息编号为"' + _ids + '"的数据项？').finally(() => (loading.value = false));
   await delInfo(_ids);
-  proxy?.$modal.msgSuccess("删除成功");
+  proxy?.$modal.msgSuccess('删除成功');
   await getList();
-}
+};
 
 /** 导出按钮操作 */
 const handleExport = () => {
-  proxy?.download('shop/info/export', {
-    ...queryParams.value
-  }, `info_${new Date().getTime()}.xlsx`)
-}
+  proxy?.download(
+    'shop/info/export',
+    {
+      ...queryParams.value
+    },
+    `info_${new Date().getTime()}.xlsx`
+  );
+};
 
 onMounted(() => {
   getList();

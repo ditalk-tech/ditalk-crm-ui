@@ -31,8 +31,8 @@
               <el-input v-model="queryParams.pinyin" placeholder="请输入姓名拼音" clearable @keyup.enter="handleQuery" />
             </el-form-item>
             <el-form-item label="性别" prop="gender">
-              <el-select v-model="queryParams.gender" placeholder="请选择性别" clearable >
-                <el-option v-for="dict in sys_user_sex" :key="dict.value" :label="dict.label" :value="dict.value"/>
+              <el-select v-model="queryParams.gender" placeholder="请选择性别" clearable>
+                <el-option v-for="dict in sys_user_sex" :key="dict.value" :label="dict.label" :value="dict.value" />
               </el-select>
             </el-form-item>
             <el-form-item label="电子邮箱" prop="email">
@@ -42,75 +42,75 @@
               <el-input v-model="queryParams.phone" placeholder="请输入联系电话" clearable @keyup.enter="handleQuery" />
             </el-form-item>
             <template v-if="showMoreConditions">
-            <el-form-item label="职位" prop="position">
-              <el-input v-model="queryParams.position" placeholder="请输入职位" clearable @keyup.enter="handleQuery" />
-            </el-form-item>
-            <el-form-item label="生日" style="width: 308px">
-              <el-date-picker
-                v-model="dateRangeBirthday"
-                value-format="YYYY-MM-DD HH:mm:ss"
-                type="daterange"
-                range-separator="-"
-                start-placeholder="开始日期"
-                end-placeholder="结束日期"
-                :default-time="[new Date(2000, 1, 1, 0, 0, 0), new Date(2000, 1, 1, 23, 59, 59)]"
-              />
-            </el-form-item>
-            <el-form-item label="户籍" prop="placeOfOrigin">
-              <el-input v-model="queryParams.placeOfOrigin" placeholder="请输入户籍" clearable @keyup.enter="handleQuery" />
-            </el-form-item>
-            <el-form-item label="居住地" prop="address">
-              <el-input v-model="queryParams.address" placeholder="请输入居住地" clearable @keyup.enter="handleQuery" />
-            </el-form-item>
-            <el-form-item label="毕业学校" prop="graduationSchool">
-              <el-input v-model="queryParams.graduationSchool" placeholder="请输入毕业学校" clearable @keyup.enter="handleQuery" />
-            </el-form-item>
-            <el-form-item label="学历" prop="qualification">
-              <el-select v-model="queryParams.qualification" placeholder="请选择学历" clearable >
-                <el-option v-for="dict in ditalk_educational_qualification" :key="dict.value" :label="dict.label" :value="dict.value"/>
-              </el-select>
-            </el-form-item>
-            <el-form-item label="社会角色" prop="socialRole">
-              <el-input v-model="queryParams.socialRole" placeholder="请输入社会角色" clearable @keyup.enter="handleQuery" />
-            </el-form-item>
-            <el-form-item label="最近接触时间" style="width: 308px">
-              <el-date-picker
-                v-model="dateRangeLastContactTime"
-                value-format="YYYY-MM-DD HH:mm:ss"
-                type="daterange"
-                range-separator="-"
-                start-placeholder="开始日期"
-                end-placeholder="结束日期"
-                :default-time="[new Date(2000, 1, 1, 0, 0, 0), new Date(2000, 1, 1, 23, 59, 59)]"
-              />
-            </el-form-item>
-            <el-form-item label="接触频率" prop="contactFrequency">
-              <el-select v-model="queryParams.contactFrequency" placeholder="请选择接触频率" clearable >
-                <el-option v-for="dict in ditalk_contact_frequency" :key="dict.value" :label="dict.label" :value="dict.value"/>
-              </el-select>
-            </el-form-item>
-            <el-form-item label="微信" prop="wechat">
-              <el-input v-model="queryParams.wechat" placeholder="请输入微信" clearable @keyup.enter="handleQuery" />
-            </el-form-item>
-            <el-form-item label="QQ" prop="qq">
-              <el-input v-model="queryParams.qq" placeholder="请输入QQ" clearable @keyup.enter="handleQuery" />
-            </el-form-item>
-            <el-form-item label="钉钉" prop="dingTalk">
-              <el-input v-model="queryParams.dingTalk" placeholder="请输入钉钉" clearable @keyup.enter="handleQuery" />
-            </el-form-item>
-            <el-form-item label="飞书" prop="lark">
-              <el-input v-model="queryParams.lark" placeholder="请输入飞书" clearable @keyup.enter="handleQuery" />
-            </el-form-item>
-            <el-form-item label="WhatsApp" prop="whatsApp">
-              <el-input v-model="queryParams.whatsApp" placeholder="请输入WhatsApp" clearable @keyup.enter="handleQuery" />
-            </el-form-item>
-            <el-form-item label="Facebook" prop="facebook">
-              <el-input v-model="queryParams.facebook" placeholder="请输入Facebook" clearable @keyup.enter="handleQuery" />
-            </el-form-item>
+              <el-form-item label="职位" prop="position">
+                <el-input v-model="queryParams.position" placeholder="请输入职位" clearable @keyup.enter="handleQuery" />
+              </el-form-item>
+              <el-form-item label="生日" style="width: 308px">
+                <el-date-picker
+                  v-model="dateRangeBirthday"
+                  value-format="YYYY-MM-DD HH:mm:ss"
+                  type="daterange"
+                  range-separator="-"
+                  start-placeholder="开始日期"
+                  end-placeholder="结束日期"
+                  :default-time="[new Date(2000, 1, 1, 0, 0, 0), new Date(2000, 1, 1, 23, 59, 59)]"
+                />
+              </el-form-item>
+              <el-form-item label="户籍" prop="placeOfOrigin">
+                <el-input v-model="queryParams.placeOfOrigin" placeholder="请输入户籍" clearable @keyup.enter="handleQuery" />
+              </el-form-item>
+              <el-form-item label="居住地" prop="address">
+                <el-input v-model="queryParams.address" placeholder="请输入居住地" clearable @keyup.enter="handleQuery" />
+              </el-form-item>
+              <el-form-item label="毕业学校" prop="graduationSchool">
+                <el-input v-model="queryParams.graduationSchool" placeholder="请输入毕业学校" clearable @keyup.enter="handleQuery" />
+              </el-form-item>
+              <el-form-item label="学历" prop="qualification">
+                <el-select v-model="queryParams.qualification" placeholder="请选择学历" clearable>
+                  <el-option v-for="dict in ditalk_educational_qualification" :key="dict.value" :label="dict.label" :value="dict.value" />
+                </el-select>
+              </el-form-item>
+              <el-form-item label="社会角色" prop="socialRole">
+                <el-input v-model="queryParams.socialRole" placeholder="请输入社会角色" clearable @keyup.enter="handleQuery" />
+              </el-form-item>
+              <el-form-item label="最近接触时间" style="width: 308px">
+                <el-date-picker
+                  v-model="dateRangeLastContactTime"
+                  value-format="YYYY-MM-DD HH:mm:ss"
+                  type="daterange"
+                  range-separator="-"
+                  start-placeholder="开始日期"
+                  end-placeholder="结束日期"
+                  :default-time="[new Date(2000, 1, 1, 0, 0, 0), new Date(2000, 1, 1, 23, 59, 59)]"
+                />
+              </el-form-item>
+              <el-form-item label="接触频率" prop="contactFrequency">
+                <el-select v-model="queryParams.contactFrequency" placeholder="请选择接触频率" clearable>
+                  <el-option v-for="dict in ditalk_contact_frequency" :key="dict.value" :label="dict.label" :value="dict.value" />
+                </el-select>
+              </el-form-item>
+              <el-form-item label="微信" prop="wechat">
+                <el-input v-model="queryParams.wechat" placeholder="请输入微信" clearable @keyup.enter="handleQuery" />
+              </el-form-item>
+              <el-form-item label="QQ" prop="qq">
+                <el-input v-model="queryParams.qq" placeholder="请输入QQ" clearable @keyup.enter="handleQuery" />
+              </el-form-item>
+              <el-form-item label="钉钉" prop="dingTalk">
+                <el-input v-model="queryParams.dingTalk" placeholder="请输入钉钉" clearable @keyup.enter="handleQuery" />
+              </el-form-item>
+              <el-form-item label="飞书" prop="lark">
+                <el-input v-model="queryParams.lark" placeholder="请输入飞书" clearable @keyup.enter="handleQuery" />
+              </el-form-item>
+              <el-form-item label="WhatsApp" prop="whatsApp">
+                <el-input v-model="queryParams.whatsApp" placeholder="请输入WhatsApp" clearable @keyup.enter="handleQuery" />
+              </el-form-item>
+              <el-form-item label="Facebook" prop="facebook">
+                <el-input v-model="queryParams.facebook" placeholder="请输入Facebook" clearable @keyup.enter="handleQuery" />
+              </el-form-item>
             </template>
             <el-form-item label="状态" prop="state">
-              <el-select v-model="queryParams.state" placeholder="请选择状态" clearable >
-                <el-option v-for="dict in ditalk_contact_state" :key="dict.value" :label="dict.label" :value="dict.value"/>
+              <el-select v-model="queryParams.state" placeholder="请选择状态" clearable>
+                <el-option v-for="dict in ditalk_contact_state" :key="dict.value" :label="dict.label" :value="dict.value" />
               </el-select>
             </el-form-item>
             <el-form-item>
@@ -133,7 +133,9 @@
             <el-button type="success" plain icon="Edit" :disabled="single" @click="handleUpdate()" v-hasPermi="['contact:info:edit']">修改</el-button>
           </el-col>
           <el-col :span="1.5">
-            <el-button type="danger" plain icon="Delete" :disabled="multiple" @click="handleDelete()" v-hasPermi="['contact:info:remove']">删除</el-button>
+            <el-button type="danger" plain icon="Delete" :disabled="multiple" @click="handleDelete()" v-hasPermi="['contact:info:remove']"
+              >删除</el-button
+            >
           </el-col>
           <el-col :span="1.5">
             <el-button type="warning" plain icon="Download" @click="handleExport" v-hasPermi="['contact:info:export']">导出</el-button>
@@ -151,13 +153,13 @@
         <el-table-column label="名称" align="center" prop="firstName" />
         <el-table-column label="头像" align="center" prop="avatarUrl" width="100">
           <template #default="scope">
-            <image-preview :src="scope.row.avatarUrl" :width="50" :height="50"/>
+            <image-preview :src="scope.row.avatarUrl" :width="50" :height="50" />
           </template>
         </el-table-column>
         <el-table-column label="姓名拼音" align="center" prop="pinyin" />
         <el-table-column label="性别" align="center" prop="gender">
           <template #default="scope">
-            <dict-tag :options="sys_user_sex" :value="scope.row.gender ?? ''"/>
+            <dict-tag :options="sys_user_sex" :value="scope.row.gender ?? ''" />
           </template>
         </el-table-column>
         <el-table-column label="电子邮箱" align="center" prop="email" />
@@ -170,14 +172,14 @@
         <el-table-column label="毕业学校" align="center" prop="graduationSchool" />
         <el-table-column label="学历" align="center" prop="qualification">
           <template #default="scope">
-            <dict-tag :options="ditalk_educational_qualification" :value="scope.row.qualification ?? ''"/>
+            <dict-tag :options="ditalk_educational_qualification" :value="scope.row.qualification ?? ''" />
           </template>
         </el-table-column>
         <el-table-column label="社会角色" align="center" prop="socialRole" />
         <el-table-column label="最近接触时间" align="center" prop="lastContactTime" width="180" />
         <el-table-column label="接触频率" align="center" prop="contactFrequency">
           <template #default="scope">
-            <dict-tag :options="ditalk_contact_frequency" :value="scope.row.contactFrequency ?? ''"/>
+            <dict-tag :options="ditalk_contact_frequency" :value="scope.row.contactFrequency ?? ''" />
           </template>
         </el-table-column>
         <el-table-column label="微信" align="center" prop="wechat" />
@@ -188,7 +190,7 @@
         <el-table-column label="Facebook" align="center" prop="facebook" />
         <el-table-column label="状态" align="center" prop="state">
           <template #default="scope">
-            <dict-tag :options="ditalk_contact_state" :value="scope.row.state"/>
+            <dict-tag :options="ditalk_contact_state" :value="scope.row.state" />
           </template>
         </el-table-column>
         <el-table-column label="操作" align="center" class-name="small-padding fixed-width" fixed="right">
@@ -218,18 +220,14 @@
           <el-input v-model="form.firstName" placeholder="请输入名称" />
         </el-form-item>
         <el-form-item label="头像" prop="avatar">
-          <image-upload v-model="form.avatar" :limit="1"/>
+          <image-upload v-model="form.avatar" :limit="1" />
         </el-form-item>
         <el-form-item label="姓名拼音" prop="pinyin">
           <el-input v-model="form.pinyin" placeholder="请输入姓名拼音" />
         </el-form-item>
         <el-form-item label="性别" prop="gender">
           <el-radio-group v-model="form.gender">
-            <el-radio
-              v-for="dict in sys_user_sex"
-              :key="dict.value"
-              :value="dict.value"
-            >{{dict.label}}</el-radio>
+            <el-radio v-for="dict in sys_user_sex" :key="dict.value" :value="dict.value">{{ dict.label }}</el-radio>
           </el-radio-group>
         </el-form-item>
         <el-form-item label="电子邮箱" prop="email">
@@ -242,14 +240,10 @@
           <el-input v-model="form.position" placeholder="请输入职位" />
         </el-form-item>
         <el-form-item label="备注信息" prop="remark">
-            <el-input v-model="form.remark" type="textarea" placeholder="请输入内容" />
+          <el-input v-model="form.remark" type="textarea" placeholder="请输入内容" />
         </el-form-item>
         <el-form-item label="生日" prop="birthday">
-          <el-date-picker clearable
-            v-model="form.birthday"
-            type="datetime"
-            value-format="YYYY-MM-DD HH:mm:ss"
-            placeholder="请选择生日">
+          <el-date-picker clearable v-model="form.birthday" type="datetime" value-format="YYYY-MM-DD HH:mm:ss" placeholder="请选择生日">
           </el-date-picker>
         </el-form-item>
         <el-form-item label="户籍" prop="placeOfOrigin">
@@ -263,33 +257,25 @@
         </el-form-item>
         <el-form-item label="学历" prop="qualification">
           <el-select v-model="form.qualification" placeholder="请选择学历">
-            <el-option
-                v-for="dict in ditalk_educational_qualification"
-                :key="dict.value"
-                :label="dict.label"
-                :value="dict.value"
-            ></el-option>
+            <el-option v-for="dict in ditalk_educational_qualification" :key="dict.value" :label="dict.label" :value="dict.value"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="社会角色" prop="socialRole">
           <el-input v-model="form.socialRole" placeholder="请输入社会角色" />
         </el-form-item>
         <el-form-item label="最近接触时间" prop="lastContactTime">
-          <el-date-picker clearable
+          <el-date-picker
+            clearable
             v-model="form.lastContactTime"
             type="datetime"
             value-format="YYYY-MM-DD HH:mm:ss"
-            placeholder="请选择最近接触时间">
+            placeholder="请选择最近接触时间"
+          >
           </el-date-picker>
         </el-form-item>
         <el-form-item label="接触频率" prop="contactFrequency" clearable>
           <el-select v-model="form.contactFrequency" placeholder="请选择接触频率">
-            <el-option
-                v-for="dict in ditalk_contact_frequency"
-                :key="dict.value"
-                :label="dict.label"
-                :value="dict.value"
-            ></el-option>
+            <el-option v-for="dict in ditalk_contact_frequency" :key="dict.value" :label="dict.label" :value="dict.value"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="微信" prop="wechat">
@@ -312,11 +298,7 @@
         </el-form-item>
         <el-form-item label="状态" prop="state">
           <el-radio-group v-model="form.state">
-            <el-radio
-              v-for="dict in ditalk_contact_state"
-              :key="dict.value"
-              :value="dict.value"
-            >{{dict.label}}</el-radio>
+            <el-radio v-for="dict in ditalk_contact_state" :key="dict.value" :value="dict.value">{{ dict.label }}</el-radio>
           </el-radio-group>
         </el-form-item>
       </el-form>
@@ -335,7 +317,9 @@ import { listInfo, getInfo, delInfo, addInfo, updateInfo } from '@/api/contact/i
 import { InfoVO, InfoQuery, InfoForm } from '@/api/contact/info/types';
 
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
-const { ditalk_educational_qualification, ditalk_contact_frequency, ditalk_contact_state, sys_user_sex } = toRefs<any>(proxy?.useDict('ditalk_educational_qualification', 'ditalk_contact_frequency', 'ditalk_contact_state', 'sys_user_sex'));
+const { ditalk_educational_qualification, ditalk_contact_frequency, ditalk_contact_state, sys_user_sex } = toRefs<any>(
+  proxy?.useDict('ditalk_educational_qualification', 'ditalk_contact_frequency', 'ditalk_contact_state', 'sys_user_sex')
+);
 
 const infoList = ref<InfoVO[]>([]);
 const buttonLoading = ref(false);
@@ -352,7 +336,7 @@ const dateRangeLastContactTime = ref<[DateModelType, DateModelType]>(['', '']);
 const queryFormRef = ref<ElFormInstance>();
 const infoFormRef = ref<ElFormInstance>();
 
-const showMoreConditions = ref<Boolean>(false);
+const showMoreConditions = ref<boolean>(false);
 
 const dialog = reactive<DialogOption>({
   visible: false,
@@ -386,9 +370,9 @@ const initFormData: InfoForm = {
   whatsApp: undefined,
   facebook: undefined,
   state: undefined
-}
+};
 const data = reactive<PageData<InfoForm, InfoQuery>>({
-  form: {...initFormData},
+  form: { ...initFormData },
   queryParams: {
     pageNum: 1,
     pageSize: 10,
@@ -417,22 +401,14 @@ const data = reactive<PageData<InfoForm, InfoQuery>>({
     params: {
       createTime: undefined,
       birthday: undefined,
-      lastContactTime: undefined,
+      lastContactTime: undefined
     }
   },
   rules: {
-    id: [
-      { required: true, message: "ID不能为空", trigger: "blur" }
-    ],
-    customerId: [
-      { required: true, message: "客户ID不能为空", trigger: "blur" }
-    ],
-    firstName: [
-      { required: true, message: "名称不能为空", trigger: "blur" }
-    ],
-    state: [
-      { required: true, message: "状态不能为空", trigger: "change" }
-    ]
+    id: [{ required: true, message: 'ID不能为空', trigger: 'blur' }],
+    customerId: [{ required: true, message: '客户ID不能为空', trigger: 'blur' }],
+    firstName: [{ required: true, message: '名称不能为空', trigger: 'blur' }],
+    state: [{ required: true, message: '状态不能为空', trigger: 'change' }]
   }
 });
 
@@ -449,25 +425,25 @@ const getList = async () => {
   infoList.value = res.rows;
   total.value = res.total;
   loading.value = false;
-}
+};
 
 /** 取消按钮 */
 const cancel = () => {
   reset();
   dialog.visible = false;
-}
+};
 
 /** 表单重置 */
 const reset = () => {
-  form.value = {...initFormData};
+  form.value = { ...initFormData };
   infoFormRef.value?.resetFields();
-}
+};
 
 /** 搜索按钮操作 */
 const handleQuery = () => {
   queryParams.value.pageNum = 1;
   getList();
-}
+};
 
 /** 重置按钮操作 */
 const resetQuery = () => {
@@ -476,31 +452,31 @@ const resetQuery = () => {
   dateRangeLastContactTime.value = ['', ''];
   queryFormRef.value?.resetFields();
   handleQuery();
-}
+};
 
 /** 多选框选中数据 */
 const handleSelectionChange = (selection: InfoVO[]) => {
-  ids.value = selection.map(item => item.id);
+  ids.value = selection.map((item) => item.id);
   single.value = selection.length != 1;
   multiple.value = !selection.length;
-}
+};
 
 /** 新增按钮操作 */
 const handleAdd = () => {
   reset();
   dialog.visible = true;
-  dialog.title = "添加联系人信息";
-}
+  dialog.title = '添加联系人信息';
+};
 
 /** 修改按钮操作 */
 const handleUpdate = async (row?: InfoVO) => {
   reset();
-  const _id = row?.id || ids.value[0]
+  const _id = row?.id || ids.value[0];
   const res = await getInfo(_id);
   Object.assign(form.value, res.data);
   dialog.visible = true;
-  dialog.title = "修改联系人信息";
-}
+  dialog.title = '修改联系人信息';
+};
 
 /** 提交按钮 */
 const submitForm = () => {
@@ -508,32 +484,36 @@ const submitForm = () => {
     if (valid) {
       buttonLoading.value = true;
       if (form.value.id) {
-        await updateInfo(form.value).finally(() =>  buttonLoading.value = false);
+        await updateInfo(form.value).finally(() => (buttonLoading.value = false));
       } else {
-        await addInfo(form.value).finally(() =>  buttonLoading.value = false);
+        await addInfo(form.value).finally(() => (buttonLoading.value = false));
       }
-      proxy?.$modal.msgSuccess("操作成功");
+      proxy?.$modal.msgSuccess('操作成功');
       dialog.visible = false;
       await getList();
     }
   });
-}
+};
 
 /** 删除按钮操作 */
 const handleDelete = async (row?: InfoVO) => {
   const _ids = row?.id || ids.value;
-  await proxy?.$modal.confirm('是否确认删除联系人信息编号为"' + _ids + '"的数据项？').finally(() => loading.value = false);
+  await proxy?.$modal.confirm('是否确认删除联系人信息编号为"' + _ids + '"的数据项？').finally(() => (loading.value = false));
   await delInfo(_ids);
-  proxy?.$modal.msgSuccess("删除成功");
+  proxy?.$modal.msgSuccess('删除成功');
   await getList();
-}
+};
 
 /** 导出按钮操作 */
 const handleExport = () => {
-  proxy?.download('contact/info/export', {
-    ...queryParams.value
-  }, `info_${new Date().getTime()}.xlsx`)
-}
+  proxy?.download(
+    'contact/info/export',
+    {
+      ...queryParams.value
+    },
+    `info_${new Date().getTime()}.xlsx`
+  );
+};
 
 onMounted(() => {
   getList();

@@ -19,17 +19,12 @@
               />
             </el-form-item>
             <el-form-item label="状态" prop="state">
-              <el-select v-model="queryParams.state" placeholder="请选择状态" clearable >
-                <el-option v-for="dict in sys_normal_disable" :key="dict.value" :label="dict.label" :value="dict.value"/>
+              <el-select v-model="queryParams.state" placeholder="请选择状态" clearable>
+                <el-option v-for="dict in sys_normal_disable" :key="dict.value" :label="dict.label" :value="dict.value" />
               </el-select>
             </el-form-item>
             <el-form-item label="发生时间" prop="eventTime">
-              <el-date-picker clearable
-                v-model="queryParams.eventTime"
-                type="date"
-                value-format="YYYY-MM-DD"
-                placeholder="请选择发生时间"
-              />
+              <el-date-picker clearable v-model="queryParams.eventTime" type="date" value-format="YYYY-MM-DD" placeholder="请选择发生时间" />
             </el-form-item>
             <el-form-item label="内容" prop="content">
               <el-input v-model="queryParams.content" placeholder="请输入内容" clearable @keyup.enter="handleQuery" />
@@ -53,7 +48,9 @@
             <el-button type="success" plain icon="Edit" :disabled="single" @click="handleUpdate()" v-hasPermi="['news:info:edit']">修改</el-button>
           </el-col>
           <el-col :span="1.5">
-            <el-button type="danger" plain icon="Delete" :disabled="multiple" @click="handleDelete()" v-hasPermi="['news:info:remove']">删除</el-button>
+            <el-button type="danger" plain icon="Delete" :disabled="multiple" @click="handleDelete()" v-hasPermi="['news:info:remove']"
+              >删除</el-button
+            >
           </el-col>
           <el-col :span="1.5">
             <el-button type="warning" plain icon="Download" @click="handleExport" v-hasPermi="['news:info:export']">导出</el-button>
@@ -72,7 +69,7 @@
         </el-table-column>
         <el-table-column label="状态" align="center" prop="state">
           <template #default="scope">
-            <dict-tag :options="sys_normal_disable" :value="scope.row.state"/>
+            <dict-tag :options="sys_normal_disable" :value="scope.row.state" />
           </template>
         </el-table-column>
         <el-table-column label="发生时间" align="center" prop="eventTime" width="180">
@@ -99,24 +96,15 @@
     <el-dialog :title="dialog.title" v-model="dialog.visible" width="960px" append-to-body>
       <el-form ref="infoFormRef" :model="form" :rules="rules" label-width="120px">
         <el-form-item label="发生时间" prop="eventTime">
-          <el-date-picker clearable
-            v-model="form.eventTime"
-            type="datetime"
-            value-format="YYYY-MM-DD HH:mm:ss"
-            placeholder="请选择发生时间">
+          <el-date-picker clearable v-model="form.eventTime" type="datetime" value-format="YYYY-MM-DD HH:mm:ss" placeholder="请选择发生时间">
           </el-date-picker>
         </el-form-item>
         <el-form-item label="内容" prop="content">
-            <el-input v-model="form.content" placeholder="请输入内容" />
+          <el-input v-model="form.content" placeholder="请输入内容" />
         </el-form-item>
         <el-form-item label="状态" prop="state">
           <el-select v-model="form.state" placeholder="请选择状态">
-            <el-option
-                v-for="dict in sys_normal_disable"
-                :key="dict.value"
-                :label="dict.label"
-                :value="dict.value"
-            ></el-option>
+            <el-option v-for="dict in sys_normal_disable" :key="dict.value" :label="dict.label" :value="dict.value"></el-option>
           </el-select>
         </el-form-item>
       </el-form>
@@ -158,12 +146,12 @@ const dialog = reactive<DialogOption>({
 const initFormData: InfoForm = {
   id: undefined,
   version: undefined,
-  state: "0",
+  state: '0',
   eventTime: undefined,
   content: undefined
-}
+};
 const data = reactive<PageData<InfoForm, InfoQuery>>({
-  form: {...initFormData},
+  form: { ...initFormData },
   queryParams: {
     pageNum: 1,
     pageSize: 10,
@@ -172,22 +160,14 @@ const data = reactive<PageData<InfoForm, InfoQuery>>({
     eventTime: undefined,
     content: undefined,
     params: {
-      createTime: undefined,
+      createTime: undefined
     }
   },
   rules: {
-    id: [
-      { required: true, message: "ID不能为空", trigger: "blur" }
-    ],
-    state: [
-      { required: true, message: "状态不能为空", trigger: "change" }
-    ],
-    eventTime: [
-      { required: true, message: "发生时间不能为空", trigger: "blur" }
-    ],
-    content: [
-      { required: true, message: "内容不能为空", trigger: "blur" }
-    ]
+    id: [{ required: true, message: 'ID不能为空', trigger: 'blur' }],
+    state: [{ required: true, message: '状态不能为空', trigger: 'change' }],
+    eventTime: [{ required: true, message: '发生时间不能为空', trigger: 'blur' }],
+    content: [{ required: true, message: '内容不能为空', trigger: 'blur' }]
   }
 });
 
@@ -202,56 +182,56 @@ const getList = async () => {
   infoList.value = res.rows;
   total.value = res.total;
   loading.value = false;
-}
+};
 
 /** 取消按钮 */
 const cancel = () => {
   reset();
   dialog.visible = false;
-}
+};
 
 /** 表单重置 */
 const reset = () => {
-  form.value = {...initFormData};
+  form.value = { ...initFormData };
   infoFormRef.value?.resetFields();
-}
+};
 
 /** 搜索按钮操作 */
 const handleQuery = () => {
   queryParams.value.pageNum = 1;
   getList();
-}
+};
 
 /** 重置按钮操作 */
 const resetQuery = () => {
   dateRangeCreateTime.value = ['', ''];
   queryFormRef.value?.resetFields();
   handleQuery();
-}
+};
 
 /** 多选框选中数据 */
 const handleSelectionChange = (selection: InfoVO[]) => {
-  ids.value = selection.map(item => item.id);
+  ids.value = selection.map((item) => item.id);
   single.value = selection.length != 1;
   multiple.value = !selection.length;
-}
+};
 
 /** 新增按钮操作 */
 const handleAdd = () => {
   reset();
   dialog.visible = true;
-  dialog.title = "添加喜讯新闻";
-}
+  dialog.title = '添加喜讯新闻';
+};
 
 /** 修改按钮操作 */
 const handleUpdate = async (row?: InfoVO) => {
   reset();
-  const _id = row?.id || ids.value[0]
+  const _id = row?.id || ids.value[0];
   const res = await getInfo(_id);
   Object.assign(form.value, res.data);
   dialog.visible = true;
-  dialog.title = "修改喜讯新闻";
-}
+  dialog.title = '修改喜讯新闻';
+};
 
 /** 提交按钮 */
 const submitForm = () => {
@@ -259,32 +239,36 @@ const submitForm = () => {
     if (valid) {
       buttonLoading.value = true;
       if (form.value.id) {
-        await updateInfo(form.value).finally(() =>  buttonLoading.value = false);
+        await updateInfo(form.value).finally(() => (buttonLoading.value = false));
       } else {
-        await addInfo(form.value).finally(() =>  buttonLoading.value = false);
+        await addInfo(form.value).finally(() => (buttonLoading.value = false));
       }
-      proxy?.$modal.msgSuccess("操作成功");
+      proxy?.$modal.msgSuccess('操作成功');
       dialog.visible = false;
       await getList();
     }
   });
-}
+};
 
 /** 删除按钮操作 */
 const handleDelete = async (row?: InfoVO) => {
   const _ids = row?.id || ids.value;
-  await proxy?.$modal.confirm('是否确认删除喜讯新闻编号为"' + _ids + '"的数据项？').finally(() => loading.value = false);
+  await proxy?.$modal.confirm('是否确认删除喜讯新闻编号为"' + _ids + '"的数据项？').finally(() => (loading.value = false));
   await delInfo(_ids);
-  proxy?.$modal.msgSuccess("删除成功");
+  proxy?.$modal.msgSuccess('删除成功');
   await getList();
-}
+};
 
 /** 导出按钮操作 */
 const handleExport = () => {
-  proxy?.download('news/info/export', {
-    ...queryParams.value
-  }, `info_${new Date().getTime()}.xlsx`)
-}
+  proxy?.download(
+    'news/info/export',
+    {
+      ...queryParams.value
+    },
+    `info_${new Date().getTime()}.xlsx`
+  );
+};
 
 onMounted(() => {
   getList();

@@ -31,8 +31,8 @@
               <el-input v-model="queryParams.website" placeholder="请输入官网" clearable @keyup.enter="handleQuery" />
             </el-form-item>
             <el-form-item label="状态" prop="state">
-              <el-select v-model="queryParams.state" placeholder="请选择状态" clearable >
-                <el-option v-for="dict in sys_normal_disable" :key="dict.value" :label="dict.label" :value="dict.value"/>
+              <el-select v-model="queryParams.state" placeholder="请选择状态" clearable>
+                <el-option v-for="dict in sys_normal_disable" :key="dict.value" :label="dict.label" :value="dict.value" />
               </el-select>
             </el-form-item>
             <el-form-item>
@@ -54,7 +54,9 @@
             <el-button type="success" plain icon="Edit" :disabled="single" @click="handleUpdate()" v-hasPermi="['goods:brand:edit']">修改</el-button>
           </el-col>
           <el-col :span="1.5">
-            <el-button type="danger" plain icon="Delete" :disabled="multiple" @click="handleDelete()" v-hasPermi="['goods:brand:remove']">删除</el-button>
+            <el-button type="danger" plain icon="Delete" :disabled="multiple" @click="handleDelete()" v-hasPermi="['goods:brand:remove']"
+              >删除</el-button
+            >
           </el-col>
           <el-col :span="1.5">
             <el-button type="warning" plain icon="Download" @click="handleExport" v-hasPermi="['goods:brand:export']">导出</el-button>
@@ -71,7 +73,7 @@
         <el-table-column label="英文名称" align="center" prop="englishName" />
         <el-table-column label="Logo" align="center" prop="logoUrl" width="100">
           <template #default="scope">
-            <image-preview :src="scope.row.logoUrl" :width="50" :height="50"/>
+            <image-preview :src="scope.row.logoUrl" :width="50" :height="50" />
           </template>
         </el-table-column>
         <el-table-column label="描述" align="center" prop="description" />
@@ -80,7 +82,7 @@
         <el-table-column label="排序" align="center" prop="sortOrder" />
         <el-table-column label="状态" align="center" prop="state">
           <template #default="scope">
-            <dict-tag :options="sys_normal_disable" :value="scope.row.state"/>
+            <dict-tag :options="sys_normal_disable" :value="scope.row.state" />
           </template>
         </el-table-column>
         <el-table-column label="操作" align="center" class-name="small-padding fixed-width" fixed="right">
@@ -107,10 +109,10 @@
           <el-input v-model="form.englishName" placeholder="请输入英文名称" />
         </el-form-item>
         <el-form-item label="Logo" prop="logo">
-          <image-upload v-model="form.logo"/>
+          <image-upload v-model="form.logo" />
         </el-form-item>
         <el-form-item label="描述" prop="description">
-            <el-input v-model="form.description" type="textarea" placeholder="请输入内容" />
+          <el-input v-model="form.description" type="textarea" placeholder="请输入内容" />
         </el-form-item>
         <el-form-item label="所属国家" prop="country">
           <el-input v-model="form.country" placeholder="请输入所属国家" />
@@ -123,11 +125,7 @@
         </el-form-item>
         <el-form-item label="状态" prop="state">
           <el-radio-group v-model="form.state">
-            <el-radio
-              v-for="dict in sys_normal_disable"
-              :key="dict.value"
-              :value="dict.value"
-            >{{dict.label}}</el-radio>
+            <el-radio v-for="dict in sys_normal_disable" :key="dict.value" :value="dict.value">{{ dict.label }}</el-radio>
           </el-radio-group>
         </el-form-item>
       </el-form>
@@ -176,10 +174,10 @@ const initFormData: BrandForm = {
   country: undefined,
   website: undefined,
   sortOrder: undefined,
-  state: "0"
-}
+  state: '0'
+};
 const data = reactive<PageData<BrandForm, BrandQuery>>({
-  form: {...initFormData},
+  form: { ...initFormData },
   queryParams: {
     pageNum: 1,
     pageSize: 10,
@@ -190,19 +188,13 @@ const data = reactive<PageData<BrandForm, BrandQuery>>({
     website: undefined,
     state: undefined,
     params: {
-      createTime: undefined,
+      createTime: undefined
     }
   },
   rules: {
-    id: [
-      { required: true, message: "ID不能为空", trigger: "blur" }
-    ],
-    name: [
-      { required: true, message: "名称不能为空", trigger: "blur" }
-    ],
-    state: [
-      { required: true, message: "状态不能为空", trigger: "change" }
-    ]
+    id: [{ required: true, message: 'ID不能为空', trigger: 'blur' }],
+    name: [{ required: true, message: '名称不能为空', trigger: 'blur' }],
+    state: [{ required: true, message: '状态不能为空', trigger: 'change' }]
   }
 });
 
@@ -217,56 +209,56 @@ const getList = async () => {
   brandList.value = res.rows;
   total.value = res.total;
   loading.value = false;
-}
+};
 
 /** 取消按钮 */
 const cancel = () => {
   reset();
   dialog.visible = false;
-}
+};
 
 /** 表单重置 */
 const reset = () => {
-  form.value = {...initFormData};
+  form.value = { ...initFormData };
   brandFormRef.value?.resetFields();
-}
+};
 
 /** 搜索按钮操作 */
 const handleQuery = () => {
   queryParams.value.pageNum = 1;
   getList();
-}
+};
 
 /** 重置按钮操作 */
 const resetQuery = () => {
   dateRangeCreateTime.value = ['', ''];
   queryFormRef.value?.resetFields();
   handleQuery();
-}
+};
 
 /** 多选框选中数据 */
 const handleSelectionChange = (selection: BrandVO[]) => {
-  ids.value = selection.map(item => item.id);
+  ids.value = selection.map((item) => item.id);
   single.value = selection.length != 1;
   multiple.value = !selection.length;
-}
+};
 
 /** 新增按钮操作 */
 const handleAdd = () => {
   reset();
   dialog.visible = true;
-  dialog.title = "添加商品品牌信息";
-}
+  dialog.title = '添加商品品牌信息';
+};
 
 /** 修改按钮操作 */
 const handleUpdate = async (row?: BrandVO) => {
   reset();
-  const _id = row?.id || ids.value[0]
+  const _id = row?.id || ids.value[0];
   const res = await getBrand(_id);
   Object.assign(form.value, res.data);
   dialog.visible = true;
-  dialog.title = "修改商品品牌信息";
-}
+  dialog.title = '修改商品品牌信息';
+};
 
 /** 提交按钮 */
 const submitForm = () => {
@@ -274,32 +266,36 @@ const submitForm = () => {
     if (valid) {
       buttonLoading.value = true;
       if (form.value.id) {
-        await updateBrand(form.value).finally(() =>  buttonLoading.value = false);
+        await updateBrand(form.value).finally(() => (buttonLoading.value = false));
       } else {
-        await addBrand(form.value).finally(() =>  buttonLoading.value = false);
+        await addBrand(form.value).finally(() => (buttonLoading.value = false));
       }
-      proxy?.$modal.msgSuccess("操作成功");
+      proxy?.$modal.msgSuccess('操作成功');
       dialog.visible = false;
       await getList();
     }
   });
-}
+};
 
 /** 删除按钮操作 */
 const handleDelete = async (row?: BrandVO) => {
   const _ids = row?.id || ids.value;
-  await proxy?.$modal.confirm('是否确认删除商品品牌信息编号为"' + _ids + '"的数据项？').finally(() => loading.value = false);
+  await proxy?.$modal.confirm('是否确认删除商品品牌信息编号为"' + _ids + '"的数据项？').finally(() => (loading.value = false));
   await delBrand(_ids);
-  proxy?.$modal.msgSuccess("删除成功");
+  proxy?.$modal.msgSuccess('删除成功');
   await getList();
-}
+};
 
 /** 导出按钮操作 */
 const handleExport = () => {
-  proxy?.download('goods/brand/export', {
-    ...queryParams.value
-  }, `brand_${new Date().getTime()}.xlsx`)
-}
+  proxy?.download(
+    'goods/brand/export',
+    {
+      ...queryParams.value
+    },
+    `brand_${new Date().getTime()}.xlsx`
+  );
+};
 
 onMounted(() => {
   getList();

@@ -142,7 +142,6 @@ export interface InfoVO {
    * 状态
    */
   state: string;
-
 }
 
 export interface InfoForm extends BaseEntity {
@@ -280,11 +279,9 @@ export interface InfoForm extends BaseEntity {
    * 状态
    */
   state?: string;
-
 }
 
 export interface InfoQuery extends PageQuery {
-
   /**
    * ID
    */
@@ -415,6 +412,3 @@ export interface InfoQuery extends PageQuery {
    */
   params?: any;
 }
-
-
-

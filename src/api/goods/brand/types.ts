@@ -57,7 +57,6 @@ export interface BrandVO {
    * 状态
    */
   state: string;
-
 }
 
 export interface BrandForm extends BaseEntity {
@@ -110,11 +109,9 @@ export interface BrandForm extends BaseEntity {
    * 状态
    */
   state?: string;
-
 }
 
 export interface BrandQuery extends PageQuery {
-
   /**
    * ID
    */
@@ -150,10 +147,10 @@ export interface BrandQuery extends PageQuery {
    */
   state?: string;
 
-    /**
-     * 日期范围参数
-     */
-    params?: any;
+  /**
+   * 日期范围参数
+   */
+  params?: any;
 }
 
 export interface BrandOptionVO {
@@ -172,4 +169,3 @@ export interface BrandOptionVO {
    */
   englishName: string;
 }
-

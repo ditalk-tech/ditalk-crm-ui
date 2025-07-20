@@ -22,8 +22,8 @@
               <el-input v-model="queryParams.eventId" placeholder="请输入活动ID" clearable @keyup.enter="handleQuery" />
             </el-form-item>
             <el-form-item label="状态" prop="state">
-              <el-select v-model="queryParams.state" placeholder="请选择状态" clearable >
-                <el-option v-for="dict in sys_normal_disable" :key="dict.value" :label="dict.label" :value="dict.value"/>
+              <el-select v-model="queryParams.state" placeholder="请选择状态" clearable>
+                <el-option v-for="dict in sys_normal_disable" :key="dict.value" :label="dict.label" :value="dict.value" />
               </el-select>
             </el-form-item>
             <el-form-item>
@@ -45,7 +45,9 @@
             <el-button type="success" plain icon="Edit" :disabled="single" @click="handleUpdate()" v-hasPermi="['event:moment:edit']">修改</el-button>
           </el-col>
           <el-col :span="1.5">
-            <el-button type="danger" plain icon="Delete" :disabled="multiple" @click="handleDelete()" v-hasPermi="['event:moment:remove']">删除</el-button>
+            <el-button type="danger" plain icon="Delete" :disabled="multiple" @click="handleDelete()" v-hasPermi="['event:moment:remove']"
+              >删除</el-button
+            >
           </el-col>
           <el-col :span="1.5">
             <el-button type="warning" plain icon="Download" @click="handleExport" v-hasPermi="['event:moment:export']">导出</el-button>
@@ -61,13 +63,13 @@
         <el-table-column label="活动ID" align="center" prop="eventId" />
         <el-table-column label="图片ID" align="center" prop="imageUrl" width="100">
           <template #default="scope">
-            <image-preview :src="scope.row.imageUrl" :width="50" :height="50"/>
+            <image-preview :src="scope.row.imageUrl" :width="50" :height="50" />
           </template>
         </el-table-column>
         <el-table-column label="摘要" align="center" prop="summary" />
         <el-table-column label="状态" align="center" prop="state">
           <template #default="scope">
-            <dict-tag :options="sys_normal_disable" :value="scope.row.state"/>
+            <dict-tag :options="sys_normal_disable" :value="scope.row.state" />
           </template>
         </el-table-column>
         <el-table-column label="操作" align="center" class-name="small-padding fixed-width" fixed="right">
@@ -91,19 +93,14 @@
           <el-input v-model="form.eventId" placeholder="请输入活动ID" />
         </el-form-item>
         <el-form-item label="图片ID" prop="image">
-          <image-upload v-model="form.image" :limit="1"/>
+          <image-upload v-model="form.image" :limit="1" />
         </el-form-item>
         <el-form-item label="摘要" prop="summary">
-            <el-input v-model="form.summary" type="textarea" placeholder="请输入内容" />
+          <el-input v-model="form.summary" type="textarea" placeholder="请输入内容" />
         </el-form-item>
         <el-form-item label="状态" prop="state">
           <el-select v-model="form.state" placeholder="请选择状态">
-            <el-option
-                v-for="dict in sys_normal_disable"
-                :key="dict.value"
-                :label="dict.label"
-                :value="dict.value"
-            ></el-option>
+            <el-option v-for="dict in sys_normal_disable" :key="dict.value" :label="dict.label" :value="dict.value"></el-option>
           </el-select>
         </el-form-item>
       </el-form>
@@ -149,9 +146,9 @@ const initFormData: MomentForm = {
   image: undefined,
   summary: undefined,
   state: undefined
-}
+};
 const data = reactive<PageData<MomentForm, MomentQuery>>({
-  form: {...initFormData},
+  form: { ...initFormData },
   queryParams: {
     pageNum: 1,
     pageSize: 10,
@@ -159,22 +156,14 @@ const data = reactive<PageData<MomentForm, MomentQuery>>({
     eventId: undefined,
     state: undefined,
     params: {
-      createTime: undefined,
+      createTime: undefined
     }
   },
   rules: {
-    id: [
-      { required: true, message: "ID不能为空", trigger: "blur" }
-    ],
-    eventId: [
-      { required: true, message: "活动ID不能为空", trigger: "blur" }
-    ],
-    image: [
-      { required: true, message: "图片ID不能为空", trigger: "blur" }
-    ],
-    state: [
-      { required: true, message: "状态不能为空", trigger: "change" }
-    ]
+    id: [{ required: true, message: 'ID不能为空', trigger: 'blur' }],
+    eventId: [{ required: true, message: '活动ID不能为空', trigger: 'blur' }],
+    image: [{ required: true, message: '图片ID不能为空', trigger: 'blur' }],
+    state: [{ required: true, message: '状态不能为空', trigger: 'change' }]
   }
 });
 
@@ -189,56 +178,56 @@ const getList = async () => {
   momentList.value = res.rows;
   total.value = res.total;
   loading.value = false;
-}
+};
 
 /** 取消按钮 */
 const cancel = () => {
   reset();
   dialog.visible = false;
-}
+};
 
 /** 表单重置 */
 const reset = () => {
-  form.value = {...initFormData};
+  form.value = { ...initFormData };
   momentFormRef.value?.resetFields();
-}
+};
 
 /** 搜索按钮操作 */
 const handleQuery = () => {
   queryParams.value.pageNum = 1;
   getList();
-}
+};
 
 /** 重置按钮操作 */
 const resetQuery = () => {
   dateRangeCreateTime.value = ['', ''];
   queryFormRef.value?.resetFields();
   handleQuery();
-}
+};
 
 /** 多选框选中数据 */
 const handleSelectionChange = (selection: MomentVO[]) => {
-  ids.value = selection.map(item => item.id);
+  ids.value = selection.map((item) => item.id);
   single.value = selection.length != 1;
   multiple.value = !selection.length;
-}
+};
 
 /** 新增按钮操作 */
 const handleAdd = () => {
   reset();
   dialog.visible = true;
-  dialog.title = "添加活动瞬间";
-}
+  dialog.title = '添加活动瞬间';
+};
 
 /** 修改按钮操作 */
 const handleUpdate = async (row?: MomentVO) => {
   reset();
-  const _id = row?.id || ids.value[0]
+  const _id = row?.id || ids.value[0];
   const res = await getMoment(_id);
   Object.assign(form.value, res.data);
   dialog.visible = true;
-  dialog.title = "修改活动瞬间";
-}
+  dialog.title = '修改活动瞬间';
+};
 
 /** 提交按钮 */
 const submitForm = () => {
@@ -246,32 +235,36 @@ const submitForm = () => {
     if (valid) {
       buttonLoading.value = true;
       if (form.value.id) {
-        await updateMoment(form.value).finally(() =>  buttonLoading.value = false);
+        await updateMoment(form.value).finally(() => (buttonLoading.value = false));
       } else {
-        await addMoment(form.value).finally(() =>  buttonLoading.value = false);
+        await addMoment(form.value).finally(() => (buttonLoading.value = false));
       }
-      proxy?.$modal.msgSuccess("操作成功");
+      proxy?.$modal.msgSuccess('操作成功');
       dialog.visible = false;
       await getList();
     }
   });
-}
+};
 
 /** 删除按钮操作 */
 const handleDelete = async (row?: MomentVO) => {
   const _ids = row?.id || ids.value;
-  await proxy?.$modal.confirm('是否确认删除活动瞬间编号为"' + _ids + '"的数据项？').finally(() => loading.value = false);
+  await proxy?.$modal.confirm('是否确认删除活动瞬间编号为"' + _ids + '"的数据项？').finally(() => (loading.value = false));
   await delMoment(_ids);
-  proxy?.$modal.msgSuccess("删除成功");
+  proxy?.$modal.msgSuccess('删除成功');
   await getList();
-}
+};
 
 /** 导出按钮操作 */
 const handleExport = () => {
-  proxy?.download('event/moment/export', {
-    ...queryParams.value
-  }, `moment_${new Date().getTime()}.xlsx`)
-}
+  proxy?.download(
+    'event/moment/export',
+    {
+      ...queryParams.value
+    },
+    `moment_${new Date().getTime()}.xlsx`
+  );
+};
 
 onMounted(() => {
   getList();

@@ -38,7 +38,6 @@ export interface InfoVO {
    * 备注
    */
   remark: string;
-
 }
 
 export interface InfoForm extends BaseEntity {
@@ -76,11 +75,9 @@ export interface InfoForm extends BaseEntity {
    * 备注
    */
   remark?: string;
-
 }
 
 export interface InfoQuery extends PageQuery {
-
   /**
    * ID
    */
@@ -111,11 +108,8 @@ export interface InfoQuery extends PageQuery {
    */
   value?: string;
 
-    /**
-     * 日期范围参数
-     */
-    params?: any;
+  /**
+   * 日期范围参数
+   */
+  params?: any;
 }
-
-
-

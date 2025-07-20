@@ -2,7 +2,6 @@ import request from '@/utils/request';
 import { AxiosPromise } from 'axios';
 import { InfoVO, InfoForm, InfoQuery, LeadContactForm } from '@/api/lead/info/types';
 
-
 /**
  * 查询线索信息列表
  * @param query
@@ -65,8 +64,8 @@ export const delInfo = (id: string | number | Array<string | number>) => {
 
 /**
  * 更新客户线索及联系人信息
- * @param data 
- * @returns 
+ * @param data
+ * @returns
  */
 export const updateLeadContact = (data: LeadContactForm) => {
   return request({
@@ -78,8 +77,8 @@ export const updateLeadContact = (data: LeadContactForm) => {
 
 /**
  * 新增客户线索及联系人信息
- * @param data 
- * @returns 
+ * @param data
+ * @returns
  */
 export const addLeadContact = (data: LeadContactForm) => {
   return request({

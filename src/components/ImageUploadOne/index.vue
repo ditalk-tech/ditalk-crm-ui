@@ -77,7 +77,7 @@ const imageUploadRef = ref<ElUploadInstance>();
 // 监听 fileType 变化，更新 fileAccept
 const fileAccept = computed(() => props.fileType.map((type) => `.${type}`).join(','));
 
-const isHide = ref<Boolean>(false) // 隐藏 avatar-uploader-icon 标记
+const isHide = ref<boolean>(false); // 隐藏 avatar-uploader-icon 标记
 
 watch(
   () => props.modelValue,
@@ -107,7 +107,7 @@ watch(
       fileList.value = [];
       return [];
     }
-    isHide.value = fileList.value.length >= 1
+    isHide.value = fileList.value.length >= 1;
   },
   { deep: true, immediate: true }
 );
@@ -247,5 +247,4 @@ const listToString = (list: any[], separator?: string) => {
   opacity: 0;
 }
 //////////////////////////////////////////////////////
-
 </style>

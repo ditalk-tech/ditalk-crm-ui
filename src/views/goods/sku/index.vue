@@ -32,8 +32,8 @@
               <el-input v-model="queryParams.skuSn" placeholder="请输入SKU编码" clearable @keyup.enter="handleQuery" />
             </el-form-item>
             <el-form-item label="状态" prop="state">
-              <el-select v-model="queryParams.state" placeholder="请选择状态" clearable >
-                <el-option v-for="dict in sys_normal_disable" :key="dict.value" :label="dict.label" :value="dict.value"/>
+              <el-select v-model="queryParams.state" placeholder="请选择状态" clearable>
+                <el-option v-for="dict in sys_normal_disable" :key="dict.value" :label="dict.label" :value="dict.value" />
               </el-select>
             </el-form-item>
             <el-form-item>
@@ -55,7 +55,9 @@
             <el-button type="success" plain icon="Edit" :disabled="single" @click="handleUpdate()" v-hasPermi="['goods:sku:edit']">修改</el-button>
           </el-col>
           <el-col :span="1.5">
-            <el-button type="danger" plain icon="Delete" :disabled="multiple" @click="handleDelete()" v-hasPermi="['goods:sku:remove']">删除</el-button>
+            <el-button type="danger" plain icon="Delete" :disabled="multiple" @click="handleDelete()" v-hasPermi="['goods:sku:remove']"
+              >删除</el-button
+            >
           </el-col>
           <el-col :span="1.5">
             <el-button type="warning" plain icon="Download" @click="handleExport" v-hasPermi="['goods:sku:export']">导出</el-button>
@@ -73,7 +75,7 @@
         <el-table-column label="SKU编码" align="center" prop="skuSn" />
         <el-table-column label="图片" align="center" prop="mainPicUrl" width="100">
           <template #default="scope">
-            <image-preview :src="scope.row.mainPicUrl" :width="50" :height="50"/>
+            <image-preview :src="scope.row.mainPicUrl" :width="50" :height="50" />
           </template>
         </el-table-column>
         <el-table-column label="规格JSON" align="center" prop="specJson" />
@@ -90,7 +92,7 @@
         <el-table-column label="总销量" align="center" prop="totalSales" />
         <el-table-column label="状态" align="center" prop="state">
           <template #default="scope">
-            <dict-tag :options="sys_normal_disable" :value="scope.row.state"/>
+            <dict-tag :options="sys_normal_disable" :value="scope.row.state" />
           </template>
         </el-table-column>
         <el-table-column label="操作" align="center" class-name="small-padding fixed-width" fixed="right">
@@ -124,10 +126,10 @@
           <el-input v-model="form.skuSn" placeholder="请输入SKU编码" />
         </el-form-item>
         <el-form-item label="图片" prop="mainPic">
-          <image-upload v-model="form.mainPic" :limit="1"/>
+          <image-upload v-model="form.mainPic" :limit="1" />
         </el-form-item>
         <el-form-item label="规格JSON" prop="specJson">
-            <el-input v-model="form.specJson" type="textarea" placeholder="请输入内容" />
+          <el-input v-model="form.specJson" type="textarea" placeholder="请输入内容" />
         </el-form-item>
         <el-form-item label="售价" prop="salePrice">
           <el-input-number v-model="form.salePrice" placeholder="请输入售价" :min="0.01" :precision="2" />
@@ -164,11 +166,7 @@
         </el-form-item>
         <el-form-item label="状态" prop="state">
           <el-radio-group v-model="form.state">
-            <el-radio
-              v-for="dict in sys_normal_disable"
-              :key="dict.value"
-              :value="dict.value"
-            >{{dict.label}}</el-radio>
+            <el-radio v-for="dict in sys_normal_disable" :key="dict.value" :value="dict.value">{{ dict.label }}</el-radio>
           </el-radio-group>
         </el-form-item>
       </el-form>
@@ -233,10 +231,10 @@ const initFormData: SkuForm = {
   unavailableStock: undefined,
   totalStock: undefined,
   totalSales: undefined,
-  state: "0"
-}
+  state: '0'
+};
 const data = reactive<PageData<SkuForm, SkuQuery>>({
-  form: {...initFormData},
+  form: { ...initFormData },
   queryParams: {
     pageNum: 1,
     pageSize: 10,
@@ -246,37 +244,21 @@ const data = reactive<PageData<SkuForm, SkuQuery>>({
     skuSn: undefined,
     state: undefined,
     params: {
-      createTime: undefined,
+      createTime: undefined
     }
   },
   rules: {
-    id: [
-      { required: true, message: "ID不能为空", trigger: "blur" }
-    ],
-    shopId: [
-      { required: true, message: "店铺ID不能为空", trigger: "blur" }
-    ],
-    goodsId: [
-      { required: true, message: "商品ID不能为空", trigger: "blur" }
-    ],
+    id: [{ required: true, message: 'ID不能为空', trigger: 'blur' }],
+    shopId: [{ required: true, message: '店铺ID不能为空', trigger: 'blur' }],
+    goodsId: [{ required: true, message: '商品ID不能为空', trigger: 'blur' }],
     // skuSn: [
     //   { required: true, message: "SKU编码不能为空", trigger: "blur" }
     // ],
-    salePrice: [
-      { required: true, message: "售价不能为空", trigger: "blur" }
-    ],
-    weight: [
-      { required: true, message: "重量(kg)不能为空", trigger: "blur" }
-    ],
-    volume: [
-      { required: true, message: "体积(m³)不能为空", trigger: "blur" }
-    ],
-    availableStock: [
-      { required: true, message: "可用库存不能为空", trigger: "blur" }
-    ],
-    state: [
-      { required: true, message: "状态不能为空", trigger: "change" }
-    ]
+    salePrice: [{ required: true, message: '售价不能为空', trigger: 'blur' }],
+    weight: [{ required: true, message: '重量(kg)不能为空', trigger: 'blur' }],
+    volume: [{ required: true, message: '体积(m³)不能为空', trigger: 'blur' }],
+    availableStock: [{ required: true, message: '可用库存不能为空', trigger: 'blur' }],
+    state: [{ required: true, message: '状态不能为空', trigger: 'change' }]
   }
 });
 
@@ -288,61 +270,61 @@ const getList = async () => {
   queryParams.value.params = {};
   proxy?.addDateRange(queryParams.value, dateRangeCreateTime.value, 'CreateTime');
   const res = await listSku(queryParams.value);
-  res.rows.forEach(row => {
+  res.rows.forEach((row) => {
     row.salePrice = row.salePrice / 100;
     row.originalPrice = row.originalPrice / 100;
     row.costPrice = row.costPrice / 100;
     row.weight = row.weight / 100;
     row.volume = row.volume / 10000;
-  })
+  });
   skuList.value = res.rows;
   total.value = res.total;
   loading.value = false;
-}
+};
 
 /** 取消按钮 */
 const cancel = () => {
   reset();
   dialog.visible = false;
-}
+};
 
 /** 表单重置 */
 const reset = () => {
-  form.value = {...initFormData};
+  form.value = { ...initFormData };
   skuFormRef.value?.resetFields();
-}
+};
 
 /** 搜索按钮操作 */
 const handleQuery = () => {
   queryParams.value.pageNum = 1;
   getList();
-}
+};
 
 /** 重置按钮操作 */
 const resetQuery = () => {
   dateRangeCreateTime.value = ['', ''];
   queryFormRef.value?.resetFields();
   handleQuery();
-}
+};
 
 /** 多选框选中数据 */
 const handleSelectionChange = (selection: SkuVO[]) => {
-  ids.value = selection.map(item => item.id);
+  ids.value = selection.map((item) => item.id);
   single.value = selection.length != 1;
   multiple.value = !selection.length;
-}
+};
 
 /** 新增按钮操作 */
 const handleAdd = () => {
   reset();
   dialog.visible = true;
-  dialog.title = "添加商品SKU";
-}
+  dialog.title = '添加商品SKU';
+};
 
 /** 修改按钮操作 */
 const handleUpdate = async (row?: SkuVO) => {
   reset();
-  const _id = row?.id || ids.value[0]
+  const _id = row?.id || ids.value[0];
   const res = await getSku(_id);
   // Convert units
   res.data.salePrice = res.data.salePrice / 100;
@@ -353,8 +335,8 @@ const handleUpdate = async (row?: SkuVO) => {
   //
   Object.assign(form.value, res.data);
   dialog.visible = true;
-  dialog.title = "修改商品SKU";
-}
+  dialog.title = '修改商品SKU';
+};
 
 /** 提交按钮 */
 const submitForm = () => {
@@ -370,32 +352,36 @@ const submitForm = () => {
       subForm.volume = subForm.volume * 10000;
       //
       if (subForm.id) {
-        await updateSku(subForm).finally(() =>  buttonLoading.value = false);
+        await updateSku(subForm).finally(() => (buttonLoading.value = false));
       } else {
-        await addSku(subForm).finally(() =>  buttonLoading.value = false);
+        await addSku(subForm).finally(() => (buttonLoading.value = false));
       }
-      proxy?.$modal.msgSuccess("操作成功");
+      proxy?.$modal.msgSuccess('操作成功');
       dialog.visible = false;
       await getList();
     }
   });
-}
+};
 
 /** 删除按钮操作 */
 const handleDelete = async (row?: SkuVO) => {
   const _ids = row?.id || ids.value;
-  await proxy?.$modal.confirm('是否确认删除商品SKU编号为"' + _ids + '"的数据项？').finally(() => loading.value = false);
+  await proxy?.$modal.confirm('是否确认删除商品SKU编号为"' + _ids + '"的数据项？').finally(() => (loading.value = false));
   await delSku(_ids);
-  proxy?.$modal.msgSuccess("删除成功");
+  proxy?.$modal.msgSuccess('删除成功');
   await getList();
-}
+};
 
 /** 导出按钮操作 */
 const handleExport = () => {
-  proxy?.download('goods/sku/export', {
-    ...queryParams.value
-  }, `sku_${new Date().getTime()}.xlsx`)
-}
+  proxy?.download(
+    'goods/sku/export',
+    {
+      ...queryParams.value
+    },
+    `sku_${new Date().getTime()}.xlsx`
+  );
+};
 
 onMounted(() => {
   getShopList();
@@ -405,44 +391,43 @@ onMounted(() => {
 const getShopList = async () => {
   const res = await listShopInfoOption();
   shopInfoList.value = res.rows;
-}
+};
 
 /** 获取查询条件分类下拉树结构 */
 const getGoodsList = async (shopId: number | string) => {
-  const query: GoodsInfoQuery = { pageNum: 1, pageSize: 1000 }
+  const query: GoodsInfoQuery = { pageNum: 1, pageSize: 1000 };
   if (!shopId) {
-    return
+    return;
   }
-  query.shopId = shopId
-  const res = await listGoodsInfoOption(query)
-  goodsInfoList.value = res.rows
+  query.shopId = shopId;
+  const res = await listGoodsInfoOption(query);
+  goodsInfoList.value = res.rows;
 };
 
 const onChangeShop = (shopId: number | string) => {
-  goodsInfoList.value = []
-  queryParams.value.goodsId = undefined // remove query form value
+  goodsInfoList.value = [];
+  queryParams.value.goodsId = undefined; // remove query form value
   if (shopId) {
     getGoodsList(shopId);
   }
-}
+};
 
 /** 获取Form中的分类下拉树结构 */
 const getFormGoodsList = async (shopId: number | string) => {
-  const query: GoodsInfoQuery = { pageNum: 1, pageSize: 1000 }
+  const query: GoodsInfoQuery = { pageNum: 1, pageSize: 1000 };
   if (!shopId) {
-    return
+    return;
   }
-  query.shopId = shopId
-  const res = await listGoodsInfoOption(query)
-  formGoodsInfoList.value = res.rows
-}
+  query.shopId = shopId;
+  const res = await listGoodsInfoOption(query);
+  formGoodsInfoList.value = res.rows;
+};
 
 const onChangeShopInForm = (shopId: number | string) => {
-  formGoodsInfoList.value = []
-  form.value.goodsId = undefined // remove data form value
+  formGoodsInfoList.value = [];
+  form.value.goodsId = undefined; // remove data form value
   if (shopId) {
     getFormGoodsList(shopId);
   }
-}
-
+};
 </script>

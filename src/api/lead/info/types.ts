@@ -90,7 +90,6 @@ export interface InfoVO {
    * 主联系人
    */
   contactInfo: ContactInfoVO;
-
 }
 
 export interface InfoForm extends BaseEntity {
@@ -173,11 +172,9 @@ export interface InfoForm extends BaseEntity {
    * 线索状态
    */
   leadState?: string;
-
 }
 
 export interface InfoQuery extends PageQuery {
-
   /**
    * ID
    */

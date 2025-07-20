@@ -37,7 +37,6 @@ export interface PhotoVO {
    * 状态
    */
   state: string;
-
 }
 
 export interface PhotoForm extends BaseEntity {
@@ -70,11 +69,9 @@ export interface PhotoForm extends BaseEntity {
    * 状态
    */
   state?: string;
-
 }
 
 export interface PhotoQuery extends PageQuery {
-
   /**
    * ID
    */
@@ -95,11 +92,8 @@ export interface PhotoQuery extends PageQuery {
    */
   state?: string;
 
-    /**
-     * 日期范围参数
-     */
-    params?: any;
+  /**
+   * 日期范围参数
+   */
+  params?: any;
 }
-
-
-

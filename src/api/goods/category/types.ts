@@ -53,10 +53,10 @@ export interface CategoryVO {
    */
   state: string;
 
-    /**
-     * 子对象
-     */
-    children: CategoryVO[];
+  /**
+   * 子对象
+   */
+  children: CategoryVO[];
 }
 
 export interface CategoryForm extends BaseEntity {
@@ -104,11 +104,9 @@ export interface CategoryForm extends BaseEntity {
    * 状态
    */
   state?: string;
-
 }
 
 export interface CategoryQuery {
-
   /**
    * ID
    */
@@ -144,10 +142,10 @@ export interface CategoryQuery {
    */
   state?: string;
 
-    /**
-     * 日期范围参数
-     */
-    params?: any;
+  /**
+   * 日期范围参数
+   */
+  params?: any;
 }
 
 /**
@@ -161,4 +159,3 @@ export interface CategoryTreeVO extends BaseEntity {
   children: CategoryTreeVO[];
   disabled: boolean;
 }
-

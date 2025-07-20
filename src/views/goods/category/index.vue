@@ -4,7 +4,14 @@
       <!-- 店铺列表 -->
       <el-col :lg="4" :xs="24" style="">
         <el-card shadow="hover">
-          <el-input v-model="shopNameSearch" placeholder="回车检索店铺" prefix-icon="Search" @keyup.enter="getShopInfoList" @clear="getShopInfoList" clearable />
+          <el-input
+            v-model="shopNameSearch"
+            placeholder="回车检索店铺"
+            prefix-icon="Search"
+            @keyup.enter="getShopInfoList"
+            @clear="getShopInfoList"
+            clearable
+          />
           <div v-for="item in shopInfoList" :key="item.id">
             <el-tag :type="shopId == item.id ? 'warning' : 'info'" effect="plain" @click="onClickShopTag(item)" mt-1>{{ item.name }}</el-tag>
           </div>
@@ -45,7 +52,7 @@
                 </el-form-item>
                 <el-form-item label="状态" prop="state">
                   <el-select v-model="queryParams.state" placeholder="请选择状态" clearable>
-                    <el-option v-for="dict in sys_normal_disable" :key="dict.value" :label="dict.label" :value="dict.value"/>
+                    <el-option v-for="dict in sys_normal_disable" :key="dict.value" :label="dict.label" :value="dict.value" />
                   </el-select>
                 </el-form-item>
                 <el-form-item>
@@ -86,13 +93,13 @@
             <el-table-column label="名称" align="center" prop="name" />
             <el-table-column label="主图" align="center" prop="mainPicUrl" width="100">
               <template #default="scope">
-                <image-preview :src="scope.row.mainPicUrl" :width="50" :height="50"/>
+                <image-preview :src="scope.row.mainPicUrl" :width="50" :height="50" />
               </template>
             </el-table-column>
             <el-table-column label="排序" align="center" prop="sortOrder" />
             <el-table-column label="状态" align="center" prop="state">
               <template #default="scope">
-                <dict-tag :options="sys_normal_disable" :value="scope.row.state"/>
+                <dict-tag :options="sys_normal_disable" :value="scope.row.state" />
               </template>
             </el-table-column>
             <el-table-column label="操作" align="center" class-name="small-padding fixed-width" width="110" fixed="right">
@@ -145,11 +152,7 @@
             </el-form-item>
             <el-form-item label="状态" prop="state">
               <el-radio-group v-model="form.state">
-                <el-radio
-                  v-for="dict in sys_normal_disable"
-                  :key="dict.value"
-                  :value="dict.value"
-                >{{dict.label}}</el-radio>
+                <el-radio v-for="dict in sys_normal_disable" :key="dict.value" :value="dict.value">{{ dict.label }}</el-radio>
               </el-radio-group>
             </el-form-item>
           </el-form>
@@ -166,7 +169,7 @@
 </template>
 
 <script setup name="Category" lang="ts">
-import { listCategory, getCategory, delCategory, addCategory, updateCategory } from "@/api/goods/category";
+import { listCategory, getCategory, delCategory, addCategory, updateCategory } from '@/api/goods/category';
 import { CategoryVO, CategoryQuery, CategoryForm } from '@/api/goods/category/types';
 import { listInfoOption as listShopInfoOption } from '@/api/shop/info';
 import { InfoOptionVO as ShopInfoOptionVO, InfoQuery as ShopInfoQuery } from '@/api/shop/info/types';
@@ -175,9 +178,9 @@ type CategoryOption = {
   id: number;
   name: string;
   children?: CategoryOption[];
-}
+};
 
-const { proxy } = getCurrentInstance() as ComponentInternalInstance;;
+const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 
 const { sys_normal_disable } = toRefs<any>(proxy?.useDict('sys_normal_disable'));
 
@@ -188,35 +191,35 @@ const showSearch = ref(true);
 const isExpandAll = ref(true);
 const loading = ref(false);
 const shopInfoList = ref<ShopInfoOptionVO[]>([]);
-const shopId = ref<string | number>()
-const shopName = ref<string>()
-const shopNameSearch = ref<string>()
+const shopId = ref<string | number>();
+const shopName = ref<string>();
+const shopNameSearch = ref<string>();
 
 const queryFormRef = ref<ElFormInstance>();
 const categoryFormRef = ref<ElFormInstance>();
-const categoryTableRef = ref<ElTableInstance>()
+const categoryTableRef = ref<ElTableInstance>();
 
 const dialog = reactive<DialogOption>({
-    visible: false,
-    title: ''
+  visible: false,
+  title: ''
 });
 
 const dateRangeCreateTime = ref<[DateModelType, DateModelType]>(['', '']);
 
 const initFormData: CategoryForm = {
-    id: undefined,
-    version: undefined,
-    shopId: undefined,
-    parentId: undefined,
-    ancestors: undefined,
-    name: undefined,
-    mainPic: undefined,
-    sortOrder: undefined,
-    state: undefined
-}
+  id: undefined,
+  version: undefined,
+  shopId: undefined,
+  parentId: undefined,
+  ancestors: undefined,
+  name: undefined,
+  mainPic: undefined,
+  sortOrder: undefined,
+  state: undefined
+};
 
 const data = reactive<PageData<CategoryForm, CategoryQuery>>({
-  form: {...initFormData},
+  form: { ...initFormData },
   queryParams: {
     id: undefined,
     shopId: undefined,
@@ -225,31 +228,19 @@ const data = reactive<PageData<CategoryForm, CategoryQuery>>({
     name: undefined,
     state: undefined,
     params: {
-      createTime: undefined,
+      createTime: undefined
     }
   },
   rules: {
-    id: [
-      { required: true, message: "ID不能为空", trigger: "blur" }
-    ],
-    shopId: [
-      { required: true, message: "店铺不能为空", trigger: "blur" }
-    ],
-    parentId: [
-      { required: true, message: "父类ID不能为空", trigger: "blur" }
-    ],
+    id: [{ required: true, message: 'ID不能为空', trigger: 'blur' }],
+    shopId: [{ required: true, message: '店铺不能为空', trigger: 'blur' }],
+    parentId: [{ required: true, message: '父类ID不能为空', trigger: 'blur' }],
     // ancestors: [
     //   { required: true, message: "祖级列表不能为空", trigger: "blur" }
     // ],
-    name: [
-      { required: true, message: "名称不能为空", trigger: "blur" }
-    ],
-    sortOrder: [
-      { required: true, message: "排序不能为空", trigger: "blur" }
-    ],
-    state: [
-      { required: true, message: "状态不能为空", trigger: "change" }
-    ]
+    name: [{ required: true, message: '名称不能为空', trigger: 'blur' }],
+    sortOrder: [{ required: true, message: '排序不能为空', trigger: 'blur' }],
+    state: [{ required: true, message: '状态不能为空', trigger: 'change' }]
   }
 });
 
@@ -259,7 +250,7 @@ const { queryParams, form, rules } = toRefs(data);
 const getList = async () => {
   //
   if (!shopId.value) {
-    proxy?.$modal.msgError("未选择店铺");
+    proxy?.$modal.msgError('未选择店铺');
     return;
   }
   queryParams.value.shopId = shopId.value; // 指定操作的店铺
@@ -268,63 +259,63 @@ const getList = async () => {
   queryParams.value.params = {};
   proxy?.addDateRange(queryParams.value, dateRangeCreateTime.value, 'CreateTime');
   const res = await listCategory(queryParams.value);
-  const data = proxy?.handleTree<CategoryVO>(res.data, "id", "parentId");
+  const data = proxy?.handleTree<CategoryVO>(res.data, 'id', 'parentId');
   if (data) {
     categoryList.value = data;
     loading.value = false;
   }
-}
+};
 
 /** 查询商品分类下拉树结构 */
 const getTreeselect = async () => {
   if (!shopId.value) {
-    proxy?.$modal.msgError("未选择店铺");
+    proxy?.$modal.msgError('未选择店铺');
     return;
   }
-  const query: CategoryQuery = {}
-  query.shopId = shopId.value
+  const query: CategoryQuery = {};
+  query.shopId = shopId.value;
   const res = await listCategory(query);
   categoryOptions.value = [];
   const data: CategoryOption = { id: 0, name: '顶级节点', children: [] };
-  data.children = proxy?.handleTree<CategoryOption>(res.data, "id", "parentId");
+  data.children = proxy?.handleTree<CategoryOption>(res.data, 'id', 'parentId');
   categoryOptions.value.push(data);
-}
+};
 
 // 取消按钮
 const cancel = () => {
   reset();
   dialog.visible = false;
-}
+};
 
 // 表单重置
 const reset = () => {
-  form.value = {...initFormData}
+  form.value = { ...initFormData };
   categoryFormRef.value?.resetFields();
-}
+};
 
 /** 搜索按钮操作 */
 const handleQuery = () => {
   getList();
-}
+};
 
 /** 重置按钮操作 */
 const resetQuery = () => {
   dateRangeCreateTime.value = ['', ''];
   queryFormRef.value?.resetFields();
   handleQuery();
-}
+};
 
 /** 新增按钮操作 */
 const handleAdd = async (row?: CategoryVO) => {
   //
   if (!shopId.value) {
-    proxy?.$modal.msgError("未选择店铺");
+    proxy?.$modal.msgError('未选择店铺');
     return;
   }
   //
   reset(); // 框架默认代码
   //
-  form.value.shopId = shopId.value // 指定操作的店铺
+  form.value.shopId = shopId.value; // 指定操作的店铺
   //
   await getTreeselect();
   if (row != null && row.id) {
@@ -333,33 +324,33 @@ const handleAdd = async (row?: CategoryVO) => {
     form.value.parentId = 0;
   }
   dialog.visible = true;
-  dialog.title = "添加商品分类";
-}
+  dialog.title = '添加商品分类';
+};
 
 /** 展开/折叠操作 */
 const handleToggleExpandAll = () => {
   isExpandAll.value = !isExpandAll.value;
-  toggleExpandAll(categoryList.value, isExpandAll.value)
-}
+  toggleExpandAll(categoryList.value, isExpandAll.value);
+};
 
 /** 展开/折叠操作 */
 const toggleExpandAll = (data: CategoryVO[], status: boolean) => {
   data.forEach((item) => {
-    categoryTableRef.value?.toggleRowExpansion(item, status)
-    if (item.children && item.children.length > 0) toggleExpandAll(item.children, status)
-  })
-}
+    categoryTableRef.value?.toggleRowExpansion(item, status);
+    if (item.children && item.children.length > 0) toggleExpandAll(item.children, status);
+  });
+};
 
 /** 修改按钮操作 */
 const handleUpdate = async (row: CategoryVO) => {
   //
   if (!shopId.value) {
-    proxy?.$modal.msgError("未选择店铺");
+    proxy?.$modal.msgError('未选择店铺');
     return;
   }
   reset(); // 框架默认代码
   //
-  form.value.shopId = shopId.value // 指定操作的店铺
+  form.value.shopId = shopId.value; // 指定操作的店铺
   //
   await getTreeselect();
   if (row != null) {
@@ -368,8 +359,8 @@ const handleUpdate = async (row: CategoryVO) => {
   const res = await getCategory(row.id);
   Object.assign(form.value, res.data);
   dialog.visible = true;
-  dialog.title = "修改商品分类";
-}
+  dialog.title = '修改商品分类';
+};
 
 /** 提交按钮 */
 const submitForm = () => {
@@ -377,25 +368,25 @@ const submitForm = () => {
     if (valid) {
       buttonLoading.value = true;
       if (form.value.id) {
-        await updateCategory(form.value).finally(() => buttonLoading.value = false);
+        await updateCategory(form.value).finally(() => (buttonLoading.value = false));
       } else {
-        await addCategory(form.value).finally(() => buttonLoading.value = false);
+        await addCategory(form.value).finally(() => (buttonLoading.value = false));
       }
-      proxy?.$modal.msgSuccess("操作成功");
+      proxy?.$modal.msgSuccess('操作成功');
       dialog.visible = false;
       getList();
     }
   });
-}
+};
 
 /** 删除按钮操作 */
 const handleDelete = async (row: CategoryVO) => {
   await proxy?.$modal.confirm('是否确认删除商品分类编号为"' + row.id + '"的数据项？');
   loading.value = true;
-  await delCategory(row.id).finally(() => loading.value = false);
+  await delCategory(row.id).finally(() => (loading.value = false));
   await getList();
-  proxy?.$modal.msgSuccess("删除成功");
-}
+  proxy?.$modal.msgSuccess('删除成功');
+};
 
 onMounted(async () => {
   // 店铺列表
@@ -405,23 +396,23 @@ onMounted(async () => {
 });
 
 const getShopInfoList = async () => {
-  const query: ShopInfoQuery = { pageNum: 1, pageSize: 100 } // 多于 100 需要先使用检索过滤
-  query.name = shopNameSearch.value
+  const query: ShopInfoQuery = { pageNum: 1, pageSize: 100 }; // 多于 100 需要先使用检索过滤
+  query.name = shopNameSearch.value;
   // 店铺列表
-  const shopListRes = await listShopInfoOption(query)
-  shopInfoList.value = shopListRes.rows
+  const shopListRes = await listShopInfoOption(query);
+  shopInfoList.value = shopListRes.rows;
   // 如果shopInfoList不为空，默认时选取第一个店铺
   if (shopInfoList.value.length > 0) {
-    setShopInfo(shopInfoList.value[0].id, shopInfoList.value[0].name)
+    setShopInfo(shopInfoList.value[0].id, shopInfoList.value[0].name);
   }
   // 商品分类列表
   await getList();
-}
+};
 
 const onClickShopTag = (shopInfo: ShopInfoOptionVO) => {
-  setShopInfo(shopInfo.id, shopInfo.name)
-  getList()
-}
+  setShopInfo(shopInfo.id, shopInfo.name);
+  getList();
+};
 
 /**
  * 默认页面全局 ShopInfo 数据
@@ -429,8 +420,7 @@ const onClickShopTag = (shopInfo: ShopInfoOptionVO) => {
  * @param name 店铺名称
  */
 const setShopInfo = (id: string | number, name: string) => {
-  shopId.value = id
-  shopName.value = name
-}
-
+  shopId.value = id;
+  shopName.value = name;
+};
 </script>

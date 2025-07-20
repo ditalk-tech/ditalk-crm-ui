@@ -19,8 +19,8 @@
               />
             </el-form-item>
             <el-form-item label="状态" prop="state">
-              <el-select v-model="queryParams.state" placeholder="请选择状态" clearable >
-                <el-option v-for="dict in sys_normal_disable" :key="dict.value" :label="dict.label" :value="dict.value"/>
+              <el-select v-model="queryParams.state" placeholder="请选择状态" clearable>
+                <el-option v-for="dict in sys_normal_disable" :key="dict.value" :label="dict.label" :value="dict.value" />
               </el-select>
             </el-form-item>
             <el-form-item label="会员ID" prop="memberId">
@@ -51,10 +51,14 @@
             <el-button type="primary" plain icon="Plus" @click="handleAdd" v-hasPermi="['member:openid:add']">新增</el-button>
           </el-col>
           <el-col :span="1.5">
-            <el-button type="success" plain icon="Edit" :disabled="single" @click="handleUpdate()" v-hasPermi="['member:openid:edit']">修改</el-button>
+            <el-button type="success" plain icon="Edit" :disabled="single" @click="handleUpdate()" v-hasPermi="['member:openid:edit']"
+              >修改</el-button
+            >
           </el-col>
           <el-col :span="1.5">
-            <el-button type="danger" plain icon="Delete" :disabled="multiple" @click="handleDelete()" v-hasPermi="['member:openid:remove']">删除</el-button>
+            <el-button type="danger" plain icon="Delete" :disabled="multiple" @click="handleDelete()" v-hasPermi="['member:openid:remove']"
+              >删除</el-button
+            >
           </el-col>
           <el-col :span="1.5">
             <el-button type="warning" plain icon="Download" @click="handleExport" v-hasPermi="['member:openid:export']">导出</el-button>
@@ -74,7 +78,7 @@
         <el-table-column label="OpenID" align="center" prop="openId" />
         <el-table-column label="状态" align="center" prop="state">
           <template #default="scope">
-            <dict-tag :options="sys_normal_disable" :value="scope.row.state"/>
+            <dict-tag :options="sys_normal_disable" :value="scope.row.state" />
           </template>
         </el-table-column>
         <el-table-column label="操作" align="center" class-name="small-padding fixed-width" fixed="right">
@@ -108,12 +112,7 @@
         </el-form-item>
         <el-form-item label="状态" prop="state">
           <el-select v-model="form.state" placeholder="请选择状态">
-            <el-option
-                v-for="dict in sys_normal_disable"
-                :key="dict.value"
-                :label="dict.label"
-                :value="dict.value"
-            ></el-option>
+            <el-option v-for="dict in sys_normal_disable" :key="dict.value" :label="dict.label" :value="dict.value"></el-option>
           </el-select>
         </el-form-item>
       </el-form>
@@ -160,9 +159,9 @@ const initFormData: OpenidForm = {
   appId: undefined,
   platform: undefined,
   openId: undefined
-}
+};
 const data = reactive<PageData<OpenidForm, OpenidQuery>>({
-  form: {...initFormData},
+  form: { ...initFormData },
   queryParams: {
     pageNum: 1,
     pageSize: 10,
@@ -173,28 +172,16 @@ const data = reactive<PageData<OpenidForm, OpenidQuery>>({
     platform: undefined,
     openId: undefined,
     params: {
-      createTime: undefined,
+      createTime: undefined
     }
   },
   rules: {
-    id: [
-      { required: true, message: "主键不能为空", trigger: "blur" }
-    ],
-    state: [
-      { required: true, message: "状态不能为空", trigger: "change" }
-    ],
-    memberId: [
-      { required: true, message: "会员ID不能为空", trigger: "blur" }
-    ],
-    appId: [
-      { required: true, message: "App应用ID不能为空", trigger: "blur" }
-    ],
-    platform: [
-      { required: true, message: "平台代码不能为空", trigger: "blur" }
-    ],
-    openId: [
-      { required: true, message: "OpenID不能为空", trigger: "blur" }
-    ]
+    id: [{ required: true, message: '主键不能为空', trigger: 'blur' }],
+    state: [{ required: true, message: '状态不能为空', trigger: 'change' }],
+    memberId: [{ required: true, message: '会员ID不能为空', trigger: 'blur' }],
+    appId: [{ required: true, message: 'App应用ID不能为空', trigger: 'blur' }],
+    platform: [{ required: true, message: '平台代码不能为空', trigger: 'blur' }],
+    openId: [{ required: true, message: 'OpenID不能为空', trigger: 'blur' }]
   }
 });
 
@@ -209,56 +196,56 @@ const getList = async () => {
   openidList.value = res.rows;
   total.value = res.total;
   loading.value = false;
-}
+};
 
 /** 取消按钮 */
 const cancel = () => {
   reset();
   dialog.visible = false;
-}
+};
 
 /** 表单重置 */
 const reset = () => {
-  form.value = {...initFormData};
+  form.value = { ...initFormData };
   openidFormRef.value?.resetFields();
-}
+};
 
 /** 搜索按钮操作 */
 const handleQuery = () => {
   queryParams.value.pageNum = 1;
   getList();
-}
+};
 
 /** 重置按钮操作 */
 const resetQuery = () => {
   dateRangeCreateTime.value = ['', ''];
   queryFormRef.value?.resetFields();
   handleQuery();
-}
+};
 
 /** 多选框选中数据 */
 const handleSelectionChange = (selection: OpenidVO[]) => {
-  ids.value = selection.map(item => item.id);
+  ids.value = selection.map((item) => item.id);
   single.value = selection.length != 1;
   multiple.value = !selection.length;
-}
+};
 
 /** 新增按钮操作 */
 const handleAdd = () => {
   reset();
   dialog.visible = true;
-  dialog.title = "添加会员OpenId";
-}
+  dialog.title = '添加会员OpenId';
+};
 
 /** 修改按钮操作 */
 const handleUpdate = async (row?: OpenidVO) => {
   reset();
-  const _id = row?.id || ids.value[0]
+  const _id = row?.id || ids.value[0];
   const res = await getOpenid(_id);
   Object.assign(form.value, res.data);
   dialog.visible = true;
-  dialog.title = "修改会员OpenId";
-}
+  dialog.title = '修改会员OpenId';
+};
 
 /** 提交按钮 */
 const submitForm = () => {
@@ -266,32 +253,36 @@ const submitForm = () => {
     if (valid) {
       buttonLoading.value = true;
       if (form.value.id) {
-        await updateOpenid(form.value).finally(() =>  buttonLoading.value = false);
+        await updateOpenid(form.value).finally(() => (buttonLoading.value = false));
       } else {
-        await addOpenid(form.value).finally(() =>  buttonLoading.value = false);
+        await addOpenid(form.value).finally(() => (buttonLoading.value = false));
       }
-      proxy?.$modal.msgSuccess("操作成功");
+      proxy?.$modal.msgSuccess('操作成功');
       dialog.visible = false;
       await getList();
     }
   });
-}
+};
 
 /** 删除按钮操作 */
 const handleDelete = async (row?: OpenidVO) => {
   const _ids = row?.id || ids.value;
-  await proxy?.$modal.confirm('是否确认删除会员OpenId编号为"' + _ids + '"的数据项？').finally(() => loading.value = false);
+  await proxy?.$modal.confirm('是否确认删除会员OpenId编号为"' + _ids + '"的数据项？').finally(() => (loading.value = false));
   await delOpenid(_ids);
-  proxy?.$modal.msgSuccess("删除成功");
+  proxy?.$modal.msgSuccess('删除成功');
   await getList();
-}
+};
 
 /** 导出按钮操作 */
 const handleExport = () => {
-  proxy?.download('member/openid/export', {
-    ...queryParams.value
-  }, `openid_${new Date().getTime()}.xlsx`)
-}
+  proxy?.download(
+    'member/openid/export',
+    {
+      ...queryParams.value
+    },
+    `openid_${new Date().getTime()}.xlsx`
+  );
+};
 
 onMounted(() => {
   getList();

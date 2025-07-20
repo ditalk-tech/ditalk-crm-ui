@@ -102,7 +102,6 @@ export interface SkuVO {
    * 状态
    */
   state: string;
-
 }
 
 export interface SkuForm extends BaseEntity {
@@ -200,11 +199,9 @@ export interface SkuForm extends BaseEntity {
    * 状态
    */
   state?: string;
-
 }
 
 export interface SkuQuery extends PageQuery {
-
   /**
    * ID
    */
@@ -235,10 +232,10 @@ export interface SkuQuery extends PageQuery {
    */
   state?: string;
 
-    /**
-     * 日期范围参数
-     */
-    params?: any;
+  /**
+   * 日期范围参数
+   */
+  params?: any;
 }
 
 export interface SkuBatchForm {
@@ -253,5 +250,4 @@ export interface SkuBatchForm {
   goodsId?: string | number;
 
   goodsSkuBos?: SkuForm[];
-
 }

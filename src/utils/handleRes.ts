@@ -11,4 +11,4 @@ export const showMsg = (res: any) => {
     ElMessage.error(res.msg);
     return false;
   }
-}
+};

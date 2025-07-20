@@ -38,7 +38,6 @@ export interface OpenidVO {
    * OpenID
    */
   openId: string | number;
-
 }
 
 export interface OpenidForm extends BaseEntity {
@@ -76,11 +75,9 @@ export interface OpenidForm extends BaseEntity {
    * OpenID
    */
   openId?: string | number;
-
 }
 
 export interface OpenidQuery extends PageQuery {
-
   /**
    * 主键
    */
@@ -116,11 +113,8 @@ export interface OpenidQuery extends PageQuery {
    */
   openId?: string | number;
 
-    /**
-     * 日期范围参数
-     */
-    params?: any;
+  /**
+   * 日期范围参数
+   */
+  params?: any;
 }
-
-
-
