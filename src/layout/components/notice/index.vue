@@ -54,7 +54,7 @@ const onNewsClick = (item: any) => {
 
 // 前往通知中心点击
 const onGoToGiteeClick = () => {
-  window.open('https://gitee.com/ditalk/ditalk-event-boot');
+  window.open('https://gitee.com/ditalk/ditalk-crm-boot');
 };
 
 onMounted(() => {

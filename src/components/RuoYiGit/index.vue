@@ -5,7 +5,7 @@
 </template>
 
 <script setup lang="ts">
-const url = ref('https://gitee.com/ditalk/ditalk-event-boot');
+const url = ref('https://gitee.com/ditalk/ditalk-crm-boot');
 
 function goto() {
   window.open(url.value);

@@ -1,6 +1,6 @@
 {
   "$schema": "https://json.schemastore.org/package",
-  "name": "ditalk-event-boot-ui",
+  "name": "ditalk-crm-boot-ui",
   "version": "5.4.0-2.4.0",
   "description": "DiTalk活动管理系统",
   "author": "DiTalk",
@@ -17,7 +17,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://gitee.com/ditalk/ditalk-event-ui.git"
+    "url": "https://gitee.com/ditalk/ditalk-crm-ui.git"
   },
   "dependencies": {
     "@element-plus/icons-vue": "2.3.1",

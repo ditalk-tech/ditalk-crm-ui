@@ -34,7 +34,7 @@ defineProps({
   }
 });
 
-const title = ref('DiTalk-Event');
+const title = ref('DiTalk-CRM');
 const settingsStore = useSettingsStore();
 const sideTheme = computed(() => settingsStore.sideTheme);
 </script>
