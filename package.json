@@ -2,7 +2,7 @@
   "$schema": "https://json.schemastore.org/package",
   "name": "ditalk-crm-boot-ui",
   "version": "5.4.0-2.4.0",
-  "description": "DiTalk活动管理系统",
+  "description": "DiTalk客户管理系统",
   "author": "DiTalk",
   "license": "MIT",
   "type": "module",
