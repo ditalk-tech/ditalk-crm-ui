@@ -87,3 +87,18 @@ export const addCustomerContact = (data: CustomerContactForm) => {
     data: data
   });
 };
+
+export const listMyCustomer = (query?: InfoQuery): AxiosPromise<InfoVO[]> => {
+  return request({
+    url: '/app/customer/info/myCustomers',
+    method: 'get',
+    params: query
+  });
+};
+
+export const getMyCustomerById = (id: string | number): AxiosPromise<InfoVO> => {
+  return request({
+    url: `/app/customer/info/myCustomer/${id}`,
+    method: 'get'
+  });
+};

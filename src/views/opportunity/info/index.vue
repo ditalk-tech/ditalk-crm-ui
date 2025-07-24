@@ -114,30 +114,54 @@
         <el-form-item label="商机标题" prop="title">
           <el-input v-model="form.title" placeholder="请输入商机标题" />
         </el-form-item>
-        <el-form-item label="客户ID" prop="customerId">
-          <el-input v-model="form.customerId" placeholder="请输入客户ID" />
-        </el-form-item>
-        <el-form-item label="指派给" prop="assignedTo">
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="客户" prop="customerId">
+              <!-- <el-input v-model="form.customerId" placeholder="请输入客户ID" /> -->
+              <el-select
+                v-model="form.customerId"
+                filterable
+                remote
+                reserve-keyword
+                placeholder="输入名称进行查询"
+                :remote-method="loadMyCustomerOption"
+                :loading="loadingCustomer"
+                style="width: 240px"
+              >
+                <el-option v-for="item in myCustomerOptions" :key="item.id" :label="item.name + '-' + item.id" :value="item.id" />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="商机阶段" prop="state">
+              <el-select v-model="form.state" placeholder="请选择商机阶段">
+                <el-option v-for="dict in ditalk_opportunity_state" :key="dict.value" :label="dict.label" :value="dict.value"></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <!-- <el-form-item label="指派给" prop="assignedTo">
           <el-input v-model="form.assignedTo" placeholder="请输入指派给" />
-        </el-form-item>
-        <el-form-item label="预计销售金额" prop="amount">
-          <el-input-number v-model="amount" placeholder="请输入预计销售金额" :min="0" :precision="2" />
-        </el-form-item>
-        <el-form-item label="预计成交日期" prop="closeDate">
-          <el-date-picker clearable v-model="form.closeDate" type="datetime" value-format="YYYY-MM-DD HH:mm:ss" placeholder="请选择预计成交日期">
-          </el-date-picker>
-        </el-form-item>
+        </el-form-item> -->
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="预计销售金额" prop="amount">
+              <el-input-number v-model="amount" placeholder="请输入预计销售金额" :min="0" :precision="2" style="width: 180px" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="预计成交日期" prop="closeDate">
+              <el-date-picker clearable v-model="form.closeDate" type="datetime" value-format="YYYY-MM-DD HH:mm:ss" placeholder="请选择预计成交日期">
+              </el-date-picker>
+            </el-form-item>
+          </el-col>
+        </el-row>
         <el-form-item label="备注信息" prop="remark">
           <el-input type="textarea" v-model="form.remark" placeholder="请输入备注信息" />
         </el-form-item>
-        <el-form-item label="商机阶段" prop="state">
-          <el-select v-model="form.state" placeholder="请选择商机阶段">
-            <el-option v-for="dict in ditalk_opportunity_state" :key="dict.value" :label="dict.label" :value="dict.value"></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="关联订单ID" prop="orderId">
+        <!-- <el-form-item label="关联订单ID" prop="orderId">
           <el-input v-model="form.orderId" placeholder="请输入订单ID" />
-        </el-form-item>
+        </el-form-item> -->
       </el-form>
       <template #footer>
         <div class="dialog-footer">
@@ -152,6 +176,8 @@
 <script setup name="Info" lang="ts">
 import { listInfo, getInfo, delInfo, addInfo, updateInfo } from '@/api/opportunity/info';
 import { InfoVO, InfoQuery, InfoForm } from '@/api/opportunity/info/types';
+import { listMyCustomer, getMyCustomerById } from '@/api/customer/info';
+// import { InfoVO as CustomerVO, InfoQuery as CustomerQuery } from '@/api/customer/info/types';
 
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 const { ditalk_opportunity_state } = toRefs<any>(proxy?.useDict('ditalk_opportunity_state'));
@@ -171,6 +197,8 @@ const queryFormRef = ref<ElFormInstance>();
 const infoFormRef = ref<ElFormInstance>();
 
 const amount = ref(0); // 预计销售金额，用于单位转换
+const myCustomerOptions = ref<{ id: number | string; name: string }[]>([]);
+const loadingCustomer = ref(false);
 
 const dialog = reactive<DialogOption>({
   visible: false,
@@ -240,6 +268,7 @@ const cancel = () => {
 const reset = () => {
   form.value = { ...initFormData };
   infoFormRef.value?.resetFields();
+  myCustomerOptions.value = [];
 };
 
 /** 搜索按钮操作 */
@@ -280,6 +309,8 @@ const handleUpdate = async (row?: InfoVO) => {
   dialog.title = '修改商机信息';
   // 单位转换
   amount.value = form.value.amount / 100;
+  // 加载客户
+  loadDefaultCustomerOption(form.value.customerId);
 };
 
 /** 提交按钮 */
@@ -324,4 +355,29 @@ const handleExport = () => {
 onMounted(() => {
   getList();
 });
+
+const loadMyCustomerOption = async (query: string) => {
+  loadingCustomer.value = true;
+  const res = await listMyCustomer({
+    name: query,
+    pageNum: 1,
+    pageSize: 40
+  });
+  myCustomerOptions.value = res.data.map((item) => ({
+    id: item.id,
+    name: item.name
+  }));
+  loadingCustomer.value = false;
+};
+
+const loadDefaultCustomerOption = async (id: string | number) => {
+  // 加载客户
+  const res = await getMyCustomerById(id);
+  myCustomerOptions.value = [
+    {
+      id: res.data.id,
+      name: res.data.name
+    }
+  ];
+};
 </script>
