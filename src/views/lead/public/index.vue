@@ -332,12 +332,11 @@
 </template>
 
 <script setup name="Info" lang="ts">
-import { listInfo, getInfo } from '@/api/lead/info';
-import { InfoVO, InfoQuery, InfoForm, LeadContactForm } from '@/api/lead/info/types';
+import { listInfo, getInfo } from '@/api/lead/public';
+import { InfoVO, InfoQuery, InfoForm } from '@/api/lead/info/types';
 import { listOption, getMyInfo } from '@/api/app/sys/user';
 import { UserOption } from '@/api/app/sys/user/types';
 import { InfoForm as ContactInfoForm } from '@/api/contact/info/types';
-import * as valueCheck from '@/utils/valueCheck';
 
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 const { ditalk_customer_source, ditalk_customer_industry, ditalk_lead_state, ditalk_customer_state, ditalk_customer_type, ditalk_customer_tier } =
