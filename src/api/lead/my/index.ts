@@ -1,6 +1,6 @@
 import request from '@/utils/request';
 import { AxiosPromise } from 'axios';
-import { InfoVO, InfoForm, InfoQuery } from '@/api/lead/info/types';
+import { InfoVO, InfoForm, InfoQuery, LeadContactForm } from '@/api/lead/info/types';
 
 /**
  * 查询线索信息列表
@@ -10,7 +10,7 @@ import { InfoVO, InfoForm, InfoQuery } from '@/api/lead/info/types';
 
 export const listInfo = (query?: InfoQuery): AxiosPromise<InfoVO[]> => {
   return request({
-    url: '/lead/info/list',
+    url: '/lead/info/my/list',
     method: 'get',
     params: query
   });
@@ -22,7 +22,7 @@ export const listInfo = (query?: InfoQuery): AxiosPromise<InfoVO[]> => {
  */
 export const getInfo = (id: string | number): AxiosPromise<InfoVO> => {
   return request({
-    url: '/lead/info/' + id,
+    url: '/lead/info/my/' + id,
     method: 'get'
   });
 };
@@ -33,7 +33,7 @@ export const getInfo = (id: string | number): AxiosPromise<InfoVO> => {
  */
 export const addInfo = (data: InfoForm) => {
   return request({
-    url: '/lead/info',
+    url: '/lead/info/my',
     method: 'post',
     data: data
   });
@@ -45,7 +45,7 @@ export const addInfo = (data: InfoForm) => {
  */
 export const updateInfo = (data: InfoForm) => {
   return request({
-    url: '/lead/info',
+    url: '/lead/info/my',
     method: 'put',
     data: data
   });
@@ -57,7 +57,33 @@ export const updateInfo = (data: InfoForm) => {
  */
 export const delInfo = (id: string | number | Array<string | number>) => {
   return request({
-    url: '/lead/info/' + id,
+    url: '/lead/info/my/' + id,
     method: 'delete'
+  });
+};
+
+/**
+ * 更新客户线索及联系人信息
+ * @param data
+ * @returns
+ */
+export const updateLeadContact = (data: LeadContactForm) => {
+  return request({
+    url: '/lead/info/my',
+    method: 'put',
+    data: data
+  });
+};
+
+/**
+ * 新增客户线索及联系人信息
+ * @param data
+ * @returns
+ */
+export const addLeadContact = (data: LeadContactForm) => {
+  return request({
+    url: '/lead/info/my',
+    method: 'post',
+    data: data
   });
 };

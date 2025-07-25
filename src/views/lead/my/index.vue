@@ -54,21 +54,10 @@
                 ></el-option>
               </el-select>
             </el-form-item>
-            <el-form-item label="客户状态" prop="state">
-              <el-select v-model="queryParams.state" placeholder="请选择客户状态" clearable>
-                <el-option v-for="dict in ditalk_customer_state" :key="dict.value" :label="dict.label" :value="dict.value" />
+            <el-form-item label="线索状态" prop="leadState">
+              <el-select v-model="queryParams.leadState" placeholder="请选择线索状态" clearable>
+                <el-option v-for="dict in ditalk_lead_state" :key="dict.value" :label="dict.label" :value="dict.value" />
               </el-select>
-            </el-form-item>
-            <el-form-item label="转换时间" prop="convertedTime">
-              <el-date-picker
-                v-model="dateRangeConvertedTime"
-                value-format="YYYY-MM-DD HH:mm:ss"
-                type="daterange"
-                range-separator="-"
-                start-placeholder="开始日期"
-                end-placeholder="结束日期"
-                :default-time="[new Date(2000, 1, 1, 0, 0, 0), new Date(2000, 1, 1, 23, 59, 59)]"
-              />
             </el-form-item>
             <el-form-item>
               <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
@@ -83,18 +72,18 @@
       <template #header>
         <el-row :gutter="10" class="mb8">
           <el-col :span="1.5">
-            <el-button type="primary" plain icon="Plus" @click="handleAdd" v-hasPermi="['customer:my:add']">新增</el-button>
+            <el-button type="primary" plain icon="Plus" @click="handleAdd" v-hasPermi="['lead:my:add']">新增</el-button>
           </el-col>
           <el-col :span="1.5">
-            <el-button type="success" plain icon="Edit" :disabled="single" @click="handleUpdate()" v-hasPermi="['customer:my:edit']">修改</el-button>
+            <el-button type="success" plain icon="Edit" :disabled="single" @click="handleUpdate()" v-hasPermi="['lead:my:edit']">修改</el-button>
           </el-col>
           <el-col :span="1.5">
-            <el-button type="danger" plain icon="Refresh" :disabled="multiple" @click="reclaim(null)" v-hasPermi="['customer:my:reclaim']"
+            <el-button type="danger" plain icon="Refresh" :disabled="multiple" @click="reclaim(null)" v-hasPermi="['lead:my:reclaim']"
               >批量回收</el-button
             >
           </el-col>
           <el-col :span="1.5">
-            <el-button type="warning" plain icon="Switch" :disabled="multiple" @click="transfer(null)" v-hasPermi="['customer:my:transfer']"
+            <el-button type="warning" plain icon="Switch" :disabled="multiple" @click="transfer(null)" v-hasPermi="['lead:my:transfer']"
               >批量转移</el-button
             >
           </el-col>
@@ -129,13 +118,12 @@
         </el-table-column>
         <el-table-column label="公司官网" align="center" prop="website" />
         <el-table-column label="地址" align="center" prop="address" />
-        <el-table-column label="分配到" align="center" prop="assignedTo" />
-        <el-table-column label="客户状态" align="center" prop="state">
+        <el-table-column label="分配到" align="center" prop="assignedTo" />180" />
+        <el-table-column label="线索状态" align="center" prop="leadState">
           <template #default="scope">
-            <dict-tag :options="ditalk_customer_state" :value="scope.row.state" />
+            <dict-tag :options="ditalk_lead_state" :value="scope.row.leadState" />
           </template>
         </el-table-column>
-        <el-table-column label="转换时间" align="center" prop="convertedTime" width="180" />
         <el-table-column label="操作" align="center" class-name="small-padding fixed-width" :width="130" fixed="right">
           <template #default="scope">
             <el-button link type="primary" size="small" @click="handleUpdate(scope.row)" v-hasPermi="['customer:my:edit']">编辑</el-button>
@@ -146,7 +134,7 @@
       </el-table>
       <pagination v-show="total > 0" :total="total" v-model:page="queryParams.pageNum" v-model:limit="queryParams.pageSize" @pagination="getList" />
     </el-card>
-    <!-- 添加或修改客户信息对话框 -->
+    <!-- 添加或修改线索信息对话框 -->
     <el-dialog :title="dialog.title" v-model="dialog.visible" width="960px" append-to-body>
       <el-row>
         <el-col :span="12" align="center">
@@ -191,9 +179,9 @@
             <el-form-item label="备注信息" prop="remark">
               <el-input v-model="form.remark" type="textarea" placeholder="请输入内容" />
             </el-form-item>
-            <el-form-item label="客户状态" prop="state">
-              <el-radio-group v-model="form.state">
-                <el-radio v-for="dict in ditalk_customer_state" :key="dict.value" :value="dict.value">{{ dict.label }}</el-radio>
+            <el-form-item label="线索状态" prop="leadState">
+              <el-radio-group v-model="form.leadState">
+                <el-radio v-for="dict in ditalk_lead_state" :key="dict.value" :value="dict.value">{{ dict.label }}</el-radio>
               </el-radio-group>
             </el-form-item>
           </el-form>
@@ -312,18 +300,25 @@
 </template>
 
 <script setup name="Info" lang="ts">
-import { CustomerContactForm } from '@/api/customer/info/types';
-import { InfoVO, InfoQuery, InfoForm } from '@/api/customer/info/types';
-import { listInfo, getInfo, addCustomerContact, updateCustomerContact } from '@/api/customer/my';
+import { listInfo, getInfo, addLeadContact, updateLeadContact } from '@/api/lead/my';
+import { InfoVO, InfoQuery, InfoForm, LeadContactForm } from '@/api/lead/info/types';
 import { listOption, getMyInfo } from '@/api/app/sys/user';
 import { UserOption } from '@/api/app/sys/user/types';
 import { InfoForm as ContactInfoForm } from '@/api/contact/info/types';
 import * as valueCheck from '@/utils/valueCheck';
 
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
-const { ditalk_customer_source, ditalk_customer_industry, ditalk_customer_state, ditalk_customer_type, ditalk_customer_tier } = toRefs<any>(
-  proxy?.useDict('ditalk_customer_source', 'ditalk_customer_industry', 'ditalk_customer_state', 'ditalk_customer_type', 'ditalk_customer_tier')
-);
+const { ditalk_customer_source, ditalk_customer_industry, ditalk_lead_state, ditalk_customer_state, ditalk_customer_type, ditalk_customer_tier } =
+  toRefs<any>(
+    proxy?.useDict(
+      'ditalk_customer_source',
+      'ditalk_customer_industry',
+      'ditalk_lead_state',
+      'ditalk_customer_state',
+      'ditalk_customer_type',
+      'ditalk_customer_tier'
+    )
+  );
 const { ditalk_educational_qualification, ditalk_contact_frequency, ditalk_contact_state, sys_user_sex } = toRefs<any>(
   proxy?.useDict('ditalk_educational_qualification', 'ditalk_contact_frequency', 'ditalk_contact_state', 'sys_user_sex')
 );
@@ -337,7 +332,6 @@ const single = ref(true);
 const multiple = ref(true);
 const total = ref(0);
 const dateRangeCreateTime = ref<[DateModelType, DateModelType]>(['', '']);
-const dateRangeConvertedTime = ref<[DateModelType, DateModelType]>(['', '']);
 
 const queryFormRef = ref<ElFormInstance>();
 const infoFormRef = ref<ElFormInstance>();
@@ -447,7 +441,6 @@ const getList = async () => {
   loading.value = true;
   queryParams.value.params = {};
   proxy?.addDateRange(queryParams.value, dateRangeCreateTime.value, 'CreateTime');
-  proxy?.addDateRange(queryParams.value, dateRangeConvertedTime.value, 'ConvertedTime');
   const res = await listInfo(queryParams.value);
   infoList.value = res.rows;
   total.value = res.total;
@@ -477,7 +470,6 @@ const handleQuery = () => {
 /** 重置按钮操作 */
 const resetQuery = () => {
   dateRangeCreateTime.value = ['', ''];
-  dateRangeConvertedTime.value = ['', ''];
   queryFormRef.value?.resetFields();
   handleQuery();
 };
@@ -493,7 +485,7 @@ const handleSelectionChange = (selection: InfoVO[]) => {
 const handleAdd = () => {
   reset();
   dialog.visible = true;
-  dialog.title = '添加客户信息';
+  dialog.title = '添加线索信息';
 };
 
 /** 修改按钮操作 */
@@ -504,17 +496,17 @@ const handleUpdate = async (row?: InfoVO) => {
   Object.assign(form.value, res.data);
   if (res.data) Object.assign(contactForm.value, res.data.contactInfo);
   dialog.visible = true;
-  dialog.title = '修改客户信息';
+  dialog.title = '修改线索信息';
 };
 
 /** 提交按钮 */
 const submitForm = async () => {
   let flag = true;
   if (valueCheck.isNullOrUndefined(form.value.contactId)) {
-    form.value.contactId = 1; // 临时值占位，后台不实际使用
+    form.value.contactId = 1; // 临时值，本方法后台不使用
   }
   if (valueCheck.isNullOrUndefined(contactForm.value.customerId)) {
-    contactForm.value.customerId = 1; // 临时值占位，后台不实际使用
+    contactForm.value.customerId = 1; // 临时值，本方法后台不使用
   }
   infoFormRef.value?.validate((valid: boolean) => {
     flag = flag && valid;
@@ -523,20 +515,31 @@ const submitForm = async () => {
     flag = flag && valid;
   });
   if (flag) {
-    const customerContactForm: CustomerContactForm = {
-      customerInfoBo: form.value,
+    const leadContactForm: LeadContactForm = {
+      leadInfoBo: form.value,
       contactInfoBo: contactForm.value
     };
     buttonLoading.value = true;
     if (form.value.id) {
-      await updateCustomerContact(customerContactForm).finally(() => (buttonLoading.value = false));
+      await updateLeadContact(leadContactForm).finally(() => (buttonLoading.value = false));
     } else {
-      await addCustomerContact(customerContactForm).finally(() => (buttonLoading.value = false));
+      await addLeadContact(leadContactForm).finally(() => (buttonLoading.value = false));
     }
     proxy?.$modal.msgSuccess('操作成功');
     dialog.visible = false;
     await getList();
   }
+};
+
+/** 导出按钮操作 */
+const handleExport = () => {
+  proxy?.download(
+    'lead/info/export',
+    {
+      ...queryParams.value
+    },
+    `info_${new Date().getTime()}.xlsx`
+  );
 };
 
 onMounted(() => {
