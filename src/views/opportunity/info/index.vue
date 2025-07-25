@@ -176,8 +176,7 @@
 <script setup name="Info" lang="ts">
 import { listInfo, getInfo, delInfo, addInfo, updateInfo } from '@/api/opportunity/info';
 import { InfoVO, InfoQuery, InfoForm } from '@/api/opportunity/info/types';
-import { listMyCustomer, getMyCustomerById } from '@/api/customer/info';
-// import { InfoVO as CustomerVO, InfoQuery as CustomerQuery } from '@/api/customer/info/types';
+import { listInfo as listMyCustomer, getInfo as getMyCustomer } from '@/api/customer/my';
 
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 const { ditalk_opportunity_state } = toRefs<any>(proxy?.useDict('ditalk_opportunity_state'));
@@ -372,7 +371,7 @@ const loadMyCustomerOption = async (query: string) => {
 
 const loadDefaultCustomerOption = async (id: string | number) => {
   // 加载客户
-  const res = await getMyCustomerById(id);
+  const res = await getMyCustomer(id);
   myCustomerOptions.value = [
     {
       id: res.data.id,

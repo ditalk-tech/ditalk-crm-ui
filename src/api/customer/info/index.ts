@@ -7,7 +7,6 @@ import { InfoVO, InfoForm, InfoQuery, CustomerContactForm } from '@/api/customer
  * @param query
  * @returns {*}
  */
-
 export const listInfo = (query?: InfoQuery): AxiosPromise<InfoVO[]> => {
   return request({
     url: '/customer/info/list',
@@ -85,20 +84,5 @@ export const addCustomerContact = (data: CustomerContactForm) => {
     url: '/app/customer/info',
     method: 'post',
     data: data
-  });
-};
-
-export const listMyCustomer = (query?: InfoQuery): AxiosPromise<InfoVO[]> => {
-  return request({
-    url: '/app/customer/info/myCustomers',
-    method: 'get',
-    params: query
-  });
-};
-
-export const getMyCustomerById = (id: string | number): AxiosPromise<InfoVO> => {
-  return request({
-    url: `/app/customer/info/myCustomer/${id}`,
-    method: 'get'
   });
 };
