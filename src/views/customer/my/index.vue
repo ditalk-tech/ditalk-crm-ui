@@ -54,6 +54,9 @@
                 ></el-option>
               </el-select>
             </el-form-item>
+            <el-form-item label="分配部门" prop="assignedDept">
+              <el-input v-model="queryParams.assignedDept" placeholder="请输入分配部门" clearable />
+            </el-form-item>
             <el-form-item label="客户状态" prop="state">
               <el-select v-model="queryParams.state" placeholder="请选择客户状态" clearable>
                 <el-option v-for="dict in ditalk_customer_state" :key="dict.value" :label="dict.label" :value="dict.value" />
@@ -129,7 +132,6 @@
         </el-table-column>
         <el-table-column label="公司官网" align="center" prop="website" />
         <el-table-column label="地址" align="center" prop="address" />
-        <el-table-column label="分配到" align="center" prop="assignedTo" />
         <el-table-column label="客户状态" align="center" prop="state">
           <template #default="scope">
             <dict-tag :options="ditalk_customer_state" :value="scope.row.state" />
@@ -143,6 +145,8 @@
             <el-button link type="warning" size="small" @click="transfer(scope.row)" v-hasPermi="['customer:my:transfer']">转移</el-button>
           </template>
         </el-table-column>
+        <el-table-column label="分配到" align="center" prop="assignedTo" />
+        <el-table-column label="分配部门" align="center" prop="assignedDept" />
       </el-table>
       <pagination v-show="total > 0" :total="total" v-model:page="queryParams.pageNum" v-model:limit="queryParams.pageSize" @pagination="getList" />
     </el-card>
@@ -315,7 +319,7 @@
 import { CustomerContactForm } from '@/api/customer/info/types';
 import { InfoVO, InfoQuery, InfoForm } from '@/api/customer/info/types';
 import { listInfo, getInfo, addCustomerContact, updateCustomerContact } from '@/api/customer/my';
-import { listOption, getMyInfo } from '@/api/app/sys/user';
+import { listOption } from '@/api/app/sys/user';
 import { UserOption } from '@/api/app/sys/user/types';
 import { InfoForm as ContactInfoForm } from '@/api/contact/info/types';
 import * as valueCheck from '@/utils/valueCheck';
@@ -361,6 +365,7 @@ const initFormData: InfoForm = {
   website: undefined,
   address: undefined,
   assignedTo: undefined,
+  assignedDept: undefined,
   remark: undefined,
   contactId: undefined,
   state: 'ACTIVE',
@@ -381,6 +386,7 @@ const data = reactive<PageData<InfoForm, InfoQuery>>({
     tier: undefined,
     address: undefined,
     assignedTo: undefined,
+    assignedDept: undefined,
     contactId: undefined,
     state: undefined,
     convertedTime: undefined,

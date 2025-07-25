@@ -57,6 +57,11 @@ export interface InfoVO {
   assignedTo: number;
 
   /**
+   * 分配部门
+   */
+  assignedDept: number;
+
+  /**
    * 备注信息
    */
   remark: string;
@@ -144,6 +149,11 @@ export interface InfoForm extends BaseEntity {
   assignedTo?: number;
 
   /**
+   * 分配部门
+   */
+  assignedDept?: number;
+
+  /**
    * 备注信息
    */
   remark?: string;
@@ -219,6 +229,11 @@ export interface InfoQuery extends PageQuery {
    * 分配到
    */
   assignedTo?: number;
+
+  /**
+   * 分配部门
+   */
+  assignedDept?: number;
 
   /**
    * 主联系人ID

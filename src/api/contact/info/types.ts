@@ -142,6 +142,16 @@ export interface InfoVO {
    * 状态
    */
   state: string;
+
+  /**
+   * 分配到
+   */
+  assignedTo: number;
+
+  /**
+   * 分配部门
+   */
+  assignedDept: number;
 }
 
 export interface InfoForm extends BaseEntity {
@@ -279,6 +289,16 @@ export interface InfoForm extends BaseEntity {
    * 状态
    */
   state?: string;
+
+  /**
+   * 分配到
+   */
+  assignedTo?: number;
+
+  /**
+   * 分配部门
+   */
+  assignedDept?: number;
 }
 
 export interface InfoQuery extends PageQuery {
@@ -406,6 +426,16 @@ export interface InfoQuery extends PageQuery {
    * 状态
    */
   state?: string;
+
+  /**
+   * 分配到
+   */
+  assignedTo?: number;
+
+  /**
+   * 分配部门
+   */
+  assignedDept?: number;
 
   /**
    * 日期范围参数

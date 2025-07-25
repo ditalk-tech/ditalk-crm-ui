@@ -45,7 +45,6 @@
               <el-input v-model="queryParams.address" placeholder="请输入地址" clearable @keyup.enter="handleQuery" />
             </el-form-item>
             <el-form-item label="分配到" prop="assignedTo">
-              <!-- <el-input v-model="queryParams.assignedTo" placeholder="请输入分配到" clearable @keyup.enter="handleQuery" /> -->
               <el-select v-model="queryParams.assignedTo" placeholder="请选择用户" filterable clearable>
                 <el-option
                   v-for="item in userOptionList"
@@ -54,6 +53,9 @@
                   :value="item.userId"
                 ></el-option>
               </el-select>
+            </el-form-item>
+            <el-form-item label="分配部门" prop="assignedDept">
+              <el-input v-model="queryParams.assignedDept" placeholder="请输入分配部门" clearable @keyup.enter="handleQuery" />
             </el-form-item>
             <el-form-item label="客户状态" prop="state">
               <el-select v-model="queryParams.state" placeholder="请选择客户状态" clearable>
@@ -130,7 +132,6 @@
         </el-table-column>
         <el-table-column label="公司官网" align="center" prop="website" />
         <el-table-column label="地址" align="center" prop="address" />
-        <el-table-column label="分配到" align="center" prop="assignedTo" />
         <el-table-column label="备注信息" align="center" prop="remark" />
         <el-table-column label="主联系人ID" align="center" prop="contactId" />
         <el-table-column label="客户状态" align="center" prop="state">
@@ -145,6 +146,8 @@
             <dict-tag :options="ditalk_lead_state" :value="scope.row.leadState" />
           </template>
         </el-table-column>
+        <el-table-column label="分配到" align="center" prop="assignedTo" />
+        <el-table-column label="分配部门" align="center" prop="assignedDept" />
         <el-table-column label="操作" align="center" class-name="small-padding fixed-width" fixed="right">
           <template #default="scope">
             <el-tooltip content="修改" placement="top">
@@ -191,17 +194,6 @@
         <el-form-item label="地址" prop="address">
           <el-input v-model="form.address" placeholder="请输入地址" />
         </el-form-item>
-        <el-form-item label="分配到" prop="assignedTo">
-          <el-select v-model="form.assignedTo" placeholder="请选择用户" filterable clearable style="width: 70%">
-            <el-option
-              v-for="item in userOptionList"
-              :key="item.userId"
-              :label="item.userName + ' - ' + item.nickName"
-              :value="item.userId"
-            ></el-option>
-          </el-select>
-          <el-button @click="assignToMe" type="info" plain>给 我</el-button>
-        </el-form-item>
         <el-form-item label="备注信息" prop="remark">
           <el-input v-model="form.remark" type="textarea" placeholder="请输入内容" />
         </el-form-item>
@@ -224,6 +216,20 @@
           <el-radio-group v-model="form.leadState">
             <el-radio v-for="dict in ditalk_lead_state" :key="dict.value" :value="dict.value">{{ dict.label }}</el-radio>
           </el-radio-group>
+        </el-form-item>
+        <el-form-item label="分配到" prop="assignedTo">
+          <el-select v-model="form.assignedTo" placeholder="请选择用户" filterable clearable style="width: 70%">
+            <el-option
+              v-for="item in userOptionList"
+              :key="item.userId"
+              :label="item.userName + ' - ' + item.nickName"
+              :value="item.userId"
+            ></el-option>
+          </el-select>
+          <el-button @click="assignToMe" type="info" plain>给 我</el-button>
+        </el-form-item>
+        <el-form-item label="分配部门" prop="assignedDept">
+          <el-input v-model="form.assignedDept" placeholder="请输入分配部门" />
         </el-form-item>
       </el-form>
       <template #footer>
@@ -286,6 +292,7 @@ const initFormData: InfoForm = {
   website: undefined,
   address: undefined,
   assignedTo: undefined,
+  assignedDept: undefined,
   remark: undefined,
   contactId: undefined,
   state: 'ACTIVE',
@@ -306,6 +313,7 @@ const data = reactive<PageData<InfoForm, InfoQuery>>({
     tier: undefined,
     address: undefined,
     assignedTo: undefined,
+    assignedDept: undefined,
     contactId: undefined,
     state: undefined,
     convertedTime: undefined,

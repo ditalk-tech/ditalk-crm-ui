@@ -193,6 +193,8 @@
             <dict-tag :options="ditalk_contact_state" :value="scope.row.state" />
           </template>
         </el-table-column>
+        <el-table-column label="分配到" align="center" prop="assignedTo" />
+        <el-table-column label="分配部门" align="center" prop="assignedDept" />
         <el-table-column label="操作" align="center" class-name="small-padding fixed-width" fixed="right">
           <template #default="scope">
             <el-tooltip content="修改" placement="top">
@@ -241,6 +243,12 @@
         </el-form-item>
         <el-form-item label="备注信息" prop="remark">
           <el-input v-model="form.remark" type="textarea" placeholder="请输入内容" />
+        </el-form-item>
+        <el-form-item label="分配到" prop="assignedTo">
+          <el-input v-model="form.assignedTo" placeholder="请输入分配到" />
+        </el-form-item>
+        <el-form-item label="分配部门" prop="assignedDept">
+          <el-input v-model="form.assignedDept" placeholder="请输入分配部门" />
         </el-form-item>
         <el-form-item label="生日" prop="birthday">
           <el-date-picker clearable v-model="form.birthday" type="datetime" value-format="YYYY-MM-DD HH:mm:ss" placeholder="请选择生日">
@@ -369,7 +377,9 @@ const initFormData: InfoForm = {
   lark: undefined,
   whatsApp: undefined,
   facebook: undefined,
-  state: undefined
+  state: undefined,
+  assignedTo: undefined,
+  assignedDept: undefined
 };
 const data = reactive<PageData<InfoForm, InfoQuery>>({
   form: { ...initFormData },
@@ -398,6 +408,8 @@ const data = reactive<PageData<InfoForm, InfoQuery>>({
     whatsApp: undefined,
     facebook: undefined,
     state: undefined,
+    assignedTo: undefined,
+    assignedDept: undefined,
     params: {
       createTime: undefined,
       birthday: undefined,

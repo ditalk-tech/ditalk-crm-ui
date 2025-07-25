@@ -44,16 +44,6 @@
             <el-form-item label="地址" prop="address">
               <el-input v-model="queryParams.address" placeholder="请输入地址" clearable @keyup.enter="handleQuery" />
             </el-form-item>
-            <!-- <el-form-item label="分配到" prop="assignedTo">
-              <el-select v-model="queryParams.assignedTo" placeholder="请选择用户" filterable clearable>
-                <el-option
-                  v-for="item in userOptionList"
-                  :key="item.userId"
-                  :label="item.userName + ' - ' + item.nickName"
-                  :value="item.userId"
-                ></el-option>
-              </el-select>
-            </el-form-item> -->
             <el-form-item label="客户状态" prop="state">
               <el-select v-model="queryParams.state" placeholder="请选择客户状态" clearable>
                 <el-option v-for="dict in ditalk_customer_state" :key="dict.value" :label="dict.label" :value="dict.value" />
@@ -174,17 +164,6 @@
             <el-form-item label="地址" prop="address">
               <el-input v-model="form.address" placeholder="请输入地址" />
             </el-form-item>
-            <!-- <el-form-item label="分配到" prop="assignedTo">
-              <el-select v-model="form.assignedTo" placeholder="请选择用户" filterable clearable style="width: 70%">
-                <el-option
-                  v-for="item in userOptionList"
-                  :key="item.userId"
-                  :label="item.userName + ' - ' + item.nickName"
-                  :value="item.userId"
-                ></el-option>
-              </el-select>
-              <el-button @click="assignToMe" type="info" plain>给 我</el-button>
-            </el-form-item> -->
             <el-form-item label="备注信息" prop="remark">
               <el-input v-model="form.remark" type="textarea" placeholder="请输入内容" />
             </el-form-item>
@@ -311,10 +290,9 @@
 <script setup name="Info" lang="ts">
 import { listInfo, getInfo } from '@/api/customer/public';
 import { InfoVO, InfoQuery, InfoForm } from '@/api/customer/info/types';
-import { listOption, getMyInfo } from '@/api/app/sys/user';
+import { listOption } from '@/api/app/sys/user';
 import { UserOption } from '@/api/app/sys/user/types';
 import { InfoForm as ContactInfoForm } from '@/api/contact/info/types';
-import * as valueCheck from '@/utils/valueCheck';
 
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 const { ditalk_customer_source, ditalk_customer_industry, ditalk_lead_state, ditalk_customer_state, ditalk_customer_type, ditalk_customer_tier } =
@@ -365,6 +343,7 @@ const initFormData: InfoForm = {
   website: undefined,
   address: undefined,
   assignedTo: undefined,
+  assignedDept: undefined,
   remark: undefined,
   contactId: undefined,
   state: 'ACTIVE',
@@ -385,6 +364,7 @@ const data = reactive<PageData<InfoForm, InfoQuery>>({
     tier: undefined,
     address: undefined,
     assignedTo: undefined,
+    assignedDept: undefined,
     contactId: undefined,
     state: undefined,
     convertedTime: undefined,
@@ -539,12 +519,6 @@ const getUserOptionList = async () => {
     pageSize: 100
   }).then((res: { data: any }) => {
     userOptionList.value = res.data;
-  });
-};
-
-const assignToMe = () => {
-  getMyInfo().then((res) => {
-    form.value.assignedTo = Number(res.data.userId);
   });
 };
 

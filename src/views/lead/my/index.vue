@@ -54,6 +54,9 @@
                 ></el-option>
               </el-select>
             </el-form-item>
+            <el-form-item label="分配部门" prop="assignedDept">
+              <el-input v-model="queryParams.assignedDept" placeholder="请输入分配部门" clearable />
+            </el-form-item>
             <el-form-item label="线索状态" prop="leadState">
               <el-select v-model="queryParams.leadState" placeholder="请选择线索状态" clearable>
                 <el-option v-for="dict in ditalk_lead_state" :key="dict.value" :label="dict.label" :value="dict.value" />
@@ -118,7 +121,6 @@
         </el-table-column>
         <el-table-column label="公司官网" align="center" prop="website" />
         <el-table-column label="地址" align="center" prop="address" />
-        <el-table-column label="分配到" align="center" prop="assignedTo" />180" />
         <el-table-column label="线索状态" align="center" prop="leadState">
           <template #default="scope">
             <dict-tag :options="ditalk_lead_state" :value="scope.row.leadState" />
@@ -131,6 +133,8 @@
             <el-button link type="warning" size="small" @click="transfer(scope.row)" v-hasPermi="['customer:my:transfer']">转移</el-button>
           </template>
         </el-table-column>
+        <el-table-column label="分配到" align="center" prop="assignedTo" />
+        <el-table-column label="分配部门" align="center" prop="assignedDept" />
       </el-table>
       <pagination v-show="total > 0" :total="total" v-model:page="queryParams.pageNum" v-model:limit="queryParams.pageSize" @pagination="getList" />
     </el-card>
@@ -355,6 +359,7 @@ const initFormData: InfoForm = {
   website: undefined,
   address: undefined,
   assignedTo: undefined,
+  assignedDept: undefined,
   remark: undefined,
   contactId: undefined,
   state: 'ACTIVE',
@@ -375,6 +380,7 @@ const data = reactive<PageData<InfoForm, InfoQuery>>({
     tier: undefined,
     address: undefined,
     assignedTo: undefined,
+    assignedDept: undefined,
     contactId: undefined,
     state: undefined,
     convertedTime: undefined,
