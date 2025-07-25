@@ -312,11 +312,13 @@
 </template>
 
 <script setup name="Info" lang="ts">
-import { listInfo, getInfo } from '@/api/customer/my';
+import { CustomerContactForm } from '@/api/customer/info/types';
 import { InfoVO, InfoQuery, InfoForm } from '@/api/customer/info/types';
+import { listInfo, getInfo, addCustomerContact, updateCustomerContact } from '@/api/customer/my';
 import { listOption, getMyInfo } from '@/api/app/sys/user';
 import { UserOption } from '@/api/app/sys/user/types';
 import { InfoForm as ContactInfoForm } from '@/api/contact/info/types';
+import * as valueCheck from '@/utils/valueCheck';
 
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 const { ditalk_customer_source, ditalk_customer_industry, ditalk_customer_state, ditalk_customer_type, ditalk_customer_tier } = toRefs<any>(
@@ -506,7 +508,36 @@ const handleUpdate = async (row?: InfoVO) => {
 };
 
 /** 提交按钮 */
-const submitForm = async () => {};
+const submitForm = async () => {
+  let flag = true;
+  if (valueCheck.isNullOrUndefined(form.value.contactId)) {
+    form.value.contactId = 1; // 临时值占位，后台不实际使用
+  }
+  if (valueCheck.isNullOrUndefined(contactForm.value.customerId)) {
+    contactForm.value.customerId = 1; // 临时值占位，后台不实际使用
+  }
+  infoFormRef.value?.validate((valid: boolean) => {
+    flag = flag && valid;
+  });
+  contactFormRef.value?.validate((valid: boolean) => {
+    flag = flag && valid;
+  });
+  if (flag) {
+    const customerContactForm: CustomerContactForm = {
+      customerInfoBo: form.value,
+      contactInfoBo: contactForm.value
+    };
+    buttonLoading.value = true;
+    if (form.value.id) {
+      await updateCustomerContact(customerContactForm).finally(() => (buttonLoading.value = false));
+    } else {
+      await addCustomerContact(customerContactForm).finally(() => (buttonLoading.value = false));
+    }
+    proxy?.$modal.msgSuccess('操作成功');
+    dialog.visible = false;
+    await getList();
+  }
+};
 
 onMounted(() => {
   getUserOptionList();
