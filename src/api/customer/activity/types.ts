@@ -10,6 +10,11 @@ export interface ActivityVO {
   createTime: string;
 
   /**
+   * 创建人ID
+   */
+  createBy: string | number;
+
+  /**
    * 乐观锁
    */
   version: number;

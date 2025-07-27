@@ -128,17 +128,15 @@
         </el-table-column>
         <el-table-column label="分配到" align="center" prop="assignedTo" />
         <el-table-column label="分配部门" align="center" prop="assignedDept" />
-        <el-table-column label="操作" align="center" class-name="small-padding fixed-width" :width="120" fixed="right">
+        <el-table-column label="操作" align="center" class-name="small-padding fixed-width" :width="140" fixed="right">
           <template #default="scope">
-            <el-button link type="primary" size="small" @click="handleActivity(scope.row)" v-hasPermi="['lead:my:activity']">活动记录</el-button>
+            <el-button link type="primary" size="small" @click="handleActivity(scope.row)" v-hasPermi="['lead:my:activity']">活动</el-button>
+            <el-button link type="success" size="small" @click="handleUpdate(scope.row)" v-hasPermi="['lead:my:edit']">编辑</el-button>
             <el-button link size="small">
               <el-dropdown trigger="click">
                 <span>更多</span>
                 <template #dropdown>
                   <el-dropdown-menu>
-                    <el-dropdown-item>
-                      <el-button link type="success" size="small" @click="handleUpdate(scope.row)" v-hasPermi="['lead:my:edit']">编辑</el-button>
-                    </el-dropdown-item>
                     <el-dropdown-item>
                       <el-button link type="danger" size="small" @click="reclaim(scope.row)" v-hasPermi="['lead:my:reclaim']">回收</el-button>
                     </el-dropdown-item>
@@ -406,7 +404,6 @@
         <el-tab-pane label="活动记录" name="activityList">
           <el-table v-loading="loading" border :data="activityList">
             <el-table-column label="ID" align="center" prop="id" v-if="true" />
-            <el-table-column label="创建时间" align="center" prop="createTime" />
             <el-table-column label="主题" align="center" prop="subject" />
             <el-table-column label="描述内容" align="center" prop="description" width="360" />
             <!-- <el-table-column label="商机ID" align="center" prop="opportunityId" /> -->
@@ -416,15 +413,206 @@
               </template>
             </el-table-column>
             <el-table-column label="活动时间" align="center" prop="activityTime" />
+            <el-table-column label="创建时间" align="center" prop="createTime" />
+            <el-table-column label="创建人ID" align="center" prop="createBy" />
           </el-table>
+          <pagination
+            v-show="activityTotal > 0"
+            :total="activityTotal"
+            v-model:page="activityQueryParams.pageNum"
+            v-model:limit="activityQueryParams.pageSize"
+            @pagination="getActivityList(form.id)"
+          />
         </el-tab-pane>
-        <!-- <el-tab-pane label="联系记录" name="second">联系记录</el-tab-pane>
-        <el-tab-pane label="备注" name="third">备注</el-tab-pane> -->
+        <el-tab-pane label="联系人" name="second">
+          <el-table v-loading="loading" border :data="contactInfoList">
+            <el-table-column label="ID" align="center" prop="id" v-if="true" />
+            <el-table-column label="创建时间" align="center" prop="createTime" width="180" />
+            <el-table-column label="客户ID" align="center" prop="customerId" />
+            <el-table-column label="姓氏" align="center" prop="lastName" />
+            <el-table-column label="名称" align="center" prop="firstName" />
+            <el-table-column label="头像" align="center" prop="avatarUrl" width="100">
+              <template #default="scope">
+                <image-preview :src="scope.row.avatarUrl" :width="50" :height="50" />
+              </template>
+            </el-table-column>
+            <el-table-column label="姓名拼音" align="center" prop="pinyin" />
+            <el-table-column label="性别" align="center" prop="gender">
+              <template #default="scope">
+                <dict-tag :options="sys_user_sex" :value="scope.row.gender ?? ''" />
+              </template>
+            </el-table-column>
+            <el-table-column label="电子邮箱" align="center" prop="email" />
+            <el-table-column label="联系电话" align="center" prop="phone" />
+
+            <el-table-column label="职位" align="center" prop="position" />
+            <!-- <el-table-column label="备注信息" align="center" prop="remark" />
+            <el-table-column label="生日" align="center" prop="birthday" width="180" />
+            <el-table-column label="户籍" align="center" prop="placeOfOrigin" />
+            <el-table-column label="居住地" align="center" prop="address" />
+            <el-table-column label="毕业学校" align="center" prop="graduationSchool" />
+            <el-table-column label="学历" align="center" prop="qualification">
+              <template #default="scope">
+                <dict-tag :options="ditalk_educational_qualification" :value="scope.row.qualification ?? ''" />
+              </template>
+            </el-table-column>
+            <el-table-column label="社会角色" align="center" prop="socialRole" />
+            <el-table-column label="最近接触时间" align="center" prop="lastContactTime" width="180" />
+            <el-table-column label="接触频率" align="center" prop="contactFrequency">
+              <template #default="scope">
+                <dict-tag :options="ditalk_contact_frequency" :value="scope.row.contactFrequency ?? ''" />
+              </template>
+            </el-table-column>
+            <el-table-column label="微信" align="center" prop="wechat" />
+            <el-table-column label="QQ" align="center" prop="qq" />
+            <el-table-column label="钉钉" align="center" prop="dingTalk" />
+            <el-table-column label="飞书" align="center" prop="lark" />
+            <el-table-column label="WhatsApp" align="center" prop="whatsApp" />
+            <el-table-column label="Facebook" align="center" prop="facebook" />
+            <el-table-column label="状态" align="center" prop="state">
+              <template #default="scope">
+                <dict-tag :options="ditalk_contact_state" :value="scope.row.state" />
+              </template>
+            </el-table-column>
+            <el-table-column label="分配到" align="center" prop="assignedTo" />
+            <el-table-column label="分配部门" align="center" prop="assignedDept" /> -->
+            <el-table-column label="操作" align="center" class-name="small-padding fixed-width" fixed="right">
+              <template #default="scope">
+                <el-tooltip content="详情" placement="top">
+                  <el-button link type="primary" icon="Postcard" @click="showContactInfo(scope.row)" v-hasPermi="['contact:info:query']"></el-button>
+                </el-tooltip>
+              </template>
+            </el-table-column>
+          </el-table>
+          <pagination
+            v-show="contactInfoTotal > 0"
+            :total="contactInfoTotal"
+            v-model:page="contactInfoQueryParams.pageNum"
+            v-model:limit="contactInfoQueryParams.pageSize"
+            @pagination="getContactInfoList(form.id)"
+          />
+        </el-tab-pane>
+        <!-- <el-tab-pane label="备注" name="third">备注</el-tab-pane> -->
       </el-tabs>
       <template #footer>
         <div class="dialog-footer">
           <el-button :loading="buttonLoading" type="primary" @click="submitActivityForm">确 定</el-button>
           <el-button @click="cancelActivity">取 消</el-button>
+        </div>
+      </template>
+    </el-dialog>
+
+    <!-- 活动记录中联系人详情弹窗 -->
+    <el-dialog :title="contactInfoDialog.title" v-model="contactInfoDialog.visible" width="960px" append-to-body>
+      <el-form ref="contactInfoFormRef" :model="contactInfoForm" :rules="rules" label-width="120px">
+        <el-form-item label="客户ID" prop="customerId">
+          <el-input v-model="contactInfoForm.customerId" placeholder="请输入客户ID" disabled />
+        </el-form-item>
+        <el-form-item label="姓氏" prop="lastName">
+          <el-input v-model="contactInfoForm.lastName" placeholder="请输入姓氏" disabled />
+        </el-form-item>
+        <el-form-item label="名称" prop="firstName">
+          <el-input v-model="contactInfoForm.firstName" placeholder="请输入名称" disabled />
+        </el-form-item>
+        <el-form-item label="头像" prop="avatar">
+          <!-- <image-upload v-model="contactInfoForm.avatar" :limit="1" disabled /> -->
+          <image-preview :src="contactInfoForm.avatarUrl" :width="50" :height="50" />
+        </el-form-item>
+        <el-form-item label="姓名拼音" prop="pinyin">
+          <el-input v-model="contactInfoForm.pinyin" placeholder="请输入姓名拼音" disabled />
+        </el-form-item>
+        <el-form-item label="性别" prop="gender">
+          <el-radio-group v-model="contactInfoForm.gender" disabled>
+            <el-radio v-for="dict in sys_user_sex" :key="dict.value" :value="dict.value">{{ dict.label }}</el-radio>
+          </el-radio-group>
+        </el-form-item>
+        <el-form-item label="电子邮箱" prop="email">
+          <el-input v-model="contactInfoForm.email" placeholder="请输入电子邮箱" disabled />
+        </el-form-item>
+        <el-form-item label="联系电话" prop="phone">
+          <el-input v-model="contactInfoForm.phone" placeholder="请输入联系电话" disabled />
+        </el-form-item>
+        <el-form-item label="职位" prop="position">
+          <el-input v-model="contactInfoForm.position" placeholder="请输入职位" disabled />
+        </el-form-item>
+        <el-form-item label="备注信息" prop="remark">
+          <el-input v-model="contactInfoForm.remark" type="textarea" placeholder="请输入内容" disabled />
+        </el-form-item>
+        <el-form-item label="分配到" prop="assignedTo">
+          <el-input v-model="contactInfoForm.assignedTo" placeholder="请输入分配到" disabled />
+        </el-form-item>
+        <el-form-item label="分配部门" prop="assignedDept">
+          <el-input v-model="contactInfoForm.assignedDept" placeholder="请输入分配部门" disabled />
+        </el-form-item>
+        <el-form-item label="生日" prop="birthday">
+          <el-date-picker
+            clearable
+            v-model="contactInfoForm.birthday"
+            type="datetime"
+            value-format="YYYY-MM-DD HH:mm:ss"
+            placeholder="请选择生日"
+            disabled
+          />
+        </el-form-item>
+        <el-form-item label="户籍" prop="placeOfOrigin">
+          <el-input v-model="contactInfoForm.placeOfOrigin" placeholder="请输入户籍" disabled />
+        </el-form-item>
+        <el-form-item label="居住地" prop="address">
+          <el-input v-model="contactInfoForm.address" placeholder="请输入居住地" disabled />
+        </el-form-item>
+        <el-form-item label="毕业学校" prop="graduationSchool">
+          <el-input v-model="contactInfoForm.graduationSchool" placeholder="请输入毕业学校" disabled />
+        </el-form-item>
+        <el-form-item label="学历" prop="qualification">
+          <el-select v-model="contactInfoForm.qualification" placeholder="请选择学历" disabled>
+            <el-option v-for="dict in ditalk_educational_qualification" :key="dict.value" :label="dict.label" :value="dict.value"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="社会角色" prop="socialRole">
+          <el-input v-model="contactInfoForm.socialRole" placeholder="请输入社会角色" disabled />
+        </el-form-item>
+        <el-form-item label="最近接触时间" prop="lastContactTime">
+          <el-date-picker
+            clearable
+            v-model="contactInfoForm.lastContactTime"
+            type="datetime"
+            value-format="YYYY-MM-DD HH:mm:ss"
+            placeholder="请选择最近接触时间"
+            disabled
+          />
+        </el-form-item>
+        <el-form-item label="接触频率" prop="contactFrequency" clearable>
+          <el-select v-model="contactInfoForm.contactFrequency" placeholder="请选择接触频率" disabled>
+            <el-option v-for="dict in ditalk_contact_frequency" :key="dict.value" :label="dict.label" :value="dict.value"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="微信" prop="wechat">
+          <el-input v-model="contactInfoForm.wechat" placeholder="请输入微信" disabled />
+        </el-form-item>
+        <el-form-item label="QQ" prop="qq">
+          <el-input v-model="contactInfoForm.qq" placeholder="请输入QQ" disabled />
+        </el-form-item>
+        <el-form-item label="钉钉" prop="dingTalk">
+          <el-input v-model="contactInfoForm.dingTalk" placeholder="请输入钉钉" disabled />
+        </el-form-item>
+        <el-form-item label="飞书" prop="lark">
+          <el-input v-model="contactInfoForm.lark" placeholder="请输入飞书" disabled />
+        </el-form-item>
+        <el-form-item label="WhatsApp" prop="whatsApp">
+          <el-input v-model="contactInfoForm.whatsApp" placeholder="请输入WhatsApp" disabled />
+        </el-form-item>
+        <el-form-item label="Facebook" prop="facebook">
+          <el-input v-model="contactInfoForm.facebook" placeholder="请输入Facebook" disabled />
+        </el-form-item>
+        <el-form-item label="状态" prop="state">
+          <el-radio-group v-model="contactInfoForm.state" disabled>
+            <el-radio v-for="dict in ditalk_contact_state" :key="dict.value" :value="dict.value">{{ dict.label }}</el-radio>
+          </el-radio-group>
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <div class="dialog-footer">
+          <el-button @click="closeContactInfoDialog">关 闭</el-button>
         </div>
       </template>
     </el-dialog>
@@ -436,7 +624,8 @@ import { listInfo, getInfo, addLeadContact, updateLeadContact } from '@/api/lead
 import { InfoVO, InfoQuery, InfoForm, LeadContactForm } from '@/api/lead/info/types';
 import { listOption, getMyInfo } from '@/api/app/sys/user';
 import { UserOption } from '@/api/app/sys/user/types';
-import { InfoForm as ContactInfoForm } from '@/api/contact/info/types';
+import { InfoVO as ContactInfoVO, InfoForm as ContactInfoForm } from '@/api/contact/info/types';
+import { getInfo as getContactInfo, listInfo as listContactInfo } from '@/api/contact/info';
 import * as valueCheck from '@/utils/valueCheck';
 import { listActivity, addActivity } from '@/api/customer/activity';
 import { ActivityVO, ActivityQuery, ActivityForm } from '@/api/customer/activity/types';
@@ -537,8 +726,17 @@ const data = reactive<PageData<InfoForm, InfoQuery>>({
 
 const { queryParams, form, rules } = toRefs(data);
 
-// 以下是联系人表单
-const contactFormRef = ref<ElFormInstance>();
+// 联系人相关
+const contactInfoList = ref<ContactInfoVO[]>([]); // 活动对话框中的联系人列表
+const contactFormRef = ref<ElFormInstance>(); // 添加线索时对应的联系人表单
+const contactInfoFormRef = ref<ElFormInstance>(); // 活动对话框中的联系人详情表单
+
+const contactInfoQueryParams = ref({
+  pageNum: 1,
+  pageSize: 10,
+  customerId: undefined
+});
+const contactInfoTotal = ref(0);
 
 const initContactFormData: ContactInfoForm = {
   id: undefined,
@@ -576,18 +774,38 @@ const contactRules = ref({
   state: [{ required: true, message: '状态不能为空', trigger: 'change' }]
 });
 
+// 添加线索时对应的联系人表单
 const contactForm = ref<ContactInfoForm>({
   ...initContactFormData
 });
 
+// 活动管理中的联系人详情表单
+const contactInfoForm = ref<ContactInfoForm>({
+  ...initContactFormData
+});
+
 // 活动相关变量
+const activityTotal = ref(0);
+const activityQueryParams = ref({
+  pageNum: 1,
+  pageSize: 10,
+  customerId: undefined
+});
+
 const activityList = ref<ActivityVO[]>([]);
 const activityFormRef = ref<ElFormInstance>();
+
 const activityDialog = reactive<DialogOption>({
   visible: false,
   title: '活动记录管理'
 });
-const activeTab = ref<string>('activityList');
+
+const contactInfoDialog = reactive<DialogOption>({
+  visible: false,
+  title: '联系人详情'
+});
+
+const activeTab = ref<string>('activityList'); // 活动对话框中的选项卡
 
 const initActivityFormData: ActivityForm = {
   id: undefined,
@@ -709,22 +927,12 @@ const submitForm = async () => {
   }
 };
 
-/** 导出按钮操作 */
-const handleExport = () => {
-  proxy?.download(
-    'lead/info/export',
-    {
-      ...queryParams.value
-    },
-    `info_${new Date().getTime()}.xlsx`
-  );
-};
-
 onMounted(() => {
   getUserOptionList();
   getList();
 });
 
+/** 获取用户选项列表 */
 const getUserOptionList = async () => {
   await listOption({
     pageNum: 1,
@@ -734,16 +942,18 @@ const getUserOptionList = async () => {
   });
 };
 
+/** 转移线索 */
 const transfer = (row: InfoVO) => {
   proxy?.$modal.notifyWarning('待完成');
 };
 
+/** 回收线索 */
 const reclaim = (row: InfoVO) => {
   proxy?.$modal.notifyWarning('待完成');
 };
 
 /**
- * 打开活动记录
+ * 打开活动对话框
  * @param row 线索信息
  */
 const handleActivity = async (row: InfoVO) => {
@@ -757,14 +967,20 @@ const handleActivity = async (row: InfoVO) => {
   activityForm.value.contactId = contactForm.value.id;
   activityDialog.visible = true;
   // 读取活动记录历史
-  const activityRes = await listActivity({
-    pageNum: 1,
-    pageSize: 20,
-    customerId: form.value.id
-  });
+  getActivityList(form.value.id);
+  // 填充联系人信息
+  getContactInfoList(form.value.id);
+};
+
+/** 读取活动记录历史 */
+const getActivityList = async (customerId: number | string) => {
+  activityQueryParams.value.customerId = customerId;
+  const activityRes = await listActivity(activityQueryParams.value);
+  activityTotal.value = activityRes.total;
   activityList.value = activityRes.rows;
 };
 
+/** 提交新增活动表单 */
 const submitActivityForm = async () => {
   activityFormRef.value?.validate(async (valid: boolean) => {
     if (valid) {
@@ -772,24 +988,59 @@ const submitActivityForm = async () => {
       await addActivity(activityForm.value).finally(() => (buttonLoading.value = false));
       proxy?.$modal.msgSuccess('操作成功');
       activityDialog.visible = false;
-      // await getList();
     }
   });
 };
 
+/** 关闭活动对话框 */
 const cancelActivity = () => {
   resetActivityForm();
   activityDialog.visible = false;
 };
 
-/** 表单重置 */
+/** 重置活动对话框表单 */
 const resetActivityForm = () => {
   form.value = { ...initFormData };
   contactForm.value = { ...initContactFormData };
   activityForm.value = { ...initActivityFormData };
   infoFormRef.value?.resetFields();
   contactFormRef.value?.resetFields();
+  // 重置活动对话框中的 联系人数据
+  contactInfoList.value = [];
+  contactInfoQueryParams.value.pageNum = 1;
+  // 重置活动对话框中的 联系人数据
   activityFormRef.value?.resetFields();
   activityList.value = [];
+  activityQueryParams.value.pageNum = 1;
+  // 重置活动对话框中的 tab 值
+  activeTab.value = 'activityList';
+};
+
+/** 获取联系人列表 */
+const getContactInfoList = async (customerId: number | string) => {
+  contactInfoQueryParams.value.customerId = customerId;
+  const contactInfoRes = await listContactInfo(contactInfoQueryParams.value);
+  contactInfoTotal.value = contactInfoRes.total;
+  contactInfoList.value = contactInfoRes.rows;
+};
+
+/** 联系人详情 */
+const showContactInfo = async (row: ContactInfoVO) => {
+  resetContactInfoForm();
+  const res = await getContactInfo(row.id);
+  Object.assign(contactInfoForm.value, res.data);
+  contactInfoDialog.visible = true;
+};
+
+/** 联系人详情关闭 */
+const closeContactInfoDialog = () => {
+  contactInfoDialog.visible = false;
+  resetContactInfoForm();
+};
+
+/** 活动对话框中的联系人详情表单重置 */
+const resetContactInfoForm = () => {
+  contactInfoForm.value = { ...initContactFormData };
+  contactInfoFormRef.value?.resetFields();
 };
 </script>

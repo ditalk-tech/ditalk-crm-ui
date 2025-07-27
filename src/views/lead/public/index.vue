@@ -44,7 +44,7 @@
             <el-form-item label="地址" prop="address">
               <el-input v-model="queryParams.address" placeholder="请输入地址" clearable @keyup.enter="handleQuery" />
             </el-form-item>
-            <el-form-item label="分配到" prop="assignedTo">
+            <!-- <el-form-item label="分配到" prop="assignedTo">
               <el-select v-model="queryParams.assignedTo" placeholder="请选择用户" filterable clearable>
                 <el-option
                   v-for="item in userOptionList"
@@ -56,7 +56,7 @@
             </el-form-item>
             <el-form-item label="分配部门" prop="assignedDept">
               <el-input v-model="queryParams.assignedDept" placeholder="请输入分配部门" clearable />
-            </el-form-item>
+            </el-form-item> -->
             <el-form-item label="线索状态" prop="leadState">
               <el-select v-model="queryParams.leadState" placeholder="请选择线索状态" clearable>
                 <el-option v-for="dict in ditalk_lead_state" :key="dict.value" :label="dict.label" :value="dict.value" />
@@ -115,8 +115,8 @@
             <dict-tag :options="ditalk_lead_state" :value="scope.row.leadState" />
           </template>
         </el-table-column>
-        <el-table-column label="分配到" align="center" prop="assignedTo" />
-        <el-table-column label="分配部门" align="center" prop="assignedDept" />
+        <!-- <el-table-column label="分配到" align="center" prop="assignedTo" />
+        <el-table-column label="分配部门" align="center" prop="assignedDept" /> -->
         <el-table-column label="操作" align="center" class-name="small-padding fixed-width" fixed="right">
           <template #default="scope">
             <el-button link size="small" type="primary" @click="claim(scope.row)" v-hasPermi="['customer:public:claim']">领取</el-button>
@@ -176,7 +176,7 @@
                 <el-radio v-for="dict in ditalk_lead_state" :key="dict.value" :value="dict.value">{{ dict.label }}</el-radio>
               </el-radio-group>
             </el-form-item>
-            <el-form-item label="分配到" prop="assignedTo">
+            <!-- <el-form-item label="分配到" prop="assignedTo">
               <el-select v-model="form.assignedTo" placeholder="请选择用户" filterable clearable style="width: 70%">
                 <el-option
                   v-for="item in userOptionList"
@@ -189,7 +189,7 @@
             </el-form-item>
             <el-form-item label="分配部门" prop="assignedDept">
               <el-input v-model="form.assignedDept" placeholder="请输入分配部门" />
-            </el-form-item>
+            </el-form-item> -->
           </el-form>
         </el-col>
         <el-col :span="12">
@@ -313,17 +313,9 @@ import { UserOption } from '@/api/app/sys/user/types';
 import { InfoForm as ContactInfoForm } from '@/api/contact/info/types';
 
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
-const { ditalk_customer_source, ditalk_customer_industry, ditalk_lead_state, ditalk_customer_state, ditalk_customer_type, ditalk_customer_tier } =
-  toRefs<any>(
-    proxy?.useDict(
-      'ditalk_customer_source',
-      'ditalk_customer_industry',
-      'ditalk_lead_state',
-      'ditalk_customer_state',
-      'ditalk_customer_type',
-      'ditalk_customer_tier'
-    )
-  );
+const { ditalk_customer_source, ditalk_customer_industry, ditalk_lead_state, ditalk_customer_type, ditalk_customer_tier } = toRefs<any>(
+  proxy?.useDict('ditalk_customer_source', 'ditalk_customer_industry', 'ditalk_lead_state', 'ditalk_customer_type', 'ditalk_customer_tier')
+);
 const { ditalk_educational_qualification, ditalk_contact_frequency, ditalk_contact_state, sys_user_sex } = toRefs<any>(
   proxy?.useDict('ditalk_educational_qualification', 'ditalk_contact_frequency', 'ditalk_contact_state', 'sys_user_sex')
 );

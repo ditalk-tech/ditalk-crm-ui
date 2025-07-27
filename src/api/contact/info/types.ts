@@ -299,6 +299,11 @@ export interface InfoForm extends BaseEntity {
    * 分配部门
    */
   assignedDept?: number;
+
+  /**
+   * 头像Url (为展示在只读表单中)
+   */
+  avatarUrl?: string;
 }
 
 export interface InfoQuery extends PageQuery {
