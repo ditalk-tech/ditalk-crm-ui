@@ -447,3 +447,25 @@ export interface InfoQuery extends PageQuery {
    */
   params?: any;
 }
+
+export interface InfoOptionVO {
+  /**
+   * ID
+   */
+  id: string | number;
+
+  /**
+   * 客户ID
+   */
+  customerId: string | number;
+
+  /**
+   * 姓氏
+   */
+  lastName: string;
+
+  /**
+   * 名称
+   */
+  firstName: string;
+}

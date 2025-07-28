@@ -364,6 +364,16 @@
               </div>
             </template>
             <el-form ref="activityFormRef" :model="activityForm" :rules="activityRules" label-width="120px">
+              <el-form-item label="联系人" prop="contactId">
+                <el-select v-model="activityForm.contactId" placeholder="请选择联系人">
+                  <el-option
+                    v-for="dict in contactInfoOptionList"
+                    :key="dict.id"
+                    :label="dict.lastName + ' ' + dict.firstName + ' --- ' + dict.id"
+                    :value="dict.id"
+                  ></el-option>
+                </el-select>
+              </el-form-item>
               <el-form-item label="主题" prop="subject">
                 <el-input v-model="activityForm.subject" placeholder="请输入主题" />
               </el-form-item>
@@ -389,9 +399,9 @@
                 <el-form-item label="客户ID" prop="customerId">
                   <el-input v-model="activityForm.customerId" placeholder="请输入客户ID" />
                 </el-form-item>
-                <el-form-item label="联系人ID" prop="contactId">
+                <!-- <el-form-item label="联系人ID" prop="contactId">
                   <el-input v-model="activityForm.contactId" placeholder="请输入联系人ID" />
-                </el-form-item>
+                </el-form-item> -->
                 <el-form-item label="商机ID" prop="opportunityId">
                   <el-input v-model="activityForm.opportunityId" placeholder="请输入商机ID" />
                 </el-form-item>
@@ -407,6 +417,7 @@
             <el-table-column label="主题" align="center" prop="subject" />
             <el-table-column label="描述内容" align="center" prop="description" width="360" />
             <!-- <el-table-column label="商机ID" align="center" prop="opportunityId" /> -->
+            <el-table-column label="联系人姓名" align="center" prop="contactName" />
             <el-table-column label="活动类型" align="center" prop="type">
               <template #default="scope">
                 <dict-tag :options="ditalk_customer_activity_type" :value="scope.row.type" />
@@ -444,7 +455,6 @@
             </el-table-column>
             <el-table-column label="电子邮箱" align="center" prop="email" />
             <el-table-column label="联系电话" align="center" prop="phone" />
-
             <el-table-column label="职位" align="center" prop="position" />
             <!-- <el-table-column label="备注信息" align="center" prop="remark" />
             <el-table-column label="生日" align="center" prop="birthday" width="180" />
@@ -624,8 +634,8 @@ import { listInfo, getInfo, addLeadContact, updateLeadContact } from '@/api/lead
 import { InfoVO, InfoQuery, InfoForm, LeadContactForm } from '@/api/lead/info/types';
 import { listOption, getMyInfo } from '@/api/app/sys/user';
 import { UserOption } from '@/api/app/sys/user/types';
-import { InfoVO as ContactInfoVO, InfoForm as ContactInfoForm } from '@/api/contact/info/types';
-import { getInfo as getContactInfo, listInfo as listContactInfo } from '@/api/contact/info';
+import { InfoVO as ContactInfoVO, InfoForm as ContactInfoForm, InfoOptionVO as ContactInfoOptionVO } from '@/api/contact/info/types';
+import { getInfo as getContactInfo, listInfo as listContactInfo, listInfoOption as listContactOptionInfo } from '@/api/contact/info';
 import * as valueCheck from '@/utils/valueCheck';
 import { listActivity, addActivity } from '@/api/customer/activity';
 import { ActivityVO, ActivityQuery, ActivityForm } from '@/api/customer/activity/types';
@@ -730,6 +740,7 @@ const { queryParams, form, rules } = toRefs(data);
 const contactInfoList = ref<ContactInfoVO[]>([]); // 活动对话框中的联系人列表
 const contactFormRef = ref<ElFormInstance>(); // 添加线索时对应的联系人表单
 const contactInfoFormRef = ref<ElFormInstance>(); // 活动对话框中的联系人详情表单
+const contactInfoOptionList = ref<ContactInfoOptionVO[]>([]); // 联系人详情选项列表
 
 const contactInfoQueryParams = ref({
   pageNum: 1,
@@ -970,6 +981,8 @@ const handleActivity = async (row: InfoVO) => {
   getActivityList(form.value.id);
   // 填充联系人信息
   getContactInfoList(form.value.id);
+  // 填充联系人详情选项列表
+  getContactInfoOptionList(form.value.id);
 };
 
 /** 读取活动记录历史 */
@@ -1042,5 +1055,11 @@ const closeContactInfoDialog = () => {
 const resetContactInfoForm = () => {
   contactInfoForm.value = { ...initContactFormData };
   contactInfoFormRef.value?.resetFields();
+};
+
+/** 获取联系人详情选项列表 */
+const getContactInfoOptionList = async (customerId: number | string) => {
+  const res = await listContactOptionInfo(customerId);
+  contactInfoOptionList.value = res.data;
 };
 </script>

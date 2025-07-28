@@ -30,6 +30,11 @@ export interface ActivityVO {
   contactId: string | number;
 
   /**
+   * 联系人姓名
+   */
+  contactName: string;
+
+  /**
    * 商机ID
    */
   opportunityId: string | number;

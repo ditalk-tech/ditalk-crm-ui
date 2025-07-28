@@ -1,13 +1,12 @@
 import request from '@/utils/request';
 import { AxiosPromise } from 'axios';
-import { InfoVO, InfoForm, InfoQuery } from '@/api/contact/info/types';
+import { InfoVO, InfoForm, InfoQuery, InfoOptionVO } from '@/api/contact/info/types';
 
 /**
  * 查询联系人信息列表
  * @param query
  * @returns {*}
  */
-
 export const listInfo = (query?: InfoQuery): AxiosPromise<InfoVO[]> => {
   return request({
     url: '/contact/info/list',
@@ -59,5 +58,17 @@ export const delInfo = (id: string | number | Array<string | number>) => {
   return request({
     url: '/contact/info/' + id,
     method: 'delete'
+  });
+};
+
+/**
+ * 查询联系人信息选项列表（下拉选择）
+ * @param customerId
+ * @returns {*}
+ */
+export const listInfoOption = (customerId: string | number): AxiosPromise<InfoOptionVO[]> => {
+  return request({
+    url: '/contact/info/list/options/' + customerId,
+    method: 'get'
   });
 };
