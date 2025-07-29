@@ -130,9 +130,12 @@
         <el-table-column label="分配部门" align="center" prop="assignedDept" />
         <el-table-column label="操作" align="center" class-name="small-padding fixed-width" :width="140" fixed="right">
           <template #default="scope">
-            <!-- <el-button link type="primary" size="small" @click="handleActivity(scope.row)" v-hasPermi="['lead:my:activity']">活动</el-button> -->
-            <el-button link type="primary" size="small" @click="handleActivityInfoList(scope.row)" v-hasPermi="['lead:my:activity']">活动</el-button>
-            <el-button link type="success" size="small" @click="handleContactInfoList(scope.row)" v-hasPermi="['lead:my:add']">联系人</el-button>
+            <el-button link type="primary" size="small" @click="handleActivityInfoList(scope.row)" v-hasPermi="['customer:activity:list']"
+              >活动</el-button
+            >
+            <el-button link type="success" size="small" @click="handleContactInfoList(scope.row)" v-hasPermi="['contact:info:list']"
+              >联系人</el-button
+            >
             <el-button link size="small">
               <el-dropdown trigger="click">
                 <span>更多</span>

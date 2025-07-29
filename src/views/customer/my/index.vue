@@ -108,7 +108,7 @@
       <el-table v-loading="loading" border :data="infoList" @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="55" align="center" fixed="left" />
         <el-table-column label="ID" align="center" prop="id" v-if="true" />
-        <el-table-column label="创建时间" align="center" prop="createTime" width="180" />
+        <el-table-column label="创建时间" align="center" prop="createTime" />
         <el-table-column label="客户名称" align="center" prop="name" />
         <el-table-column label="客户类型" align="center" prop="type">
           <template #default="scope">
@@ -137,12 +137,33 @@
             <dict-tag :options="ditalk_customer_state" :value="scope.row.state" />
           </template>
         </el-table-column>
-        <el-table-column label="转换时间" align="center" prop="convertedTime" width="180" />
-        <el-table-column label="操作" align="center" class-name="small-padding fixed-width" :width="130" fixed="right">
+        <el-table-column label="转换时间" align="center" prop="convertedTime" />
+        <el-table-column label="操作" align="center" class-name="small-padding fixed-width" :width="140" fixed="right">
           <template #default="scope">
-            <el-button link type="primary" size="small" @click="handleUpdate(scope.row)" v-hasPermi="['customer:my:edit']">编辑</el-button>
-            <el-button link type="danger" size="small" @click="reclaim(scope.row)" v-hasPermi="['customer:my:reclaim']">回收</el-button>
-            <el-button link type="warning" size="small" @click="transfer(scope.row)" v-hasPermi="['customer:my:transfer']">转移</el-button>
+            <el-button link type="primary" size="small" @click="handleActivityInfoList(scope.row)" v-hasPermi="['customer:activity:list']"
+              >活动</el-button
+            >
+            <el-button link type="success" size="small" @click="handleContactInfoList(scope.row)" v-hasPermi="['contact:info:list']"
+              >联系人</el-button
+            >
+            <el-button link size="small">
+              <el-dropdown trigger="click">
+                <span>更多</span>
+                <template #dropdown>
+                  <el-dropdown-menu>
+                    <el-dropdown-item>
+                      <el-button link type="primary" size="small" @click="handleUpdate(scope.row)" v-hasPermi="['customer:my:edit']">编辑</el-button>
+                    </el-dropdown-item>
+                    <el-dropdown-item>
+                      <el-button link type="danger" size="small" @click="reclaim(scope.row)" v-hasPermi="['customer:my:reclaim']">回收</el-button>
+                    </el-dropdown-item>
+                    <el-dropdown-item>
+                      <el-button link type="warning" size="small" @click="transfer(scope.row)" v-hasPermi="['customer:my:transfer']">转移</el-button>
+                    </el-dropdown-item>
+                  </el-dropdown-menu>
+                </template>
+              </el-dropdown>
+            </el-button>
           </template>
         </el-table-column>
         <el-table-column label="分配到" align="center" prop="assignedTo" />
@@ -316,14 +337,14 @@
 </template>
 
 <script setup name="Info" lang="ts">
-import { CustomerContactForm } from '@/api/customer/info/types';
-import { InfoVO, InfoQuery, InfoForm } from '@/api/customer/info/types';
+import { InfoVO, InfoQuery, InfoForm, CustomerContactForm } from '@/api/customer/info/types';
 import { listInfo, getInfo, addCustomerContact, updateCustomerContact } from '@/api/customer/my';
 import { listOption } from '@/api/app/sys/user';
 import { UserOption } from '@/api/app/sys/user/types';
 import { InfoForm as ContactInfoForm } from '@/api/contact/info/types';
 import * as valueCheck from '@/utils/valueCheck';
 
+const router = useRouter();
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 const { ditalk_customer_source, ditalk_customer_industry, ditalk_customer_state, ditalk_customer_type, ditalk_customer_tier } = toRefs<any>(
   proxy?.useDict('ditalk_customer_source', 'ditalk_customer_industry', 'ditalk_customer_state', 'ditalk_customer_type', 'ditalk_customer_tier')
@@ -565,5 +586,15 @@ const transfer = (row: InfoVO) => {
 
 const reclaim = (row: InfoVO) => {
   proxy?.$modal.notifyWarning('待完成');
+};
+
+/** 路由到联系人页面 */
+const handleContactInfoList = (row: InfoVO) => {
+  router.push({ path: '/contact/info-list/' + row.id }); // :customerId
+};
+
+/** 路由到活动页面 */
+const handleActivityInfoList = (row: InfoVO) => {
+  router.push({ path: '/activity/info-list/' + row.id }); // :customerId
 };
 </script>
