@@ -60,3 +60,14 @@ export const delInfo = (id: string | number | Array<string | number>) => {
     method: 'delete'
   });
 };
+
+/**
+ * 全量查询客户信息选择列表 —— 主要用于select组件
+ * @returns {*}
+ */
+export const listAllInfoOption = (): AxiosPromise<InfoVO[]> => {
+  return request({
+    url: '/customer/info/list/all/option',
+    method: 'get'
+  });
+};

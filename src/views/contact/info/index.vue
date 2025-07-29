@@ -324,6 +324,7 @@
 import { listInfo, getInfo, delInfo, addInfo, updateInfo } from '@/api/contact/info';
 import { InfoVO, InfoQuery, InfoForm } from '@/api/contact/info/types';
 
+const route = useRoute();
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 const { ditalk_educational_qualification, ditalk_contact_frequency, ditalk_contact_state, sys_user_sex } = toRefs<any>(
   proxy?.useDict('ditalk_educational_qualification', 'ditalk_contact_frequency', 'ditalk_contact_state', 'sys_user_sex')
@@ -345,6 +346,7 @@ const queryFormRef = ref<ElFormInstance>();
 const infoFormRef = ref<ElFormInstance>();
 
 const showMoreConditions = ref<boolean>(false);
+const defaultCustomerId = ref<string>('');
 
 const dialog = reactive<DialogOption>({
   visible: false,
@@ -463,6 +465,7 @@ const resetQuery = () => {
   dateRangeBirthday.value = ['', ''];
   dateRangeLastContactTime.value = ['', ''];
   queryFormRef.value?.resetFields();
+  queryParams.value.customerId = defaultCustomerId.value;
   handleQuery();
 };
 
@@ -478,6 +481,7 @@ const handleAdd = () => {
   reset();
   dialog.visible = true;
   dialog.title = '添加联系人信息';
+  form.value.customerId = queryParams.value.customerId;
 };
 
 /** 修改按钮操作 */
@@ -528,6 +532,13 @@ const handleExport = () => {
 };
 
 onMounted(() => {
+  setDefualtCustomerId();
   getList();
 });
+
+/** 设置默认客户ID */
+const setDefualtCustomerId = async () => {
+  queryParams.value.customerId = route.params && (route.params.customerId as string);
+  defaultCustomerId.value = route.params && (route.params.customerId as string);
+};
 </script>

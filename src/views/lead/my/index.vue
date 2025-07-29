@@ -130,13 +130,17 @@
         <el-table-column label="分配部门" align="center" prop="assignedDept" />
         <el-table-column label="操作" align="center" class-name="small-padding fixed-width" :width="140" fixed="right">
           <template #default="scope">
-            <el-button link type="primary" size="small" @click="handleActivity(scope.row)" v-hasPermi="['lead:my:activity']">活动</el-button>
-            <el-button link type="success" size="small" @click="handleUpdate(scope.row)" v-hasPermi="['lead:my:edit']">编辑</el-button>
+            <!-- <el-button link type="primary" size="small" @click="handleActivity(scope.row)" v-hasPermi="['lead:my:activity']">活动</el-button> -->
+            <el-button link type="primary" size="small" @click="handleActivityInfoList(scope.row)" v-hasPermi="['lead:my:activity']">活动</el-button>
+            <el-button link type="success" size="small" @click="handleContactInfoList(scope.row)" v-hasPermi="['lead:my:add']">联系人</el-button>
             <el-button link size="small">
               <el-dropdown trigger="click">
                 <span>更多</span>
                 <template #dropdown>
                   <el-dropdown-menu>
+                    <el-dropdown-item>
+                      <el-button link type="success" size="small" @click="handleUpdate(scope.row)" v-hasPermi="['lead:my:edit']">编辑</el-button>
+                    </el-dropdown-item>
                     <el-dropdown-item>
                       <el-button link type="danger" size="small" @click="reclaim(scope.row)" v-hasPermi="['lead:my:reclaim']">回收</el-button>
                     </el-dropdown-item>
@@ -152,6 +156,7 @@
       </el-table>
       <pagination v-show="total > 0" :total="total" v-model:page="queryParams.pageNum" v-model:limit="queryParams.pageSize" @pagination="getList" />
     </el-card>
+
     <!-- 添加或修改线索信息对话框 -->
     <el-dialog :title="dialog.title" v-model="dialog.visible" width="960px" append-to-body>
       <el-row>
@@ -314,351 +319,27 @@
         </div>
       </template>
     </el-dialog>
-
-    <!-- 活动记录对话框 -->
-    <el-dialog :title="activityDialog.title" v-model="activityDialog.visible" width="1140px" append-to-body>
-      <el-row>
-        <el-col :span="12">
-          <el-card mr="1" shadow="hover">
-            <template #header>
-              <div class="card-header">
-                <span>客户信息</span>
-              </div>
-            </template>
-            <el-form label-width="100px">
-              <el-form-item label="客户名称">
-                <el-input v-model="form.name" disabled />
-              </el-form-item>
-              <el-form-item label="客户类型">
-                <el-select v-model="form.type" disabled>
-                  <el-option v-for="dict in ditalk_customer_type" :key="dict.value" :label="dict.label" :value="dict.value" />
-                </el-select>
-              </el-form-item>
-              <el-form-item label="联系人姓名">
-                <el-input :value="contactForm.lastName + ' ' + contactForm.firstName" disabled />
-              </el-form-item>
-              <el-form-item label="性别" prop="gender">
-                <el-select v-model="contactForm.gender" disabled>
-                  <el-option v-for="dict in sys_user_sex" :key="dict.value" :label="dict.label" :value="dict.value" />
-                </el-select>
-              </el-form-item>
-              <el-form-item label="线索状态">
-                <el-select v-model="form.leadState" disabled>
-                  <el-option v-for="dict in ditalk_lead_state" :key="dict.value" :label="dict.label" :value="dict.value" />
-                </el-select>
-              </el-form-item>
-              <el-form-item label="联系电话">
-                <el-input v-model="contactForm.phone" disabled />
-              </el-form-item>
-              <el-form-item label="电子邮箱">
-                <el-input v-model="contactForm.email" disabled />
-              </el-form-item>
-            </el-form>
-          </el-card>
-        </el-col>
-        <el-col :span="12">
-          <el-card ml="1" shadow="hover">
-            <template #header>
-              <div class="card-header">
-                <span>登记活动信息</span>
-              </div>
-            </template>
-            <el-form ref="activityFormRef" :model="activityForm" :rules="activityRules" label-width="120px">
-              <el-form-item label="联系人" prop="contactId">
-                <el-select v-model="activityForm.contactId" placeholder="请选择联系人">
-                  <el-option
-                    v-for="dict in contactInfoOptionList"
-                    :key="dict.id"
-                    :label="dict.lastName + ' ' + dict.firstName + ' --- ' + dict.id"
-                    :value="dict.id"
-                  ></el-option>
-                </el-select>
-              </el-form-item>
-              <el-form-item label="主题" prop="subject">
-                <el-input v-model="activityForm.subject" placeholder="请输入主题" />
-              </el-form-item>
-              <el-form-item label="活动类型" prop="type">
-                <el-select v-model="activityForm.type" placeholder="请选择活动类型">
-                  <el-option v-for="dict in ditalk_customer_activity_type" :key="dict.value" :label="dict.label" :value="dict.value"></el-option>
-                </el-select>
-              </el-form-item>
-              <el-form-item label="描述内容" prop="description">
-                <el-input v-model="activityForm.description" type="textarea" placeholder="请输入内容" />
-              </el-form-item>
-              <el-form-item label="活动时间" prop="activityTime">
-                <el-date-picker
-                  clearable
-                  v-model="activityForm.activityTime"
-                  type="datetime"
-                  value-format="YYYY-MM-DD HH:mm:ss"
-                  placeholder="请选择活动时间"
-                >
-                </el-date-picker>
-              </el-form-item>
-              <template :v-show="false">
-                <el-form-item label="客户ID" prop="customerId">
-                  <el-input v-model="activityForm.customerId" placeholder="请输入客户ID" />
-                </el-form-item>
-                <!-- <el-form-item label="联系人ID" prop="contactId">
-                  <el-input v-model="activityForm.contactId" placeholder="请输入联系人ID" />
-                </el-form-item> -->
-                <el-form-item label="商机ID" prop="opportunityId">
-                  <el-input v-model="activityForm.opportunityId" placeholder="请输入商机ID" />
-                </el-form-item>
-              </template>
-            </el-form>
-          </el-card>
-        </el-col>
-      </el-row>
-      <el-tabs v-model="activeTab" type="border-card">
-        <el-tab-pane label="活动记录" name="activityList">
-          <el-table v-loading="loading" border :data="activityList">
-            <el-table-column label="ID" align="center" prop="id" v-if="true" />
-            <el-table-column label="主题" align="center" prop="subject" />
-            <el-table-column label="描述内容" align="center" prop="description" width="360" />
-            <!-- <el-table-column label="商机ID" align="center" prop="opportunityId" /> -->
-            <el-table-column label="联系人姓名" align="center" prop="contactName" />
-            <el-table-column label="活动类型" align="center" prop="type">
-              <template #default="scope">
-                <dict-tag :options="ditalk_customer_activity_type" :value="scope.row.type" />
-              </template>
-            </el-table-column>
-            <el-table-column label="活动时间" align="center" prop="activityTime" />
-            <el-table-column label="创建时间" align="center" prop="createTime" />
-            <el-table-column label="创建人ID" align="center" prop="createBy" />
-          </el-table>
-          <pagination
-            v-show="activityTotal > 0"
-            :total="activityTotal"
-            v-model:page="activityQueryParams.pageNum"
-            v-model:limit="activityQueryParams.pageSize"
-            @pagination="getActivityList(form.id)"
-          />
-        </el-tab-pane>
-        <el-tab-pane label="联系人" name="second">
-          <el-table v-loading="loading" border :data="contactInfoList">
-            <el-table-column label="ID" align="center" prop="id" v-if="true" />
-            <el-table-column label="创建时间" align="center" prop="createTime" width="180" />
-            <el-table-column label="客户ID" align="center" prop="customerId" />
-            <el-table-column label="姓氏" align="center" prop="lastName" />
-            <el-table-column label="名称" align="center" prop="firstName" />
-            <el-table-column label="头像" align="center" prop="avatarUrl" width="100">
-              <template #default="scope">
-                <image-preview :src="scope.row.avatarUrl" :width="50" :height="50" />
-              </template>
-            </el-table-column>
-            <el-table-column label="姓名拼音" align="center" prop="pinyin" />
-            <el-table-column label="性别" align="center" prop="gender">
-              <template #default="scope">
-                <dict-tag :options="sys_user_sex" :value="scope.row.gender ?? ''" />
-              </template>
-            </el-table-column>
-            <el-table-column label="电子邮箱" align="center" prop="email" />
-            <el-table-column label="联系电话" align="center" prop="phone" />
-            <el-table-column label="职位" align="center" prop="position" />
-            <!-- <el-table-column label="备注信息" align="center" prop="remark" />
-            <el-table-column label="生日" align="center" prop="birthday" width="180" />
-            <el-table-column label="户籍" align="center" prop="placeOfOrigin" />
-            <el-table-column label="居住地" align="center" prop="address" />
-            <el-table-column label="毕业学校" align="center" prop="graduationSchool" />
-            <el-table-column label="学历" align="center" prop="qualification">
-              <template #default="scope">
-                <dict-tag :options="ditalk_educational_qualification" :value="scope.row.qualification ?? ''" />
-              </template>
-            </el-table-column>
-            <el-table-column label="社会角色" align="center" prop="socialRole" />
-            <el-table-column label="最近接触时间" align="center" prop="lastContactTime" width="180" />
-            <el-table-column label="接触频率" align="center" prop="contactFrequency">
-              <template #default="scope">
-                <dict-tag :options="ditalk_contact_frequency" :value="scope.row.contactFrequency ?? ''" />
-              </template>
-            </el-table-column>
-            <el-table-column label="微信" align="center" prop="wechat" />
-            <el-table-column label="QQ" align="center" prop="qq" />
-            <el-table-column label="钉钉" align="center" prop="dingTalk" />
-            <el-table-column label="飞书" align="center" prop="lark" />
-            <el-table-column label="WhatsApp" align="center" prop="whatsApp" />
-            <el-table-column label="Facebook" align="center" prop="facebook" />
-            <el-table-column label="状态" align="center" prop="state">
-              <template #default="scope">
-                <dict-tag :options="ditalk_contact_state" :value="scope.row.state" />
-              </template>
-            </el-table-column>
-            <el-table-column label="分配到" align="center" prop="assignedTo" />
-            <el-table-column label="分配部门" align="center" prop="assignedDept" /> -->
-            <el-table-column label="操作" align="center" class-name="small-padding fixed-width" fixed="right">
-              <template #default="scope">
-                <el-tooltip content="详情" placement="top">
-                  <el-button link type="primary" icon="Postcard" @click="showContactInfo(scope.row)" v-hasPermi="['contact:info:query']"></el-button>
-                </el-tooltip>
-              </template>
-            </el-table-column>
-          </el-table>
-          <pagination
-            v-show="contactInfoTotal > 0"
-            :total="contactInfoTotal"
-            v-model:page="contactInfoQueryParams.pageNum"
-            v-model:limit="contactInfoQueryParams.pageSize"
-            @pagination="getContactInfoList(form.id)"
-          />
-        </el-tab-pane>
-        <!-- <el-tab-pane label="备注" name="third">备注</el-tab-pane> -->
-      </el-tabs>
-      <template #footer>
-        <div class="dialog-footer">
-          <el-button :loading="buttonLoading" type="primary" @click="submitActivityForm">确 定</el-button>
-          <el-button @click="cancelActivity">取 消</el-button>
-        </div>
-      </template>
-    </el-dialog>
-
-    <!-- 活动记录中联系人详情弹窗 -->
-    <el-dialog :title="contactInfoDialog.title" v-model="contactInfoDialog.visible" width="960px" append-to-body>
-      <el-form ref="contactInfoFormRef" :model="contactInfoForm" :rules="rules" label-width="120px">
-        <el-form-item label="客户ID" prop="customerId">
-          <el-input v-model="contactInfoForm.customerId" placeholder="请输入客户ID" disabled />
-        </el-form-item>
-        <el-form-item label="姓氏" prop="lastName">
-          <el-input v-model="contactInfoForm.lastName" placeholder="请输入姓氏" disabled />
-        </el-form-item>
-        <el-form-item label="名称" prop="firstName">
-          <el-input v-model="contactInfoForm.firstName" placeholder="请输入名称" disabled />
-        </el-form-item>
-        <el-form-item label="头像" prop="avatar">
-          <!-- <image-upload v-model="contactInfoForm.avatar" :limit="1" disabled /> -->
-          <image-preview :src="contactInfoForm.avatarUrl" :width="50" :height="50" />
-        </el-form-item>
-        <el-form-item label="姓名拼音" prop="pinyin">
-          <el-input v-model="contactInfoForm.pinyin" placeholder="请输入姓名拼音" disabled />
-        </el-form-item>
-        <el-form-item label="性别" prop="gender">
-          <el-radio-group v-model="contactInfoForm.gender" disabled>
-            <el-radio v-for="dict in sys_user_sex" :key="dict.value" :value="dict.value">{{ dict.label }}</el-radio>
-          </el-radio-group>
-        </el-form-item>
-        <el-form-item label="电子邮箱" prop="email">
-          <el-input v-model="contactInfoForm.email" placeholder="请输入电子邮箱" disabled />
-        </el-form-item>
-        <el-form-item label="联系电话" prop="phone">
-          <el-input v-model="contactInfoForm.phone" placeholder="请输入联系电话" disabled />
-        </el-form-item>
-        <el-form-item label="职位" prop="position">
-          <el-input v-model="contactInfoForm.position" placeholder="请输入职位" disabled />
-        </el-form-item>
-        <el-form-item label="备注信息" prop="remark">
-          <el-input v-model="contactInfoForm.remark" type="textarea" placeholder="请输入内容" disabled />
-        </el-form-item>
-        <el-form-item label="分配到" prop="assignedTo">
-          <el-input v-model="contactInfoForm.assignedTo" placeholder="请输入分配到" disabled />
-        </el-form-item>
-        <el-form-item label="分配部门" prop="assignedDept">
-          <el-input v-model="contactInfoForm.assignedDept" placeholder="请输入分配部门" disabled />
-        </el-form-item>
-        <el-form-item label="生日" prop="birthday">
-          <el-date-picker
-            clearable
-            v-model="contactInfoForm.birthday"
-            type="datetime"
-            value-format="YYYY-MM-DD HH:mm:ss"
-            placeholder="请选择生日"
-            disabled
-          />
-        </el-form-item>
-        <el-form-item label="户籍" prop="placeOfOrigin">
-          <el-input v-model="contactInfoForm.placeOfOrigin" placeholder="请输入户籍" disabled />
-        </el-form-item>
-        <el-form-item label="居住地" prop="address">
-          <el-input v-model="contactInfoForm.address" placeholder="请输入居住地" disabled />
-        </el-form-item>
-        <el-form-item label="毕业学校" prop="graduationSchool">
-          <el-input v-model="contactInfoForm.graduationSchool" placeholder="请输入毕业学校" disabled />
-        </el-form-item>
-        <el-form-item label="学历" prop="qualification">
-          <el-select v-model="contactInfoForm.qualification" placeholder="请选择学历" disabled>
-            <el-option v-for="dict in ditalk_educational_qualification" :key="dict.value" :label="dict.label" :value="dict.value"></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="社会角色" prop="socialRole">
-          <el-input v-model="contactInfoForm.socialRole" placeholder="请输入社会角色" disabled />
-        </el-form-item>
-        <el-form-item label="最近接触时间" prop="lastContactTime">
-          <el-date-picker
-            clearable
-            v-model="contactInfoForm.lastContactTime"
-            type="datetime"
-            value-format="YYYY-MM-DD HH:mm:ss"
-            placeholder="请选择最近接触时间"
-            disabled
-          />
-        </el-form-item>
-        <el-form-item label="接触频率" prop="contactFrequency" clearable>
-          <el-select v-model="contactInfoForm.contactFrequency" placeholder="请选择接触频率" disabled>
-            <el-option v-for="dict in ditalk_contact_frequency" :key="dict.value" :label="dict.label" :value="dict.value"></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="微信" prop="wechat">
-          <el-input v-model="contactInfoForm.wechat" placeholder="请输入微信" disabled />
-        </el-form-item>
-        <el-form-item label="QQ" prop="qq">
-          <el-input v-model="contactInfoForm.qq" placeholder="请输入QQ" disabled />
-        </el-form-item>
-        <el-form-item label="钉钉" prop="dingTalk">
-          <el-input v-model="contactInfoForm.dingTalk" placeholder="请输入钉钉" disabled />
-        </el-form-item>
-        <el-form-item label="飞书" prop="lark">
-          <el-input v-model="contactInfoForm.lark" placeholder="请输入飞书" disabled />
-        </el-form-item>
-        <el-form-item label="WhatsApp" prop="whatsApp">
-          <el-input v-model="contactInfoForm.whatsApp" placeholder="请输入WhatsApp" disabled />
-        </el-form-item>
-        <el-form-item label="Facebook" prop="facebook">
-          <el-input v-model="contactInfoForm.facebook" placeholder="请输入Facebook" disabled />
-        </el-form-item>
-        <el-form-item label="状态" prop="state">
-          <el-radio-group v-model="contactInfoForm.state" disabled>
-            <el-radio v-for="dict in ditalk_contact_state" :key="dict.value" :value="dict.value">{{ dict.label }}</el-radio>
-          </el-radio-group>
-        </el-form-item>
-      </el-form>
-      <template #footer>
-        <div class="dialog-footer">
-          <el-button @click="closeContactInfoDialog">关 闭</el-button>
-        </div>
-      </template>
-    </el-dialog>
   </div>
 </template>
 
 <script setup name="Info" lang="ts">
 import { listInfo, getInfo, addLeadContact, updateLeadContact } from '@/api/lead/my';
 import { InfoVO, InfoQuery, InfoForm, LeadContactForm } from '@/api/lead/info/types';
-import { listOption, getMyInfo } from '@/api/app/sys/user';
+import { listOption } from '@/api/app/sys/user';
 import { UserOption } from '@/api/app/sys/user/types';
-import { InfoVO as ContactInfoVO, InfoForm as ContactInfoForm, InfoOptionVO as ContactInfoOptionVO } from '@/api/contact/info/types';
-import { getInfo as getContactInfo, listInfo as listContactInfo, listInfoOption as listContactOptionInfo } from '@/api/contact/info';
+import { InfoForm as ContactInfoForm } from '@/api/contact/info/types';
 import * as valueCheck from '@/utils/valueCheck';
-import { listActivity, addActivity } from '@/api/customer/activity';
-import { ActivityVO, ActivityQuery, ActivityForm } from '@/api/customer/activity/types';
 
+const router = useRouter();
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 // 客户字典选项
-const { ditalk_customer_source, ditalk_customer_industry, ditalk_lead_state, ditalk_customer_state, ditalk_customer_type, ditalk_customer_tier } =
-  toRefs<any>(
-    proxy?.useDict(
-      'ditalk_customer_source',
-      'ditalk_customer_industry',
-      'ditalk_lead_state',
-      'ditalk_customer_state',
-      'ditalk_customer_type',
-      'ditalk_customer_tier'
-    )
-  );
+const { ditalk_customer_source, ditalk_customer_industry, ditalk_lead_state, ditalk_customer_type, ditalk_customer_tier } = toRefs<any>(
+  proxy?.useDict('ditalk_customer_source', 'ditalk_customer_industry', 'ditalk_lead_state', 'ditalk_customer_type', 'ditalk_customer_tier')
+);
 // 联系人字典选项
 const { ditalk_educational_qualification, ditalk_contact_frequency, ditalk_contact_state, sys_user_sex } = toRefs<any>(
   proxy?.useDict('ditalk_educational_qualification', 'ditalk_contact_frequency', 'ditalk_contact_state', 'sys_user_sex')
 );
-// 活动字典选项
-const { ditalk_customer_activity_type } = toRefs<any>(proxy?.useDict('ditalk_customer_activity_type'));
 
 const infoList = ref<InfoVO[]>([]);
 const buttonLoading = ref(false);
@@ -737,17 +418,7 @@ const data = reactive<PageData<InfoForm, InfoQuery>>({
 const { queryParams, form, rules } = toRefs(data);
 
 // 联系人相关
-const contactInfoList = ref<ContactInfoVO[]>([]); // 活动对话框中的联系人列表
 const contactFormRef = ref<ElFormInstance>(); // 添加线索时对应的联系人表单
-const contactInfoFormRef = ref<ElFormInstance>(); // 活动对话框中的联系人详情表单
-const contactInfoOptionList = ref<ContactInfoOptionVO[]>([]); // 联系人详情选项列表
-
-const contactInfoQueryParams = ref({
-  pageNum: 1,
-  pageSize: 10,
-  customerId: undefined
-});
-const contactInfoTotal = ref(0);
 
 const initContactFormData: ContactInfoForm = {
   id: undefined,
@@ -790,59 +461,6 @@ const contactForm = ref<ContactInfoForm>({
   ...initContactFormData
 });
 
-// 活动管理中的联系人详情表单
-const contactInfoForm = ref<ContactInfoForm>({
-  ...initContactFormData
-});
-
-// 活动相关变量
-const activityTotal = ref(0);
-const activityQueryParams = ref({
-  pageNum: 1,
-  pageSize: 10,
-  customerId: undefined
-});
-
-const activityList = ref<ActivityVO[]>([]);
-const activityFormRef = ref<ElFormInstance>();
-
-const activityDialog = reactive<DialogOption>({
-  visible: false,
-  title: '活动记录管理'
-});
-
-const contactInfoDialog = reactive<DialogOption>({
-  visible: false,
-  title: '联系人详情'
-});
-
-const activeTab = ref<string>('activityList'); // 活动对话框中的选项卡
-
-const initActivityFormData: ActivityForm = {
-  id: undefined,
-  version: undefined,
-  customerId: undefined,
-  contactId: undefined,
-  opportunityId: undefined,
-  type: undefined,
-  subject: undefined,
-  description: undefined,
-  activityTime: undefined
-};
-
-const activityRules = ref({
-  id: [{ required: true, message: 'ID不能为空', trigger: 'blur' }],
-  customerId: [{ required: true, message: '客户ID不能为空', trigger: 'blur' }],
-  contactId: [{ required: true, message: '联系人ID不能为空', trigger: 'blur' }],
-  type: [{ required: true, message: '活动类型不能为空', trigger: 'change' }],
-  subject: [{ required: true, message: '主题不能为空', trigger: 'blur' }],
-  description: [{ required: true, message: '描述内容不能为空', trigger: 'blur' }]
-});
-
-const activityForm = ref<ActivityForm>({
-  ...initActivityFormData
-});
-
 /** 查询线索信息列表 */
 const getList = async () => {
   loading.value = true;
@@ -865,7 +483,6 @@ const reset = () => {
   form.value = { ...initFormData };
   contactForm.value = { ...initContactFormData };
   infoFormRef.value?.resetFields();
-  contactFormRef.value?.resetFields();
 };
 
 /** 搜索按钮操作 */
@@ -918,9 +535,6 @@ const submitForm = async () => {
   infoFormRef.value?.validate((valid: boolean) => {
     flag = flag && valid;
   });
-  contactFormRef.value?.validate((valid: boolean) => {
-    flag = flag && valid;
-  });
   if (flag) {
     const leadContactForm: LeadContactForm = {
       leadInfoBo: form.value,
@@ -963,103 +577,13 @@ const reclaim = (row: InfoVO) => {
   proxy?.$modal.notifyWarning('待完成');
 };
 
-/**
- * 打开活动对话框
- * @param row 线索信息
- */
-const handleActivity = async (row: InfoVO) => {
-  resetActivityForm();
-  const _id = row?.id || ids.value[0];
-  const res = await getInfo(_id);
-  Object.assign(form.value, res.data);
-  if (res.data) Object.assign(contactForm.value, res.data.contactInfo);
-  // 填充活动记录
-  activityForm.value.customerId = form.value.id;
-  activityForm.value.contactId = contactForm.value.id;
-  activityDialog.visible = true;
-  // 读取活动记录历史
-  getActivityList(form.value.id);
-  // 填充联系人信息
-  getContactInfoList(form.value.id);
-  // 填充联系人详情选项列表
-  getContactInfoOptionList(form.value.id);
+/** 路由到联系人页面 */
+const handleContactInfoList = (row: InfoVO) => {
+  router.push({ path: '/contact/info-list/' + row.id }); // :customerId
 };
 
-/** 读取活动记录历史 */
-const getActivityList = async (customerId: number | string) => {
-  activityQueryParams.value.customerId = customerId;
-  const activityRes = await listActivity(activityQueryParams.value);
-  activityTotal.value = activityRes.total;
-  activityList.value = activityRes.rows;
-};
-
-/** 提交新增活动表单 */
-const submitActivityForm = async () => {
-  activityFormRef.value?.validate(async (valid: boolean) => {
-    if (valid) {
-      buttonLoading.value = true;
-      await addActivity(activityForm.value).finally(() => (buttonLoading.value = false));
-      proxy?.$modal.msgSuccess('操作成功');
-      activityDialog.visible = false;
-    }
-  });
-};
-
-/** 关闭活动对话框 */
-const cancelActivity = () => {
-  resetActivityForm();
-  activityDialog.visible = false;
-};
-
-/** 重置活动对话框表单 */
-const resetActivityForm = () => {
-  form.value = { ...initFormData };
-  contactForm.value = { ...initContactFormData };
-  activityForm.value = { ...initActivityFormData };
-  infoFormRef.value?.resetFields();
-  contactFormRef.value?.resetFields();
-  // 重置活动对话框中的 联系人数据
-  contactInfoList.value = [];
-  contactInfoQueryParams.value.pageNum = 1;
-  // 重置活动对话框中的 联系人数据
-  activityFormRef.value?.resetFields();
-  activityList.value = [];
-  activityQueryParams.value.pageNum = 1;
-  // 重置活动对话框中的 tab 值
-  activeTab.value = 'activityList';
-};
-
-/** 获取联系人列表 */
-const getContactInfoList = async (customerId: number | string) => {
-  contactInfoQueryParams.value.customerId = customerId;
-  const contactInfoRes = await listContactInfo(contactInfoQueryParams.value);
-  contactInfoTotal.value = contactInfoRes.total;
-  contactInfoList.value = contactInfoRes.rows;
-};
-
-/** 联系人详情 */
-const showContactInfo = async (row: ContactInfoVO) => {
-  resetContactInfoForm();
-  const res = await getContactInfo(row.id);
-  Object.assign(contactInfoForm.value, res.data);
-  contactInfoDialog.visible = true;
-};
-
-/** 联系人详情关闭 */
-const closeContactInfoDialog = () => {
-  contactInfoDialog.visible = false;
-  resetContactInfoForm();
-};
-
-/** 活动对话框中的联系人详情表单重置 */
-const resetContactInfoForm = () => {
-  contactInfoForm.value = { ...initContactFormData };
-  contactInfoFormRef.value?.resetFields();
-};
-
-/** 获取联系人详情选项列表 */
-const getContactInfoOptionList = async (customerId: number | string) => {
-  const res = await listContactOptionInfo(customerId);
-  contactInfoOptionList.value = res.data;
+/** 路由到活动页面 */
+const handleActivityInfoList = (row: InfoVO) => {
+  router.push({ path: '/activity/info-list/' + row.id }); // :customerId
 };
 </script>

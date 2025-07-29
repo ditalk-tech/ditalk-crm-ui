@@ -95,8 +95,8 @@
         <el-table-column label="主题" align="center" prop="subject" />
         <el-table-column label="描述内容" align="center" prop="description" />
         <el-table-column label="活动时间" align="center" prop="activityTime" />
-        <el-table-column label="创建时间" align="center" prop="createTime" />
         <el-table-column label="创建人ID" align="center" prop="createBy" />
+        <el-table-column label="创建时间" align="center" prop="createTime" />
         <el-table-column label="操作" align="center" class-name="small-padding fixed-width" fixed="right">
           <template #default="scope">
             <el-tooltip content="修改" placement="top">
@@ -114,11 +114,20 @@
     <!-- 添加或修改客户活动记录对话框 -->
     <el-dialog :title="dialog.title" v-model="dialog.visible" width="960px" append-to-body>
       <el-form ref="activityFormRef" :model="form" :rules="rules" label-width="120px">
-        <el-form-item label="客户ID" prop="customerId">
-          <el-input v-model="form.customerId" placeholder="请输入客户ID" />
+        <el-form-item label="客户" prop="customerId">
+          <el-select v-model="form.customerId" placeholder="请选择客户" filterable @change="getContactInfoOptionList">
+            <el-option v-for="dict in customerInfoOptionList" :key="dict.id" :label="dict.name + ' --- ' + dict.id" :value="dict.id"></el-option>
+          </el-select>
         </el-form-item>
-        <el-form-item label="联系人ID" prop="contactId">
-          <el-input v-model="form.contactId" placeholder="请输入联系人ID" />
+        <el-form-item label="联系人" prop="contactId">
+          <el-select v-model="form.contactId" placeholder="请选择联系人">
+            <el-option
+              v-for="dict in contactInfoOptionList"
+              :key="dict.id"
+              :label="dict.lastName + ' ' + dict.firstName + ' --- ' + dict.id"
+              :value="dict.id"
+            ></el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="商机ID" prop="opportunityId">
           <el-input v-model="form.opportunityId" placeholder="请输入商机ID" />
@@ -152,7 +161,12 @@
 <script setup name="Activity" lang="ts">
 import { listActivity, getActivity, delActivity, addActivity, updateActivity } from '@/api/customer/activity';
 import { ActivityVO, ActivityQuery, ActivityForm } from '@/api/customer/activity/types';
+import { InfoOptionVO as ContactInfoOptionVO } from '@/api/contact/info/types';
+import { listInfoOption as listContactOptionInfo } from '@/api/contact/info';
+import { InfoOptionVO as CustomerInfoOptionVO } from '@/api/customer/info/types';
+import { listAllInfoOption as listAllCustomerInfoOption } from '@/api/customer/info';
 
+const route = useRoute();
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 const { ditalk_customer_activity_type } = toRefs<any>(proxy?.useDict('ditalk_customer_activity_type'));
 
@@ -169,6 +183,11 @@ const dateRangeActivityTime = ref<[DateModelType, DateModelType]>(['', '']);
 
 const queryFormRef = ref<ElFormInstance>();
 const activityFormRef = ref<ElFormInstance>();
+const defaultCustomerId = ref<string>('');
+// const defaultContactId = ref<string>('');
+
+const customerInfoOptionList = ref<CustomerInfoOptionVO[]>([]); // 客户详情选项列表
+const contactInfoOptionList = ref<ContactInfoOptionVO[]>([]); // 联系人详情选项列表
 
 const dialog = reactive<DialogOption>({
   visible: false,
@@ -237,6 +256,8 @@ const cancel = () => {
 const reset = () => {
   form.value = { ...initFormData };
   activityFormRef.value?.resetFields();
+  // customerInfoOptionList.value = []; // 目前加载页面时只请求一次后台
+  contactInfoOptionList.value = [];
 };
 
 /** 搜索按钮操作 */
@@ -250,6 +271,8 @@ const resetQuery = () => {
   dateRangeCreateTime.value = ['', ''];
   dateRangeActivityTime.value = ['', ''];
   queryFormRef.value?.resetFields();
+  queryParams.value.customerId = defaultCustomerId.value;
+  // queryParams.value.contactId = defaultContactId.value;
   handleQuery();
 };
 
@@ -265,6 +288,11 @@ const handleAdd = () => {
   reset();
   dialog.visible = true;
   dialog.title = '添加客户活动记录';
+  form.value.customerId = queryParams.value.customerId;
+  // form.value.contactId = queryParams.value.contactId;
+  if (form.value.customerId) {
+    getContactInfoOptionList(form.value.customerId);
+  }
 };
 
 /** 修改按钮操作 */
@@ -275,6 +303,9 @@ const handleUpdate = async (row?: ActivityVO) => {
   Object.assign(form.value, res.data);
   dialog.visible = true;
   dialog.title = '修改客户活动记录';
+  if (form.value.customerId) {
+    getContactInfoOptionList(form.value.customerId);
+  }
 };
 
 /** 提交按钮 */
@@ -315,6 +346,28 @@ const handleExport = () => {
 };
 
 onMounted(() => {
+  setDefualtCustomerId();
+  getCustomerInfoList();
   getList();
 });
+
+/** 查询字典类型详细 */
+const setDefualtCustomerId = async () => {
+  queryParams.value.customerId = route.params && (route.params.customerId as string);
+  defaultCustomerId.value = route.params && (route.params.customerId as string);
+  // queryParams.value.contactId = route.params && (route.params.contactId as string);
+  // defaultContactId.value = route.params && (route.params.contactId as string);
+};
+
+/** 获取联系人选项列表 */
+const getContactInfoOptionList = async (customerId: number | string) => {
+  const res = await listContactOptionInfo(customerId);
+  contactInfoOptionList.value = res.data;
+};
+
+/** 获取全量客户选项列表 */
+const getCustomerInfoList = async () => {
+  const res = await listAllCustomerInfoOption();
+  customerInfoOptionList.value = res.data;
+};
 </script>
