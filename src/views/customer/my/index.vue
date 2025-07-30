@@ -92,7 +92,13 @@
             <el-button type="success" plain icon="Edit" :disabled="single" @click="handleUpdate()" v-hasPermi="['customer:my:edit']">修改</el-button>
           </el-col>
           <el-col :span="1.5">
-            <el-button type="danger" plain icon="Refresh" :disabled="multiple" @click="batchReclaimCustomer" v-hasPermi="['customer:my:reclaim']"
+            <el-button
+              type="danger"
+              plain
+              icon="Refresh"
+              :disabled="multiple"
+              @click="handleBatchReclaimCustomer"
+              v-hasPermi="['customer:my:reclaim']"
               >批量回收</el-button
             >
           </el-col>
@@ -669,7 +675,7 @@ const reclaimCustomer = (customerId: string | number) => {
     });
 };
 
-const batchReclaimCustomer = () => {
+const handleBatchReclaimCustomer = () => {
   proxy?.$modal.notifyWarning('待完成');
 };
 

@@ -87,3 +87,28 @@ export const addLeadContact = (data: LeadContactForm) => {
     data: data
   });
 };
+
+/**
+ * 回收线索到线索池
+ * @param leadId
+ * @returns
+ */
+export const reclaim = (leadId: string | number) => {
+  return request({
+    url: `/lead/info/my/reclaim/${leadId}`,
+    method: 'put'
+  });
+};
+
+/**
+ * 转移线索到指定用户
+ * @param leadId
+ * @param userId
+ * @returns
+ */
+export const transfer = (leadId: string | number, userId: string | number) => {
+  return request({
+    url: `/lead/info/my/transfer/${leadId}/${userId}`,
+    method: 'put'
+  });
+};

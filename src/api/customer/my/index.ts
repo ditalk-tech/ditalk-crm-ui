@@ -45,7 +45,7 @@ export const addCustomerContact = (data: CustomerContactForm) => {
 
 /**
  * 回收客户到公海
- * @param data
+ * @param customerId
  * @returns
  */
 export const reclaim = (customerId: string | number) => {
@@ -57,7 +57,8 @@ export const reclaim = (customerId: string | number) => {
 
 /**
  * 转移客户到指定用户
- * @param data
+ * @param customerId
+ * @param userId
  * @returns
  */
 export const transfer = (customerId: string | number, userId: string | number) => {
