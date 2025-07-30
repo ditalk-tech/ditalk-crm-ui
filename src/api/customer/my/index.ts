@@ -42,3 +42,27 @@ export const addCustomerContact = (data: CustomerContactForm) => {
     data: data
   });
 };
+
+/**
+ * 回收客户到公海
+ * @param data
+ * @returns
+ */
+export const reclaim = (customerId: string | number) => {
+  return request({
+    url: `/customer/info/my/reclaim/${customerId}`,
+    method: 'put'
+  });
+};
+
+/**
+ * 转移客户到指定用户
+ * @param data
+ * @returns
+ */
+export const transfer = (customerId: string | number, userId: string | number) => {
+  return request({
+    url: `/customer/info/my/transfer/${customerId}/${userId}`,
+    method: 'put'
+  });
+};

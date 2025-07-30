@@ -92,12 +92,18 @@
             <el-button type="success" plain icon="Edit" :disabled="single" @click="handleUpdate()" v-hasPermi="['customer:my:edit']">修改</el-button>
           </el-col>
           <el-col :span="1.5">
-            <el-button type="danger" plain icon="Refresh" :disabled="multiple" @click="reclaim(null)" v-hasPermi="['customer:my:reclaim']"
+            <el-button type="danger" plain icon="Refresh" :disabled="multiple" @click="batchReclaimCustomer" v-hasPermi="['customer:my:reclaim']"
               >批量回收</el-button
             >
           </el-col>
           <el-col :span="1.5">
-            <el-button type="warning" plain icon="Switch" :disabled="multiple" @click="transfer(null)" v-hasPermi="['customer:my:transfer']"
+            <el-button
+              type="warning"
+              plain
+              icon="Switch"
+              :disabled="multiple"
+              @click="handleBatchTransferCustomer"
+              v-hasPermi="['customer:my:transfer']"
               >批量转移</el-button
             >
           </el-col>
@@ -155,10 +161,19 @@
                       <el-button link type="primary" size="small" @click="handleUpdate(scope.row)" v-hasPermi="['customer:my:edit']">编辑</el-button>
                     </el-dropdown-item>
                     <el-dropdown-item>
-                      <el-button link type="danger" size="small" @click="reclaim(scope.row)" v-hasPermi="['customer:my:reclaim']">回收</el-button>
+                      <el-button link type="danger" size="small" @click="reclaimCustomer(scope.row.id)" v-hasPermi="['customer:my:reclaim']"
+                        >回收</el-button
+                      >
                     </el-dropdown-item>
                     <el-dropdown-item>
-                      <el-button link type="warning" size="small" @click="transfer(scope.row)" v-hasPermi="['customer:my:transfer']">转移</el-button>
+                      <el-button
+                        link
+                        type="warning"
+                        size="small"
+                        @click="handleTransferCustomer(scope.row.id, scope.row.name)"
+                        v-hasPermi="['customer:my:transfer']"
+                        >转移</el-button
+                      >
                     </el-dropdown-item>
                   </el-dropdown-menu>
                 </template>
@@ -333,12 +348,42 @@
         </div>
       </template>
     </el-dialog>
+
+    <!-- 回收客户对话框 -->
+    <el-dialog :title="transferDialog.title" v-model="transferDialog.visible" width="960px" append-to-body>
+      <el-form :model="transferForm" :rules="transferRules" ref="transferFormRef" label-width="120px">
+        <!-- 选定的客户 -->
+        <el-form-item label="客户ID" prop="customerId" v-show="false">
+          <el-input v-model="transferForm.customerId" placeholder="请输入客户ID" />
+        </el-form-item>
+        <el-form-item label="客户名称">
+          <el-text>{{ transferForm.customerName }}</el-text>
+        </el-form-item>
+        <!-- 指定用户 -->
+        <el-form-item label="指定用户" prop="userId">
+          <el-select v-model="transferForm.userId" placeholder="请选择用户" clearable>
+            <el-option
+              v-for="dict in userOptionList"
+              :key="dict.userId"
+              :label="dict.nickName + ' --- ' + dict.userId"
+              :value="dict.userId"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <div class="dialog-footer">
+          <el-button :loading="buttonLoading" type="primary" @click="submitTransfer">确 定</el-button>
+          <el-button @click="cancelTransfer">取 消</el-button>
+        </div>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
 <script setup name="Info" lang="ts">
 import { InfoVO, InfoQuery, InfoForm, CustomerContactForm } from '@/api/customer/info/types';
-import { listInfo, getInfo, addCustomerContact, updateCustomerContact } from '@/api/customer/my';
+import { listInfo, getInfo, addCustomerContact, updateCustomerContact, reclaim, transfer } from '@/api/customer/my';
 import { listOption } from '@/api/app/sys/user';
 import { UserOption } from '@/api/app/sys/user/types';
 import { InfoForm as ContactInfoForm } from '@/api/contact/info/types';
@@ -469,6 +514,25 @@ const contactForm = ref<ContactInfoForm>({
   ...initContactFormData
 });
 
+// 回收客户对话框
+const transferDialog = reactive<DialogOption>({
+  visible: false,
+  title: '回收客户'
+});
+
+const transferForm = reactive({
+  customerId: undefined,
+  userId: undefined,
+  customerName: undefined
+});
+
+const transferRules = ref({
+  customerId: [{ required: true, message: '客户不能为空', trigger: 'blur' }],
+  userId: [{ required: true, message: '目标用户不能为空', trigger: 'change' }]
+});
+
+const transferFormRef = ref<ElFormInstance>();
+
 /** 查询线索信息列表 */
 const getList = async () => {
   loading.value = true;
@@ -580,11 +644,32 @@ const getUserOptionList = async () => {
   });
 };
 
-const transfer = (row: InfoVO) => {
+const handleTransferCustomer = (customerId: string | number, customerName: string) => {
+  resetTransferForm();
+  transferDialog.visible = true;
+  transferForm.customerId = customerId;
+  transferForm.customerName = customerName;
+};
+
+const handleBatchTransferCustomer = () => {
   proxy?.$modal.notifyWarning('待完成');
 };
 
-const reclaim = (row: InfoVO) => {
+const reclaimCustomer = (customerId: string | number) => {
+  // 确认对话框
+  proxy?.$modal
+    .confirm('确认回收客户吗？')
+    .then(async () => {
+      await reclaim(customerId);
+      proxy?.$modal.msgSuccess('回收成功');
+      await getList();
+    })
+    .catch(() => {
+      return;
+    });
+};
+
+const batchReclaimCustomer = () => {
   proxy?.$modal.notifyWarning('待完成');
 };
 
@@ -596,5 +681,31 @@ const handleContactInfoList = (row: InfoVO) => {
 /** 路由到活动页面 */
 const handleActivityInfoList = (row: InfoVO) => {
   router.push({ path: '/activity/info-list/' + row.id }); // :customerId
+};
+
+/** 重置转移客户表单 */
+const resetTransferForm = () => {
+  transferForm.customerId = undefined;
+  transferForm.userId = undefined;
+  transferForm.customerName = undefined;
+  transferFormRef.value?.resetFields();
+};
+
+/** 取消转移客户 */
+const cancelTransfer = () => {
+  resetTransferForm();
+  transferDialog.visible = false;
+};
+
+/** 提交转移客户 */
+const submitTransfer = async () => {
+  const flag = await transferFormRef.value?.validate();
+  if (flag) {
+    buttonLoading.value = true;
+    await transfer(transferForm.customerId, transferForm.userId).finally(() => (buttonLoading.value = false));
+    proxy?.$modal.msgSuccess('操作成功');
+    transferDialog.visible = false;
+    await getList();
+  }
 };
 </script>
