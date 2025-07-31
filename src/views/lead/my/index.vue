@@ -81,7 +81,7 @@
             <el-button type="success" plain icon="Edit" :disabled="single" @click="handleUpdate()" v-hasPermi="['lead:my:edit']">修改</el-button>
           </el-col>
           <el-col :span="1.5">
-            <el-button type="danger" plain icon="Refresh" :disabled="multiple" @click="handleBatchReclaimLead" v-hasPermi="['lead:my:reclaim']"
+            <el-button type="danger" plain icon="Refresh" :disabled="multiple" @click="reclaimLead()" v-hasPermi="['lead:my:reclaim']"
               >批量回收</el-button
             >
           </el-col>
@@ -90,6 +90,12 @@
               >批量转移</el-button
             >
           </el-col>
+          <!-- <el-col :span="1.5">
+            <el-button type="danger" plain icon="Refresh" @click="handleReclaimUserLead" v-hasPermi="['lead:my:reclaim']">回收用户线索</el-button>
+          </el-col>
+          <el-col :span="1.5">
+            <el-button type="warning" plain icon="Switch" @click="handleTransferUserLead" v-hasPermi="['lead:my:transfer']">转移用户线索</el-button>
+          </el-col> -->
           <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
         </el-row>
       </template>
@@ -148,12 +154,7 @@
                       <el-button link type="danger" size="small" @click="reclaimLead(scope.row.id)" v-hasPermi="['lead:my:reclaim']">回收</el-button>
                     </el-dropdown-item>
                     <el-dropdown-item>
-                      <el-button
-                        link
-                        type="warning"
-                        size="small"
-                        @click="handleTransferLead(scope.row.id, scope.row.name)"
-                        v-hasPermi="['lead:my:transfer']"
+                      <el-button link type="warning" size="small" @click="handleTransferLead(scope.row.id)" v-hasPermi="['lead:my:transfer']"
                         >转移</el-button
                       >
                     </el-dropdown-item>
@@ -334,11 +335,8 @@
     <el-dialog :title="transferDialog.title" v-model="transferDialog.visible" width="960px" append-to-body>
       <el-form :model="transferForm" :rules="transferRules" ref="transferFormRef" label-width="120px">
         <!-- 选定的线索 -->
-        <el-form-item label="线索ID" prop="leadId" v-show="false">
-          <el-input v-model="transferForm.leadId" placeholder="请输入线索ID" />
-        </el-form-item>
-        <el-form-item label="线索名称">
-          <el-text>{{ transferForm.leadName }}</el-text>
+        <el-form-item label="线索ID" prop="leadIds">
+          <el-input type="textarea" v-model="transferForm.leadIds" disabled />
         </el-form-item>
         <!-- 指定用户 -->
         <el-form-item label="指定用户" prop="userId">
@@ -354,8 +352,8 @@
       </el-form>
       <template #footer>
         <div class="dialog-footer">
-          <el-button :loading="buttonLoading" type="primary" @click="submitTransfer">确 定</el-button>
           <el-button @click="cancelTransfer">取 消</el-button>
+          <el-button :loading="buttonLoading" type="primary" @click="submitTransfer">确 定</el-button>
         </div>
       </template>
     </el-dialog>
@@ -392,6 +390,7 @@ const total = ref(0);
 const dateRangeCreateTime = ref<[DateModelType, DateModelType]>(['', '']);
 
 const userOptionList = ref<UserOption[]>([]);
+const transferCustomerId = ref<string | number>();
 
 // 客户表单内容
 const queryFormRef = ref<ElFormInstance>();
@@ -508,9 +507,8 @@ const transferDialog = reactive<DialogOption>({
 });
 
 const transferForm = reactive({
-  leadId: undefined,
-  userId: undefined,
-  leadName: undefined
+  leadIds: undefined,
+  userId: undefined
 });
 
 const transferRules = ref({
@@ -627,34 +625,26 @@ const getUserOptionList = async () => {
 };
 
 /** 转移线索 */
-const handleTransferLead = (leadId: string | number, leadName: string) => {
+const handleTransferLead = async (leadId?: string | number) => {
   resetTransferForm();
   transferDialog.visible = true;
-  transferForm.leadId = leadId;
-  transferForm.leadName = leadName;
+  transferForm.leadIds = leadId;
 };
 
-const handleBatchTransferLead = () => {
-  proxy?.$modal.notifyWarning('待完成');
-};
-
-const handleBatchReclaimLead = () => {
-  proxy?.$modal.notifyWarning('待完成');
+/** 批量转移线索 */
+const handleBatchTransferLead = async () => {
+  resetTransferForm();
+  transferDialog.visible = true;
+  transferForm.leadIds = ids.value;
 };
 
 /** 回收线索 */
-const reclaimLead = (leadId: string | number) => {
-  // 确认对话框
-  proxy?.$modal
-    .confirm('确认回收线索吗？')
-    .then(async () => {
-      await reclaim(leadId);
-      proxy?.$modal.msgSuccess('回收成功');
-      await getList();
-    })
-    .catch(() => {
-      return;
-    });
+const reclaimLead = async (leadId?: string | number) => {
+  const _ids = leadId || ids.value;
+  await proxy?.$modal.confirm('确认回收编号为"' + _ids + '"的线索吗？').finally(() => (loading.value = false));
+  await reclaim(_ids);
+  proxy?.$modal.msgSuccess('回收成功');
+  await getList();
 };
 
 /** 路由到联系人页面 */
@@ -669,10 +659,10 @@ const handleActivityInfoList = (row: InfoVO) => {
 
 /** 重置转移线索表单 */
 const resetTransferForm = () => {
-  transferForm.leadId = undefined;
+  transferForm.leadIds = undefined;
   transferForm.userId = undefined;
-  transferForm.leadName = undefined;
   transferFormRef.value?.resetFields();
+  transferCustomerId.value = undefined;
 };
 
 /** 取消转移线索 */
@@ -683,13 +673,32 @@ const cancelTransfer = () => {
 
 /** 提交转移线索 */
 const submitTransfer = async () => {
+  const _ids = transferForm.leadIds || ids.value;
+  transferForm.leadIds = _ids;
+  await proxy?.$modal.confirm('确认转移编号为"' + _ids + '"的线索吗？').finally(() => (loading.value = false));
   const flag = await transferFormRef.value?.validate();
   if (flag) {
     buttonLoading.value = true;
-    await transfer(transferForm.leadId, transferForm.userId).finally(() => (buttonLoading.value = false));
+    await transfer(transferForm.leadIds, transferForm.userId).finally(() => (buttonLoading.value = false));
     proxy?.$modal.msgSuccess('操作成功');
     transferDialog.visible = false;
     await getList();
   }
 };
+
+// /** 回收用户所有线索 */
+// const handleReclaimUserLead = async () => {
+//   await proxy?.$modal.confirm('确认回收编号为"' + ids.value + '"的线索吗？').finally(() => (loading.value = false));
+//   await reclaimUserLead(ids.value);
+//   proxy?.$modal.msgSuccess('回收成功');
+//   await getList();
+// };
+
+// /** 转移用户所有线索到指定用户 */
+// const handleTransferUserLead = async () => {
+//   await proxy?.$modal.confirm('确认转移编号为"' + ids.value + '"的线索吗？').finally(() => (loading.value = false));
+//   await transferUserLead(ids.value);
+//   proxy?.$modal.msgSuccess('转移成功');
+//   await getList();
+// };
 </script>

@@ -89,26 +89,26 @@ export const addLeadContact = (data: LeadContactForm) => {
 };
 
 /**
- * 回收线索到线索池
- * @param leadId
+ * 单个或批量回收线索到线索池
+ * @param leadIds
  * @returns
  */
-export const reclaim = (leadId: string | number) => {
+export const reclaim = (leadIds: string | number | Array<string | number>) => {
   return request({
-    url: `/lead/info/my/reclaim/${leadId}`,
+    url: `/lead/info/my/reclaim/${leadIds}`,
     method: 'put'
   });
 };
 
 /**
- * 转移线索到指定用户
- * @param leadId
+ * 单个或批量转移线索到指定用户
+ * @param leadIds
  * @param userId
  * @returns
  */
-export const transfer = (leadId: string | number, userId: string | number) => {
+export const transfer = (leadIds: string | number | Array<string | number>, userId: string | number) => {
   return request({
-    url: `/lead/info/my/transfer/${leadId}/${userId}`,
+    url: `/lead/info/my/transfer/${leadIds}/${userId}`,
     method: 'put'
   });
 };
