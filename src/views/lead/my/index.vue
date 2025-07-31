@@ -90,12 +90,12 @@
               >批量转移</el-button
             >
           </el-col>
-          <!-- <el-col :span="1.5">
+          <el-col :span="1.5">
             <el-button type="danger" plain icon="Refresh" @click="handleReclaimUserLead" v-hasPermi="['lead:my:reclaim']">回收用户线索</el-button>
           </el-col>
           <el-col :span="1.5">
             <el-button type="warning" plain icon="Switch" @click="handleTransferUserLead" v-hasPermi="['lead:my:transfer']">转移用户线索</el-button>
-          </el-col> -->
+          </el-col>
           <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
         </el-row>
       </template>
@@ -357,12 +357,69 @@
         </div>
       </template>
     </el-dialog>
+
+    <!-- 回收指定用户所有线索的对话框 -->
+    <el-dialog :title="reclaimUserLeadDialog.title" v-model="reclaimUserLeadDialog.visible" width="600px" append-to-body>
+      <el-form :model="reclaimUserLeadForm" :rules="reclaimUserLeadFormRules" ref="reclaimUserLeadFormRef" label-width="120px">
+        <!-- 指定用户 -->
+        <el-form-item label="指定用户" prop="userId">
+          <el-select v-model="reclaimUserLeadForm.userId" placeholder="请选择用户" clearable>
+            <el-option
+              v-for="dict in userOptionList"
+              :key="dict.userId"
+              :label="dict.nickName + ' --- ' + dict.userId"
+              :value="dict.userId"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <div class="dialog-footer">
+          <el-button @click="cancelReclaimUserLead">取 消</el-button>
+          <el-button :loading="buttonLoading" type="primary" @click="submitReclaimUserLead">确 定</el-button>
+        </div>
+      </template>
+    </el-dialog>
+
+    <!-- 转移指定用户所有线索到另一用户对话框 -->
+    <el-dialog :title="transferUserLeadDialog.title" v-model="transferUserLeadDialog.visible" width="600px" append-to-body>
+      <el-form :model="transferUserLeadForm" :rules="transferUserLeadFormRules" ref="transferUserLeadFormRef" label-width="120px">
+        <!-- 转换用户 -->
+        <el-form-item label="转换用户" prop="sourceUserId">
+          <el-select v-model="transferUserLeadForm.sourceUserId" placeholder="请选择用户" clearable>
+            <el-option
+              v-for="dict in userOptionList"
+              :key="dict.userId"
+              :label="dict.nickName + ' --- ' + dict.userId"
+              :value="dict.userId"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+        <!-- 目标用户 -->
+        <el-form-item label="目标用户" prop="targetUserId">
+          <el-select v-model="transferUserLeadForm.targetUserId" placeholder="请选择用户" clearable>
+            <el-option
+              v-for="dict in userOptionList"
+              :key="dict.userId"
+              :label="dict.nickName + ' --- ' + dict.userId"
+              :value="dict.userId"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <div class="dialog-footer">
+          <el-button @click="cancelTransferUserLead">取 消</el-button>
+          <el-button :loading="buttonLoading" type="primary" @click="submitTransferUserLead">确 定</el-button>
+        </div>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
 <script setup name="Info" lang="ts">
 import { InfoVO, InfoQuery, InfoForm, LeadContactForm } from '@/api/lead/info/types';
-import { listInfo, getInfo, addLeadContact, updateLeadContact, reclaim, transfer } from '@/api/lead/my';
+import { listInfo, getInfo, addLeadContact, updateLeadContact, reclaim, transfer, transferUserLead, reclaimUserLead } from '@/api/lead/my';
 import { listOption } from '@/api/app/sys/user';
 import { UserOption } from '@/api/app/sys/user/types';
 import { InfoForm as ContactInfoForm } from '@/api/contact/info/types';
@@ -500,23 +557,48 @@ const contactForm = ref<ContactInfoForm>({
   ...initContactFormData
 });
 
-// 回收线索对话框
+// 回收指定线索的对话框变量
+const transferFormRef = ref<ElFormInstance>();
 const transferDialog = reactive<DialogOption>({
   visible: false,
   title: '回收线索'
 });
-
 const transferForm = reactive({
   leadIds: undefined,
   userId: undefined
 });
-
 const transferRules = ref({
   leadId: [{ required: true, message: '线索不能为空', trigger: 'blur' }],
   userId: [{ required: true, message: '目标用户不能为空', trigger: 'change' }]
 });
 
-const transferFormRef = ref<ElFormInstance>();
+// 回收用户所有线索的对话框变量
+const reclaimUserLeadFormRef = ref<ElFormInstance>();
+const reclaimUserLeadDialog = reactive<DialogOption>({
+  visible: false,
+  title: '回收用户所有线索'
+});
+const reclaimUserLeadForm = reactive({
+  userId: undefined
+});
+const reclaimUserLeadFormRules = ref({
+  userId: [{ required: true, message: '用户不能为空', trigger: 'change' }]
+});
+
+// 转移指定用户所有线索到另一用户的对话框变量
+const transferUserLeadFormRef = ref<ElFormInstance>();
+const transferUserLeadDialog = reactive<DialogOption>({
+  visible: false,
+  title: '转移指定用户所有线索到另一用户'
+});
+const transferUserLeadForm = reactive({
+  sourceUserId: undefined,
+  targetUserId: undefined
+});
+const transferUserLeadFormRules = ref({
+  sourceUserId: [{ required: true, message: '转换用户不能为空', trigger: 'change' }],
+  targetUserId: [{ required: true, message: '目标用户不能为空', trigger: 'change' }]
+});
 
 /** 查询线索信息列表 */
 const getList = async () => {
@@ -686,19 +768,56 @@ const submitTransfer = async () => {
   }
 };
 
-// /** 回收用户所有线索 */
-// const handleReclaimUserLead = async () => {
-//   await proxy?.$modal.confirm('确认回收编号为"' + ids.value + '"的线索吗？').finally(() => (loading.value = false));
-//   await reclaimUserLead(ids.value);
-//   proxy?.$modal.msgSuccess('回收成功');
-//   await getList();
-// };
+/** 回收用户所有线索 */
+const handleReclaimUserLead = async () => {
+  resetReclaimUserLeadForm();
+  reclaimUserLeadDialog.visible = true;
+  reclaimUserLeadForm.userId = ids.value;
+};
 
-// /** 转移用户所有线索到指定用户 */
-// const handleTransferUserLead = async () => {
-//   await proxy?.$modal.confirm('确认转移编号为"' + ids.value + '"的线索吗？').finally(() => (loading.value = false));
-//   await transferUserLead(ids.value);
-//   proxy?.$modal.msgSuccess('转移成功');
-//   await getList();
-// };
+/** 转移用户所有线索到指定用户 */
+const handleTransferUserLead = async () => {
+  resetTransferUserLeadForm();
+  transferUserLeadDialog.visible = true;
+  transferUserLeadForm.sourceUserId = ids.value;
+};
+
+const cancelReclaimUserLead = () => {
+  resetReclaimUserLeadForm();
+  reclaimUserLeadDialog.visible = false;
+};
+
+const submitReclaimUserLead = async () => {
+  const flag = await reclaimUserLeadFormRef.value?.validate();
+  if (flag) {
+    await reclaimUserLead(reclaimUserLeadForm.userId);
+    proxy?.$modal.msgSuccess('回收成功');
+    await getList();
+  }
+};
+
+const cancelTransferUserLead = () => {
+  resetTransferUserLeadForm();
+  transferUserLeadDialog.visible = false;
+};
+
+const submitTransferUserLead = async () => {
+  const flag = await transferUserLeadFormRef.value?.validate();
+  if (flag) {
+    await transferUserLead(transferUserLeadForm.sourceUserId, transferUserLeadForm.targetUserId);
+    proxy?.$modal.msgSuccess('转移成功');
+    await getList();
+  }
+};
+
+const resetReclaimUserLeadForm = () => {
+  reclaimUserLeadForm.userId = undefined;
+  reclaimUserLeadFormRef.value?.resetFields();
+};
+
+const resetTransferUserLeadForm = () => {
+  transferUserLeadForm.sourceUserId = undefined;
+  transferUserLeadForm.targetUserId = undefined;
+  transferUserLeadFormRef.value?.resetFields();
+};
 </script>

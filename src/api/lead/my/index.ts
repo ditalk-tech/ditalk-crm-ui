@@ -112,3 +112,28 @@ export const transfer = (leadIds: string | number | Array<string | number>, user
     method: 'put'
   });
 };
+
+/**
+ * 转移指定用户的线索到另一个用户
+ * @param sourceUserId 原用户
+ * @param targetUserId 目标用户
+ * @returns
+ */
+export const transferUserLead = (sourceUserId: string | number, targetUserId: string | number) => {
+  return request({
+    url: `/lead/info/my/transfer/user/${sourceUserId}/${targetUserId}`,
+    method: 'put'
+  });
+};
+
+/**
+ * 回收指定用户的线索到线索池
+ * @param userId 用户id
+ * @returns
+ */
+export const reclaimUserLead = (userId: string | number) => {
+  return request({
+    url: `/lead/info/my/reclaim/user/${userId}`,
+    method: 'put'
+  });
+};
