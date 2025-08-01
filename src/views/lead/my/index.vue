@@ -103,7 +103,7 @@
       <el-table v-loading="loading" border :data="infoList" @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="55" align="center" fixed="left" />
         <el-table-column label="ID" align="center" prop="id" v-if="true" />
-        <el-table-column label="创建时间" align="center" prop="createTime" width="180" />
+        <el-table-column label="创建时间" align="center" prop="createTime" />
         <el-table-column label="客户名称" align="center" prop="name" />
         <el-table-column label="客户类型" align="center" prop="type">
           <template #default="scope">

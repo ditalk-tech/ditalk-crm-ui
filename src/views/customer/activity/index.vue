@@ -92,8 +92,20 @@
             <dict-tag :options="ditalk_customer_activity_type" :value="scope.row.type" />
           </template>
         </el-table-column>
-        <el-table-column label="主题" align="center" prop="subject" />
-        <el-table-column label="描述内容" align="center" prop="description" />
+        <el-table-column label="主题" align="center" prop="subject" width="160">
+          <template #default="scope">
+            <el-tooltip :content="scope.row.subject" placement="top">
+              <p class="descStyle">{{ scope.row.subject }}</p>
+            </el-tooltip>
+          </template>
+        </el-table-column>
+        <el-table-column label="描述内容" align="center" prop="description" width="240">
+          <template #default="scope">
+            <el-tooltip :content="scope.row.description" placement="top">
+              <p class="descStyle">{{ scope.row.description }}</p>
+            </el-tooltip>
+          </template>
+        </el-table-column>
         <el-table-column label="活动时间" align="center" prop="activityTime" />
         <el-table-column label="创建人ID" align="center" prop="createBy" />
         <el-table-column label="创建时间" align="center" prop="createTime" />
@@ -371,3 +383,14 @@ const getCustomerInfoList = async () => {
   customerInfoOptionList.value = res.data;
 };
 </script>
+<style scoped lang="scss">
+.descStyle {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  word-break: break-all;
+  display: -webkit-box;
+  line-clamp: 3;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+}
+</style>
