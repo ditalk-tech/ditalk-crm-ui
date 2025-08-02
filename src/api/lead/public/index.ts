@@ -26,3 +26,16 @@ export const getInfo = (id: string | number): AxiosPromise<InfoVO> => {
     method: 'get'
   });
 };
+
+/**
+ * 领取线索
+ * @param userId 用户id
+ * @param leadIds 线索id列表
+ * @returns 领取结果
+ */
+export const claim = (userId: string | number, leadIds: string | number | Array<string | number>) => {
+  return request({
+    url: `/lead/info/public/claim/${userId}/${leadIds}`,
+    method: 'put'
+  });
+};

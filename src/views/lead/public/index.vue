@@ -44,19 +44,6 @@
             <el-form-item label="地址" prop="address">
               <el-input v-model="queryParams.address" placeholder="请输入地址" clearable @keyup.enter="handleQuery" />
             </el-form-item>
-            <!-- <el-form-item label="分配到" prop="assignedTo">
-              <el-select v-model="queryParams.assignedTo" placeholder="请选择用户" filterable clearable>
-                <el-option
-                  v-for="item in userOptionList"
-                  :key="item.userId"
-                  :label="item.userName + ' - ' + item.nickName"
-                  :value="item.userId"
-                ></el-option>
-              </el-select>
-            </el-form-item>
-            <el-form-item label="分配部门" prop="assignedDept">
-              <el-input v-model="queryParams.assignedDept" placeholder="请输入分配部门" clearable />
-            </el-form-item> -->
             <el-form-item label="线索状态" prop="leadState">
               <el-select v-model="queryParams.leadState" placeholder="请选择线索状态" clearable>
                 <el-option v-for="dict in ditalk_lead_state" :key="dict.value" :label="dict.label" :value="dict.value" />
@@ -75,7 +62,7 @@
       <template #header>
         <el-row :gutter="10" class="mb8">
           <el-col :span="1.5">
-            <el-button type="warning" plain icon="Switch" :disabled="multiple" @click="claim(null)" v-hasPermi="['customer:public:claim']"
+            <el-button type="warning" plain icon="Switch" :disabled="multiple" @click="handleClaimToMe()" v-hasPermi="['customer:public:claim']"
               >批量领取</el-button
             >
           </el-col>
@@ -115,11 +102,9 @@
             <dict-tag :options="ditalk_lead_state" :value="scope.row.leadState" />
           </template>
         </el-table-column>
-        <!-- <el-table-column label="分配到" align="center" prop="assignedTo" />
-        <el-table-column label="分配部门" align="center" prop="assignedDept" /> -->
         <el-table-column label="操作" align="center" class-name="small-padding fixed-width" fixed="right">
           <template #default="scope">
-            <el-button link size="small" type="primary" @click="claim(scope.row)" v-hasPermi="['customer:public:claim']">领取</el-button>
+            <el-button link size="small" type="primary" @click="handleClaimToMe(scope.row.id)" v-hasPermi="['customer:public:claim']">领取</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -176,20 +161,6 @@
                 <el-radio v-for="dict in ditalk_lead_state" :key="dict.value" :value="dict.value">{{ dict.label }}</el-radio>
               </el-radio-group>
             </el-form-item>
-            <!-- <el-form-item label="分配到" prop="assignedTo">
-              <el-select v-model="form.assignedTo" placeholder="请选择用户" filterable clearable style="width: 70%">
-                <el-option
-                  v-for="item in userOptionList"
-                  :key="item.userId"
-                  :label="item.userName + ' - ' + item.nickName"
-                  :value="item.userId"
-                ></el-option>
-              </el-select>
-              <el-button @click="assignToMe" type="info" plain>给 我</el-button>
-            </el-form-item>
-            <el-form-item label="分配部门" prop="assignedDept">
-              <el-input v-model="form.assignedDept" placeholder="请输入分配部门" />
-            </el-form-item> -->
           </el-form>
         </el-col>
         <el-col :span="12">
@@ -306,7 +277,7 @@
 </template>
 
 <script setup name="Info" lang="ts">
-import { listInfo, getInfo } from '@/api/lead/public';
+import { listInfo, getInfo, claim } from '@/api/lead/public';
 import { InfoVO, InfoQuery, InfoForm } from '@/api/lead/info/types';
 import { listOption, getMyInfo } from '@/api/app/sys/user';
 import { UserOption } from '@/api/app/sys/user/types';
@@ -532,7 +503,12 @@ const assignToMe = () => {
   });
 };
 
-const claim = (row: InfoVO) => {
-  proxy?.$modal.notifyWarning('待完成');
+const handleClaimToMe = async (leadId?: string | number) => {
+  const _ids = leadId || ids.value;
+  await proxy?.$modal.confirm('确认领取编号为"' + _ids + '"的线索吗？').finally(() => (loading.value = false));
+  const res = await getMyInfo();
+  await claim(Number(res.data.userId), _ids);
+  proxy?.$modal.msgSuccess('领取成功');
+  await getList();
 };
 </script>
