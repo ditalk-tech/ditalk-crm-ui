@@ -696,6 +696,16 @@ onMounted(() => {
   getList();
 });
 
+/** 路由到联系人页面 */
+const handleContactInfoList = (row: InfoVO) => {
+  router.push({ path: '/contact/info-list/' + row.id }); // :leadId
+};
+
+/** 路由到活动页面 */
+const handleActivityInfoList = (row: InfoVO) => {
+  router.push({ path: '/activity/info-list/' + row.id }); // :leadId
+};
+
 /** 获取用户选项列表 */
 const getUserOptionList = async () => {
   await listOption({
@@ -723,20 +733,15 @@ const handleBatchTransferLead = async () => {
 /** 回收线索 */
 const reclaimLead = async (leadId?: string | number) => {
   const _ids = leadId || ids.value;
-  await proxy?.$modal.confirm('确认回收编号为"' + _ids + '"的线索吗？').finally(() => (loading.value = false));
-  await reclaim(_ids);
+  await proxy?.$modal.confirm('确认回收编号为"' + _ids + '"的线索吗？');
+  const loading = ElLoading.service({
+    lock: true,
+    text: '回收进行中...',
+    background: 'rgba(0, 0, 0, 0.7)'
+  });
+  await reclaim(_ids).finally(() => loading.close());
   proxy?.$modal.msgSuccess('回收成功');
   await getList();
-};
-
-/** 路由到联系人页面 */
-const handleContactInfoList = (row: InfoVO) => {
-  router.push({ path: '/contact/info-list/' + row.id }); // :leadId
-};
-
-/** 路由到活动页面 */
-const handleActivityInfoList = (row: InfoVO) => {
-  router.push({ path: '/activity/info-list/' + row.id }); // :leadId
 };
 
 /** 重置转移线索表单 */
@@ -757,11 +762,15 @@ const cancelTransfer = () => {
 const submitTransfer = async () => {
   const _ids = transferForm.leadIds || ids.value;
   transferForm.leadIds = _ids;
-  await proxy?.$modal.confirm('确认转移编号为"' + _ids + '"的线索吗？').finally(() => (loading.value = false));
+  await proxy?.$modal.confirm('确认转移编号为"' + _ids + '"的线索吗？');
   const flag = await transferFormRef.value?.validate();
   if (flag) {
-    buttonLoading.value = true;
-    await transfer(transferForm.leadIds, transferForm.userId).finally(() => (buttonLoading.value = false));
+    const loading = ElLoading.service({
+      lock: true,
+      text: '转移进行中...',
+      background: 'rgba(0, 0, 0, 0.7)'
+    });
+    await transfer(transferForm.leadIds, transferForm.userId).finally(() => loading.close());
     proxy?.$modal.msgSuccess('操作成功');
     transferDialog.visible = false;
     await getList();
@@ -790,9 +799,11 @@ const cancelReclaimUserLead = () => {
 const submitReclaimUserLead = async () => {
   const flag = await reclaimUserLeadFormRef.value?.validate();
   if (flag) {
-    await reclaimUserLead(reclaimUserLeadForm.userId);
+    buttonLoading.value = true;
+    await reclaimUserLead(reclaimUserLeadForm.userId).finally(() => (buttonLoading.value = false));
     proxy?.$modal.msgSuccess('回收成功');
     await getList();
+    reclaimUserLeadDialog.visible = false;
   }
 };
 
@@ -804,9 +815,11 @@ const cancelTransferUserLead = () => {
 const submitTransferUserLead = async () => {
   const flag = await transferUserLeadFormRef.value?.validate();
   if (flag) {
-    await transferUserLead(transferUserLeadForm.sourceUserId, transferUserLeadForm.targetUserId);
+    buttonLoading.value = true;
+    await transferUserLead(transferUserLeadForm.sourceUserId, transferUserLeadForm.targetUserId).finally(() => (buttonLoading.value = false));
     proxy?.$modal.msgSuccess('转移成功');
     await getList();
+    transferUserLeadDialog.visible = false;
   }
 };
 

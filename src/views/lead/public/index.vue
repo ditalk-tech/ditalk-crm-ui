@@ -102,9 +102,15 @@
             <dict-tag :options="ditalk_lead_state" :value="scope.row.leadState" />
           </template>
         </el-table-column>
-        <el-table-column label="操作" align="center" class-name="small-padding fixed-width" fixed="right">
+        <el-table-column label="操作" align="center" class-name="small-padding fixed-width" fixed="right" width="140">
           <template #default="scope">
-            <el-button link size="small" type="primary" @click="handleClaimToMe(scope.row.id)" v-hasPermi="['customer:public:claim']">领取</el-button>
+            <el-button link type="primary" size="small" @click="handleActivityInfoList(scope.row)" v-hasPermi="['customer:activity:list']"
+              >活动</el-button
+            >
+            <el-button link type="success" size="small" @click="handleContactInfoList(scope.row)" v-hasPermi="['contact:info:list']"
+              >联系人</el-button
+            >
+            <el-button link type="primary" size="small" @click="handleClaimToMe(scope.row.id)" v-hasPermi="['customer:public:claim']">领取</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -282,6 +288,8 @@ import { InfoVO, InfoQuery, InfoForm } from '@/api/lead/info/types';
 import { listOption, getMyInfo } from '@/api/app/sys/user';
 import { UserOption } from '@/api/app/sys/user/types';
 import { InfoForm as ContactInfoForm } from '@/api/contact/info/types';
+
+const router = useRouter();
 
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 const { ditalk_customer_source, ditalk_customer_industry, ditalk_lead_state, ditalk_customer_type, ditalk_customer_tier } = toRefs<any>(
@@ -488,6 +496,16 @@ onMounted(() => {
   getList();
 });
 
+/** 路由到联系人页面 */
+const handleContactInfoList = (row: InfoVO) => {
+  router.push({ path: '/contact/info-list/' + row.id }); // :leadId
+};
+
+/** 路由到活动页面 */
+const handleActivityInfoList = (row: InfoVO) => {
+  router.push({ path: '/activity/info-list/' + row.id }); // :leadId
+};
+
 const getUserOptionList = async () => {
   await listOption({
     pageNum: 1,
@@ -505,10 +523,14 @@ const assignToMe = () => {
 
 const handleClaimToMe = async (leadId?: string | number) => {
   const _ids = leadId || ids.value;
-  await proxy?.$modal.confirm('确认领取编号为"' + _ids + '"的线索吗？').finally(() => (loading.value = false));
-  const res = await getMyInfo();
+  const loading = ElLoading.service({
+    lock: true,
+    text: '领取进行中...',
+    background: 'rgba(0, 0, 0, 0.7)'
+  });
+  await proxy?.$modal.confirm('确认领取编号为"' + _ids + '"的线索吗？');
+  const res = await getMyInfo().finally(() => loading.close());
   await claim(Number(res.data.userId), _ids);
   proxy?.$modal.msgSuccess('领取成功');
-  await getList();
 };
 </script>

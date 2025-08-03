@@ -72,7 +72,7 @@
       <template #header>
         <el-row :gutter="10" class="mb8">
           <el-col :span="1.5">
-            <el-button type="warning" plain icon="Switch" :disabled="multiple" @click="claim(null)" v-hasPermi="['customer:public:claim']"
+            <el-button type="warning" plain icon="Switch" :disabled="multiple" @click="handleClaimToMe()" v-hasPermi="['customer:public:claim']"
               >批量领取</el-button
             >
           </el-col>
@@ -83,7 +83,7 @@
       <el-table v-loading="loading" border :data="infoList" @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="55" align="center" fixed="left" />
         <el-table-column label="ID" align="center" prop="id" v-if="true" />
-        <el-table-column label="创建时间" align="center" prop="createTime" width="180" />
+        <el-table-column label="创建时间" align="center" prop="createTime" />
         <el-table-column label="客户名称" align="center" prop="name" />
         <el-table-column label="客户类型" align="center" prop="type">
           <template #default="scope">
@@ -112,10 +112,16 @@
             <dict-tag :options="ditalk_customer_state" :value="scope.row.state" />
           </template>
         </el-table-column>
-        <el-table-column label="转换时间" align="center" prop="convertedTime" width="180" />
-        <el-table-column label="操作" align="center" class-name="small-padding fixed-width" fixed="right">
+        <el-table-column label="转换时间" align="center" prop="convertedTime" />
+        <el-table-column label="操作" align="center" class-name="small-padding fixed-width" fixed="right" width="140">
           <template #default="scope">
-            <el-button link size="small" type="primary" @click="claim(scope.row)" v-hasPermi="['customer:public:claim']">领取</el-button>
+            <el-button link type="primary" size="small" @click="handleActivityInfoList(scope.row)" v-hasPermi="['customer:activity:list']"
+              >活动</el-button
+            >
+            <el-button link type="success" size="small" @click="handleContactInfoList(scope.row)" v-hasPermi="['contact:info:list']"
+              >联系人</el-button
+            >
+            <el-button link size="small" type="primary" @click="handleClaimToMe(scope.row.id)" v-hasPermi="['customer:public:claim']">领取</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -288,24 +294,18 @@
 </template>
 
 <script setup name="Info" lang="ts">
-import { listInfo, getInfo } from '@/api/customer/public';
+import { listInfo, getInfo, claim } from '@/api/customer/public';
 import { InfoVO, InfoQuery, InfoForm } from '@/api/customer/info/types';
-import { listOption } from '@/api/app/sys/user';
+import { listOption, getMyInfo } from '@/api/app/sys/user';
 import { UserOption } from '@/api/app/sys/user/types';
 import { InfoForm as ContactInfoForm } from '@/api/contact/info/types';
 
+const router = useRouter();
+
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
-const { ditalk_customer_source, ditalk_customer_industry, ditalk_lead_state, ditalk_customer_state, ditalk_customer_type, ditalk_customer_tier } =
-  toRefs<any>(
-    proxy?.useDict(
-      'ditalk_customer_source',
-      'ditalk_customer_industry',
-      'ditalk_lead_state',
-      'ditalk_customer_state',
-      'ditalk_customer_type',
-      'ditalk_customer_tier'
-    )
-  );
+const { ditalk_customer_source, ditalk_customer_industry, ditalk_customer_state, ditalk_customer_type, ditalk_customer_tier } = toRefs<any>(
+  proxy?.useDict('ditalk_customer_source', 'ditalk_customer_industry', 'ditalk_customer_state', 'ditalk_customer_type', 'ditalk_customer_tier')
+);
 const { ditalk_educational_qualification, ditalk_contact_frequency, ditalk_contact_state, sys_user_sex } = toRefs<any>(
   proxy?.useDict('ditalk_educational_qualification', 'ditalk_contact_frequency', 'ditalk_contact_state', 'sys_user_sex')
 );
@@ -513,6 +513,16 @@ onMounted(() => {
   getList();
 });
 
+/** 路由到联系人页面 */
+const handleContactInfoList = (row: InfoVO) => {
+  router.push({ path: '/contact/info-list/' + row.id }); // :customerId
+};
+
+/** 路由到活动页面 */
+const handleActivityInfoList = (row: InfoVO) => {
+  router.push({ path: '/activity/info-list/' + row.id }); // :customerId
+};
+
 const getUserOptionList = async () => {
   await listOption({
     pageNum: 1,
@@ -522,7 +532,23 @@ const getUserOptionList = async () => {
   });
 };
 
-const claim = (row: InfoVO) => {
-  proxy?.$modal.notifyWarning('待完成');
+const assignToMe = () => {
+  getMyInfo().then((res) => {
+    form.value.assignedTo = Number(res.data.userId);
+  });
+};
+
+const handleClaimToMe = async (customerId?: string | number) => {
+  const _ids = customerId || ids.value;
+  await proxy?.$modal.confirm('确认领取编号为"' + _ids + '"的客户吗？');
+  const loading = ElLoading.service({
+    lock: true,
+    text: '领取进行中...',
+    background: 'rgba(0, 0, 0, 0.7)'
+  });
+  const res = await getMyInfo();
+  await claim(Number(res.data.userId), _ids).finally(() => loading.close());
+  proxy?.$modal.msgSuccess('领取成功');
+  getList();
 };
 </script>

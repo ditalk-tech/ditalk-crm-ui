@@ -92,13 +92,7 @@
             <el-button type="success" plain icon="Edit" :disabled="single" @click="handleUpdate()" v-hasPermi="['customer:my:edit']">修改</el-button>
           </el-col>
           <el-col :span="1.5">
-            <el-button
-              type="danger"
-              plain
-              icon="Refresh"
-              :disabled="multiple"
-              @click="handleBatchReclaimCustomer"
-              v-hasPermi="['customer:my:reclaim']"
+            <el-button type="danger" plain icon="Refresh" :disabled="multiple" @click="reclaimCustomer()" v-hasPermi="['customer:my:reclaim']"
               >批量回收</el-button
             >
           </el-col>
@@ -111,6 +105,16 @@
               @click="handleBatchTransferCustomer"
               v-hasPermi="['customer:my:transfer']"
               >批量转移</el-button
+            >
+          </el-col>
+          <el-col :span="1.5">
+            <el-button type="danger" plain icon="Refresh" @click="handleReclaimUserCustomer" v-hasPermi="['customer:my:reclaim']"
+              >回收用户线索</el-button
+            >
+          </el-col>
+          <el-col :span="1.5">
+            <el-button type="warning" plain icon="Switch" @click="handleTransferUserCustomer" v-hasPermi="['customer:my:transfer']"
+              >转移用户线索</el-button
             >
           </el-col>
           <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
@@ -172,12 +176,7 @@
                       >
                     </el-dropdown-item>
                     <el-dropdown-item>
-                      <el-button
-                        link
-                        type="warning"
-                        size="small"
-                        @click="handleTransferCustomer(scope.row.id, scope.row.name)"
-                        v-hasPermi="['customer:my:transfer']"
+                      <el-button link type="warning" size="small" @click="handleTransferCustomer(scope.row.id)" v-hasPermi="['customer:my:transfer']"
                         >转移</el-button
                       >
                     </el-dropdown-item>
@@ -359,11 +358,8 @@
     <el-dialog :title="transferDialog.title" v-model="transferDialog.visible" width="960px" append-to-body>
       <el-form :model="transferForm" :rules="transferRules" ref="transferFormRef" label-width="120px">
         <!-- 选定的客户 -->
-        <el-form-item label="客户ID" prop="customerId" v-show="false">
-          <el-input v-model="transferForm.customerId" placeholder="请输入客户ID" />
-        </el-form-item>
-        <el-form-item label="客户名称">
-          <el-text>{{ transferForm.customerName }}</el-text>
+        <el-form-item label="客户ID" prop="customerIds">
+          <el-input type="textarea" v-model="transferForm.customerIds" disabled />
         </el-form-item>
         <!-- 指定用户 -->
         <el-form-item label="指定用户" prop="userId">
@@ -379,8 +375,65 @@
       </el-form>
       <template #footer>
         <div class="dialog-footer">
-          <el-button :loading="buttonLoading" type="primary" @click="submitTransfer">确 定</el-button>
           <el-button @click="cancelTransfer">取 消</el-button>
+          <el-button :loading="buttonLoading" type="primary" @click="submitTransfer">确 定</el-button>
+        </div>
+      </template>
+    </el-dialog>
+
+    <!-- 回收指定用户所有客户的对话框 -->
+    <el-dialog :title="reclaimUserCustomerDialog.title" v-model="reclaimUserCustomerDialog.visible" width="600px" append-to-body>
+      <el-form :model="reclaimUserCustomerForm" :rules="reclaimUserCustomerFormRules" ref="reclaimUserCustomerFormRef" label-width="120px">
+        <!-- 指定用户 -->
+        <el-form-item label="指定用户" prop="userId">
+          <el-select v-model="reclaimUserCustomerForm.userId" placeholder="请选择用户" clearable>
+            <el-option
+              v-for="dict in userOptionList"
+              :key="dict.userId"
+              :label="dict.nickName + ' --- ' + dict.userId"
+              :value="dict.userId"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <div class="dialog-footer">
+          <el-button @click="cancelReclaimUserCustomer">取 消</el-button>
+          <el-button :loading="buttonLoading" type="primary" @click="submitReclaimUserCustomer">确 定</el-button>
+        </div>
+      </template>
+    </el-dialog>
+
+    <!-- 转移指定用户所有客户到另一用户对话框 -->
+    <el-dialog :title="transferUserCustomerDialog.title" v-model="transferUserCustomerDialog.visible" width="600px" append-to-body>
+      <el-form :model="transferUserCustomerForm" :rules="transferUserCustomerFormRules" ref="transferUserCustomerFormRef" label-width="120px">
+        <!-- 转换用户 -->
+        <el-form-item label="转换用户" prop="sourceUserId">
+          <el-select v-model="transferUserCustomerForm.sourceUserId" placeholder="请选择用户" clearable>
+            <el-option
+              v-for="dict in userOptionList"
+              :key="dict.userId"
+              :label="dict.nickName + ' --- ' + dict.userId"
+              :value="dict.userId"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+        <!-- 目标用户 -->
+        <el-form-item label="目标用户" prop="targetUserId">
+          <el-select v-model="transferUserCustomerForm.targetUserId" placeholder="请选择用户" clearable>
+            <el-option
+              v-for="dict in userOptionList"
+              :key="dict.userId"
+              :label="dict.nickName + ' --- ' + dict.userId"
+              :value="dict.userId"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <div class="dialog-footer">
+          <el-button @click="cancelTransferUserCustomer">取 消</el-button>
+          <el-button :loading="buttonLoading" type="primary" @click="submitTransferUserCustomer">确 定</el-button>
         </div>
       </template>
     </el-dialog>
@@ -389,7 +442,16 @@
 
 <script setup name="Info" lang="ts">
 import { InfoVO, InfoQuery, InfoForm, CustomerContactForm } from '@/api/customer/info/types';
-import { listInfo, getInfo, addCustomerContact, updateCustomerContact, reclaim, transfer } from '@/api/customer/my';
+import {
+  listInfo,
+  getInfo,
+  addCustomerContact,
+  updateCustomerContact,
+  reclaim,
+  transfer,
+  reclaimUserCustomer,
+  transferUserCustomer
+} from '@/api/customer/my';
 import { listOption } from '@/api/app/sys/user';
 import { UserOption } from '@/api/app/sys/user/types';
 import { InfoForm as ContactInfoForm } from '@/api/contact/info/types';
@@ -420,6 +482,7 @@ const infoFormRef = ref<ElFormInstance>();
 const contactFormRef = ref<ElFormInstance>();
 
 const userOptionList = ref<UserOption[]>([]);
+const transferCustomerId = ref<string | number>();
 
 const dialog = reactive<DialogOption>({
   visible: false,
@@ -520,24 +583,48 @@ const contactForm = ref<ContactInfoForm>({
   ...initContactFormData
 });
 
-// 回收客户对话框
+// 回收指定客户的对话框变量
+const transferFormRef = ref<ElFormInstance>();
 const transferDialog = reactive<DialogOption>({
   visible: false,
   title: '回收客户'
 });
-
 const transferForm = reactive({
-  customerId: undefined,
-  userId: undefined,
-  customerName: undefined
+  customerIds: undefined,
+  userId: undefined
 });
-
 const transferRules = ref({
-  customerId: [{ required: true, message: '客户不能为空', trigger: 'blur' }],
+  customerIds: [{ required: true, message: '客户不能为空', trigger: 'blur' }],
   userId: [{ required: true, message: '目标用户不能为空', trigger: 'change' }]
 });
 
-const transferFormRef = ref<ElFormInstance>();
+// 回收用户所有客户的对话框变量
+const reclaimUserCustomerFormRef = ref<ElFormInstance>();
+const reclaimUserCustomerDialog = reactive<DialogOption>({
+  visible: false,
+  title: '回收用户所有客户'
+});
+const reclaimUserCustomerForm = reactive({
+  userId: undefined
+});
+const reclaimUserCustomerFormRules = ref({
+  userId: [{ required: true, message: '用户不能为空', trigger: 'change' }]
+});
+
+// 转移指定用户所有客户到另一用户的对话框变量
+const transferUserCustomerFormRef = ref<ElFormInstance>();
+const transferUserCustomerDialog = reactive<DialogOption>({
+  visible: false,
+  title: '转移指定用户所有客户到另一用户'
+});
+const transferUserCustomerForm = reactive({
+  sourceUserId: undefined,
+  targetUserId: undefined
+});
+const transferUserCustomerFormRules = ref({
+  sourceUserId: [{ required: true, message: '转换用户不能为空', trigger: 'change' }],
+  targetUserId: [{ required: true, message: '目标用户不能为空', trigger: 'change' }]
+});
 
 /** 查询线索信息列表 */
 const getList = async () => {
@@ -641,44 +728,6 @@ onMounted(() => {
   getList();
 });
 
-const getUserOptionList = async () => {
-  await listOption({
-    pageNum: 1,
-    pageSize: 100
-  }).then((res: { data: any }) => {
-    userOptionList.value = res.data;
-  });
-};
-
-const handleTransferCustomer = (customerId: string | number, customerName: string) => {
-  resetTransferForm();
-  transferDialog.visible = true;
-  transferForm.customerId = customerId;
-  transferForm.customerName = customerName;
-};
-
-const handleBatchTransferCustomer = () => {
-  proxy?.$modal.notifyWarning('待完成');
-};
-
-const reclaimCustomer = (customerId: string | number) => {
-  // 确认对话框
-  proxy?.$modal
-    .confirm('确认回收客户吗？')
-    .then(async () => {
-      await reclaim(customerId);
-      proxy?.$modal.msgSuccess('回收成功');
-      await getList();
-    })
-    .catch(() => {
-      return;
-    });
-};
-
-const handleBatchReclaimCustomer = () => {
-  proxy?.$modal.notifyWarning('待完成');
-};
-
 /** 路由到联系人页面 */
 const handleContactInfoList = (row: InfoVO) => {
   router.push({ path: '/contact/info-list/' + row.id }); // :customerId
@@ -689,12 +738,49 @@ const handleActivityInfoList = (row: InfoVO) => {
   router.push({ path: '/activity/info-list/' + row.id }); // :customerId
 };
 
+const getUserOptionList = async () => {
+  await listOption({
+    pageNum: 1,
+    pageSize: 100
+  }).then((res: { data: any }) => {
+    userOptionList.value = res.data;
+  });
+};
+
+/** 转移客户 */
+const handleTransferCustomer = async (customerId?: string | number) => {
+  resetTransferForm();
+  transferDialog.visible = true;
+  transferForm.customerIds = customerId;
+};
+
+/** 批量转移客户 */
+const handleBatchTransferCustomer = async () => {
+  resetTransferForm();
+  transferDialog.visible = true;
+  transferForm.customerIds = ids.value;
+};
+
+/** 回收客户 */
+const reclaimCustomer = async (customerId?: string | number) => {
+  const _ids = customerId || ids.value;
+  await proxy?.$modal.confirm('确认回收编号为"' + _ids + '"的客户吗？');
+  const loading = ElLoading.service({
+    lock: true,
+    text: '回收进行中...',
+    background: 'rgba(0, 0, 0, 0.7)'
+  });
+  await reclaim(_ids).finally(() => loading.close());
+  proxy?.$modal.msgSuccess('回收成功');
+  await getList();
+};
+
 /** 重置转移客户表单 */
 const resetTransferForm = () => {
-  transferForm.customerId = undefined;
+  transferForm.customerIds = undefined;
   transferForm.userId = undefined;
-  transferForm.customerName = undefined;
   transferFormRef.value?.resetFields();
+  transferCustomerId.value = undefined;
 };
 
 /** 取消转移客户 */
@@ -705,13 +791,79 @@ const cancelTransfer = () => {
 
 /** 提交转移客户 */
 const submitTransfer = async () => {
+  const _ids = transferForm.customerIds || ids.value;
+  transferForm.customerIds = _ids;
+  await proxy?.$modal.confirm('确认转移编号为"' + _ids + '"的客户吗？').finally(() => (loading.value = false));
   const flag = await transferFormRef.value?.validate();
   if (flag) {
-    buttonLoading.value = true;
-    await transfer(transferForm.customerId, transferForm.userId).finally(() => (buttonLoading.value = false));
+    const loading = ElLoading.service({
+      lock: true,
+      text: '转移进行中...',
+      background: 'rgba(0, 0, 0, 0.7)'
+    });
+    await transfer(transferForm.customerIds, transferForm.userId).finally(() => loading.close());
     proxy?.$modal.msgSuccess('操作成功');
     transferDialog.visible = false;
     await getList();
   }
+};
+
+/** 回收用户所有客户 */
+const handleReclaimUserCustomer = async () => {
+  resetReclaimUserCustomerForm();
+  reclaimUserCustomerDialog.visible = true;
+  reclaimUserCustomerForm.userId = ids.value;
+};
+
+/** 转移用户所有客户到指定用户 */
+const handleTransferUserCustomer = async () => {
+  resetTransferUserCustomerForm();
+  transferUserCustomerDialog.visible = true;
+  transferUserCustomerForm.sourceUserId = ids.value;
+};
+
+const cancelReclaimUserCustomer = () => {
+  resetReclaimUserCustomerForm();
+  reclaimUserCustomerDialog.visible = false;
+};
+
+const submitReclaimUserCustomer = async () => {
+  const flag = await reclaimUserCustomerFormRef.value?.validate();
+  if (flag) {
+    buttonLoading.value = true;
+    await reclaimUserCustomer(reclaimUserCustomerForm.userId).finally(() => (buttonLoading.value = false));
+    proxy?.$modal.msgSuccess('回收成功');
+    await getList();
+    reclaimUserCustomerDialog.visible = false;
+  }
+};
+
+const cancelTransferUserCustomer = () => {
+  resetTransferUserCustomerForm();
+  transferUserCustomerDialog.visible = false;
+};
+
+const submitTransferUserCustomer = async () => {
+  const flag = await transferUserCustomerFormRef.value?.validate();
+  if (flag) {
+    buttonLoading.value = true;
+    await transferUserCustomer(transferUserCustomerForm.sourceUserId, transferUserCustomerForm.targetUserId).finally(
+      () => (buttonLoading.value = false)
+    );
+    proxy?.$modal.msgSuccess('转移成功');
+    await getList();
+    transferUserCustomerDialog.visible = false;
+  }
+};
+
+const resetReclaimUserCustomerForm = () => {
+  reclaimUserCustomerForm.userId = undefined;
+  reclaimUserCustomerFormRef.value?.resetFields();
+};
+
+const resetTransferUserCustomerForm = () => {
+  transferUserCustomerForm.sourceUserId = undefined;
+  transferUserCustomerForm.targetUserId = undefined;
+  transferUserCustomerFormRef.value?.resetFields();
 };
 </script>

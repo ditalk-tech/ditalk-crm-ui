@@ -16,3 +16,16 @@ export const getInfo = (id: string | number): AxiosPromise<InfoVO> => {
     method: 'get'
   });
 };
+
+/**
+ * 领取客户
+ * @param userId 用户id
+ * @param customerIds 客户id列表
+ * @returns 领取结果
+ */
+export const claim = (userId: string | number, customerIds: string | number | Array<string | number>) => {
+  return request({
+    url: `/customer/info/public/claim/${userId}/${customerIds}`,
+    method: 'put'
+  });
+};
