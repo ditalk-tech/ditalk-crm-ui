@@ -201,7 +201,14 @@
               <image-upload v-model="form.subPics" />
             </el-form-item>
             <el-form-item label="属性集">
-              <el-input-tag v-model="attrArray" placeholder="输入后回车，格式 '属性名:属性值'" draggable @add-tag="addAttrTag" />
+              <el-input-tag
+                v-model="attrArray"
+                placeholder="输入后回车，格式 '属性名:属性值'"
+                draggable
+                @add-tag="addAttrTag"
+                tag-type="primary"
+                tag-effect="light"
+              />
             </el-form-item>
             <el-form-item label="规格集" prop="specJson">
               <template v-for="(v, index) in specKeyArray" :key="index">
@@ -220,6 +227,8 @@
                   style="margin-bottom: 16px"
                   draggable
                   @add-tag="checkForDeplicateValues(index)"
+                  tag-type="primary"
+                  tag-effect="light"
                 />
               </template>
               <el-button type="primary" plain @click="addSpecRow">添加规格</el-button>
@@ -296,6 +305,8 @@
                   style="margin-bottom: 16px"
                   draggable
                   @add-tag="checkForDeplicateValues(index)"
+                  tag-type="primary"
+                  tag-effect="light"
                 />
               </template>
               <el-button type="primary" plain @click="addSpecRow">添加规格</el-button>
@@ -952,7 +963,7 @@ const buildSkuSpecArray = () => {
  */
 const buildSkuSpecTableHead = () => {
   // 如果现存 SKU 后台记录，从 SKU 后台记录构建出 spec 对象集合
-  const specObjectArray: Object[] = skuList.value.flatMap((sku) => sku['specObject']); // 格式：[{颜色:白,产地:中国},{颜色:红,产地:中国}]
+  const specObjectArray: Record<string, string>[] = skuList.value.flatMap((sku) => sku['specObject']); // 格式：[{颜色:白,产地:中国},{颜色:红,产地:中国}]
   // 【1】从后台记录构建动态表头
   skuSpecTableHead.value = getObjectKeys(specObjectArray);
   // 【2】从定义集合构建动态表头，并与【1】后台记录合并成全量表头

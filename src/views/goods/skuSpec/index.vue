@@ -126,7 +126,7 @@
           <el-input v-model="form.name" placeholder="请输入规格名称" />
         </el-form-item>
         <el-form-item label="规格选项集">
-          <el-input-tag v-model="specArray" placeholder="输入后回车" draggable @add-tag="addSpecTag" />
+          <el-input-tag v-model="specArray" placeholder="输入后回车" draggable @add-tag="addSpecTag" tag-type="primary" tag-effect="light" />
         </el-form-item>
         <el-form-item label="排序" prop="sortOrder">
           <el-input-number v-model="form.sortOrder" placeholder="请输入排序" :min="0" :max="99999999" :precision="0" />
