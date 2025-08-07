@@ -154,6 +154,8 @@
           </template>
         </el-table-column>
         <el-table-column label="转换时间" align="center" prop="convertedTime" />
+        <el-table-column label="分配到" align="center" prop="assignedTo" />
+        <el-table-column label="分配部门" align="center" prop="assignedDept" />
         <el-table-column label="操作" align="center" class-name="small-padding fixed-width" :width="140" fixed="right">
           <template #default="scope">
             <el-button link type="primary" size="small" @click="handleActivityInfoList(scope.row)" v-hasPermi="['customer:activity:list']"
@@ -161,6 +163,9 @@
             >
             <el-button link type="success" size="small" @click="handleContactInfoList(scope.row)" v-hasPermi="['contact:info:list']"
               >联系人</el-button
+            >
+            <el-button link type="warning" size="small" @click="handleOpportunityInfoList(scope.row)" v-hasPermi="['opportunity:info:list']"
+              >商机</el-button
             >
             <el-button link size="small">
               <el-dropdown trigger="click">
@@ -186,8 +191,6 @@
             </el-button>
           </template>
         </el-table-column>
-        <el-table-column label="分配到" align="center" prop="assignedTo" />
-        <el-table-column label="分配部门" align="center" prop="assignedDept" />
       </el-table>
       <pagination v-show="total > 0" :total="total" v-model:page="queryParams.pageNum" v-model:limit="queryParams.pageSize" @pagination="getList" />
     </el-card>
@@ -736,6 +739,11 @@ const handleContactInfoList = (row: InfoVO) => {
 /** 路由到活动页面 */
 const handleActivityInfoList = (row: InfoVO) => {
   router.push({ path: '/activity/info-list/' + row.id }); // :customerId
+};
+
+/** 路由到商机页面 */
+const handleOpportunityInfoList = (row: InfoVO) => {
+  router.push({ path: '/opportunity/info-list/' + row.id }); // :customerId
 };
 
 const getUserOptionList = async () => {

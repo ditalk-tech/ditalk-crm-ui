@@ -21,8 +21,18 @@
             <el-form-item label="商机标题" prop="title">
               <el-input v-model="queryParams.title" placeholder="请输入商机标题" clearable @keyup.enter="handleQuery" />
             </el-form-item>
-            <el-form-item label="客户ID" prop="customerId">
-              <el-input v-model="queryParams.customerId" placeholder="请输入客户ID" clearable @keyup.enter="handleQuery" />
+            <el-form-item label="客户" prop="customerId">
+              <el-select
+                v-model="queryParams.customerId"
+                filterable
+                clearable
+                reserve-keyword
+                placeholder="输入客户名称"
+                :loading="loadingCustomer"
+                style="width: 240px"
+              >
+                <el-option v-for="item in myCustomerOptions" :key="item.id" :label="item.name + '-' + item.id" :value="item.id" />
+              </el-select>
             </el-form-item>
             <el-form-item label="指派给" prop="assignedTo">
               <el-input v-model="queryParams.assignedTo" placeholder="请输入指派给" clearable @keyup.enter="handleQuery" />
@@ -117,17 +127,6 @@
         <el-row>
           <el-col :span="12">
             <el-form-item label="客户" prop="customerId">
-              <!-- <el-input v-model="form.customerId" placeholder="请输入客户ID" /> -->
-              <!-- <el-select
-                v-model="form.customerId"
-                filterable
-                remote
-                reserve-keyword
-                placeholder="输入名称进行查询"
-                :remote-method="loadMyCustomerOption"
-                :loading="loadingCustomer"
-                style="width: 240px"
-              > -->
               <el-select
                 v-model="form.customerId"
                 filterable
@@ -148,9 +147,6 @@
             </el-form-item>
           </el-col>
         </el-row>
-        <!-- <el-form-item label="指派给" prop="assignedTo">
-          <el-input v-model="form.assignedTo" placeholder="请输入指派给" />
-        </el-form-item> -->
         <el-row>
           <el-col :span="12">
             <el-form-item label="预计销售金额" prop="amount">
@@ -184,8 +180,9 @@
 <script setup name="Info" lang="ts">
 import { listInfo, getInfo, delInfo, addInfo, updateInfo } from '@/api/opportunity/info';
 import { InfoVO, InfoQuery, InfoForm } from '@/api/opportunity/info/types';
-// import { listInfoOption as listCustomerInfoOption, listInfoPageOption as listCustomerInfoPageOption, getInfo as getMyCustomer } from '@/api/customer/my';
 import { listInfoOption as listCustomerInfoOption } from '@/api/customer/my';
+
+const route = useRoute();
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 const { ditalk_opportunity_state } = toRefs<any>(proxy?.useDict('ditalk_opportunity_state'));
 
@@ -206,6 +203,7 @@ const infoFormRef = ref<ElFormInstance>();
 const amount = ref(0); // 预计销售金额，用于单位转换
 const myCustomerOptions = ref<{ id: number | string; name: string }[]>([]);
 const loadingCustomer = ref(false);
+const defaultCustomerId = ref<string>('');
 
 const dialog = reactive<DialogOption>({
   visible: false,
@@ -275,7 +273,6 @@ const cancel = () => {
 const reset = () => {
   form.value = { ...initFormData };
   infoFormRef.value?.resetFields();
-  myCustomerOptions.value = [];
 };
 
 /** 搜索按钮操作 */
@@ -289,6 +286,7 @@ const resetQuery = () => {
   dateRangeCreateTime.value = ['', ''];
   dateRangeCloseDate.value = ['', ''];
   queryFormRef.value?.resetFields();
+  queryParams.value.customerId = defaultCustomerId.value;
   handleQuery();
 };
 
@@ -304,6 +302,8 @@ const handleAdd = () => {
   reset();
   dialog.visible = true;
   dialog.title = '添加商机信息';
+  amount.value = undefined;
+  form.value.customerId = queryParams.value.customerId;
 };
 
 /** 修改按钮操作 */
@@ -316,9 +316,6 @@ const handleUpdate = async (row?: InfoVO) => {
   dialog.title = '修改商机信息';
   // 单位转换
   amount.value = form.value.amount / 100;
-  // 加载客户
-  // loadDefaultCustomerOption(form.value.customerId); // 加载默认客户，用于远程实时调用
-  loadMyCustomerOption(); // 加载全量我的客户
 };
 
 /** 提交按钮 */
@@ -361,41 +358,25 @@ const handleExport = () => {
 };
 
 onMounted(() => {
+  setDefualtCustomerId();
+  loadMyCustomerOption();
   getList();
 });
 
-// const loadMyCustomerOption = async (query: string) => {
-//   loadingCustomer.value = true;
-//   const res = await listCustomerInfoPageOption({
-//     name: query,
-//     pageNum: 1,
-//     pageSize: 40
-//   });
-//   myCustomerOptions.value = res.data.map((item) => ({
-//     id: item.id,
-//     name: item.name
-//   }));
-//   loadingCustomer.value = false;
-// };
-
-// const loadDefaultCustomerOption = async (id: string | number) => {
-//   // 加载客户
-//   const res = await getMyCustomer(id);
-//   myCustomerOptions.value = [
-//     {
-//       id: res.data.id,
-//       name: res.data.name
-//     }
-//   ];
-// };
-
+/** 获取全量客户选项列表 */
 const loadMyCustomerOption = async () => {
-  loadingCustomer.value = true;
+  // loadingCustomer.value = true;
   const res = await listCustomerInfoOption();
   myCustomerOptions.value = res.data.map((item) => ({
     id: item.id,
     name: item.name
   }));
-  loadingCustomer.value = false;
+  // loadingCustomer.value = false;
+};
+
+/** 查询字典类型详细 */
+const setDefualtCustomerId = async () => {
+  queryParams.value.customerId = route.params && (route.params.customerId as string);
+  defaultCustomerId.value = route.params && (route.params.customerId as string);
 };
 </script>
