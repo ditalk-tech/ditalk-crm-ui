@@ -18,11 +18,20 @@
                 :default-time="[new Date(2000, 1, 1, 0, 0, 0), new Date(2000, 1, 1, 23, 59, 59)]"
               />
             </el-form-item>
-            <el-form-item label="客户ID" prop="customerId">
-              <el-input v-model="queryParams.customerId" placeholder="请输入客户ID" clearable @keyup.enter="handleQuery" />
+            <el-form-item label="客户" prop="customerId">
+              <el-select v-model="queryParams.customerId" placeholder="请选择客户" filterable @change="getContactInfoOptionList">
+                <el-option v-for="dict in customerInfoOptionList" :key="dict.id" :label="dict.name + ' --- ' + dict.id" :value="dict.id"></el-option>
+              </el-select>
             </el-form-item>
-            <el-form-item label="联系人ID" prop="contactId">
-              <el-input v-model="queryParams.contactId" placeholder="请输入联系人ID" clearable @keyup.enter="handleQuery" />
+            <el-form-item label="联系人" prop="contactId">
+              <el-select v-model="queryParams.contactId" placeholder="请选择联系人" filterable clearable>
+                <el-option
+                  v-for="dict in contactInfoOptionList"
+                  :key="dict.id"
+                  :label="dict.lastName + ' ' + dict.firstName + ' --- ' + dict.id"
+                  :value="dict.id"
+                ></el-option>
+              </el-select>
             </el-form-item>
             <el-form-item label="商机ID" prop="opportunityId">
               <el-input v-model="queryParams.opportunityId" placeholder="请输入商机ID" clearable @keyup.enter="handleQuery" />
@@ -132,7 +141,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="联系人" prop="contactId">
-          <el-select v-model="form.contactId" placeholder="请选择联系人">
+          <el-select v-model="form.contactId" placeholder="请选择联系人" filterable>
             <el-option
               v-for="dict in contactInfoOptionList"
               :key="dict.id"
@@ -367,12 +376,13 @@ onMounted(() => {
 const setDefualtCustomerId = async () => {
   queryParams.value.customerId = route.params && (route.params.customerId as string);
   defaultCustomerId.value = route.params && (route.params.customerId as string);
-  // queryParams.value.contactId = route.params && (route.params.contactId as string);
-  // defaultContactId.value = route.params && (route.params.contactId as string);
 };
 
 /** 获取联系人选项列表 */
 const getContactInfoOptionList = async (customerId: number | string) => {
+  // 切换客户清空查询条件中的联系人
+  queryParams.value.contactId = undefined;
+  // 切换客户刷新联系人列表
   const res = await listContactOptionInfo(customerId);
   contactInfoOptionList.value = res.data;
 };
