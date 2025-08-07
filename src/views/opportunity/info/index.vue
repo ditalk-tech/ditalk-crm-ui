@@ -34,9 +34,6 @@
                 <el-option v-for="item in myCustomerOptions" :key="item.id" :label="item.name + '-' + item.id" :value="item.id" />
               </el-select>
             </el-form-item>
-            <el-form-item label="指派给" prop="assignedTo">
-              <el-input v-model="queryParams.assignedTo" placeholder="请输入指派给" clearable @keyup.enter="handleQuery" />
-            </el-form-item>
             <el-form-item label="预计成交日期" style="width: 308px">
               <el-date-picker
                 v-model="dateRangeCloseDate"
@@ -94,7 +91,6 @@
         <el-table-column label="创建时间" align="center" prop="createTime" width="180" />
         <el-table-column label="商机标题" align="center" prop="title" />
         <el-table-column label="客户ID" align="center" prop="customerId" />
-        <el-table-column label="指派给" align="center" prop="assignedTo" />
         <el-table-column label="预计销售金额" align="center" prop="amount" />
         <el-table-column label="预计成交日期" align="center" prop="closeDate" width="180" />
         <el-table-column label="描述内容" align="center" prop="remark" width="240">
@@ -222,7 +218,6 @@ const initFormData: InfoForm = {
   title: undefined,
   customerId: undefined,
   amount: undefined,
-  assignedTo: undefined,
   orderId: undefined,
   remark: undefined,
   closeDate: undefined,
@@ -236,7 +231,6 @@ const data = reactive<PageData<InfoForm, InfoQuery>>({
     id: undefined,
     title: undefined,
     customerId: undefined,
-    assignedTo: undefined,
     orderId: undefined,
     state: undefined,
     params: {

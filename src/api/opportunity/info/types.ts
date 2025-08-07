@@ -30,11 +30,6 @@ export interface InfoVO {
   amount: number;
 
   /**
-   * 指派给
-   */
-  assignedTo: number;
-
-  /**
    * 订单ID
    */
   orderId: string | number;
@@ -82,11 +77,6 @@ export interface InfoForm extends BaseEntity {
   amount?: number;
 
   /**
-   * 指派给
-   */
-  assignedTo?: number;
-
-  /**
    * 订单ID
    */
   orderId?: string | number;
@@ -127,11 +117,6 @@ export interface InfoQuery extends PageQuery {
    * 客户ID
    */
   customerId?: string | number;
-
-  /**
-   * 指派给
-   */
-  assignedTo?: number;
 
   /**
    * 订单ID
