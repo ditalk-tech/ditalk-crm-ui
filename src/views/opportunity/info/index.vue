@@ -118,13 +118,21 @@
           <el-col :span="12">
             <el-form-item label="客户" prop="customerId">
               <!-- <el-input v-model="form.customerId" placeholder="请输入客户ID" /> -->
-              <el-select
+              <!-- <el-select
                 v-model="form.customerId"
                 filterable
                 remote
                 reserve-keyword
                 placeholder="输入名称进行查询"
                 :remote-method="loadMyCustomerOption"
+                :loading="loadingCustomer"
+                style="width: 240px"
+              > -->
+              <el-select
+                v-model="form.customerId"
+                filterable
+                reserve-keyword
+                placeholder="输入客户名称"
                 :loading="loadingCustomer"
                 style="width: 240px"
               >
@@ -176,8 +184,8 @@
 <script setup name="Info" lang="ts">
 import { listInfo, getInfo, delInfo, addInfo, updateInfo } from '@/api/opportunity/info';
 import { InfoVO, InfoQuery, InfoForm } from '@/api/opportunity/info/types';
-import { listInfo as listMyCustomer, getInfo as getMyCustomer } from '@/api/customer/my';
-
+// import { listInfoOption as listCustomerInfoOption, listInfoPageOption as listCustomerInfoPageOption, getInfo as getMyCustomer } from '@/api/customer/my';
+import { listInfoOption as listCustomerInfoOption } from '@/api/customer/my';
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 const { ditalk_opportunity_state } = toRefs<any>(proxy?.useDict('ditalk_opportunity_state'));
 
@@ -309,7 +317,8 @@ const handleUpdate = async (row?: InfoVO) => {
   // 单位转换
   amount.value = form.value.amount / 100;
   // 加载客户
-  loadDefaultCustomerOption(form.value.customerId);
+  // loadDefaultCustomerOption(form.value.customerId); // 加载默认客户，用于远程实时调用
+  loadMyCustomerOption(); // 加载全量我的客户
 };
 
 /** 提交按钮 */
@@ -355,28 +364,38 @@ onMounted(() => {
   getList();
 });
 
-const loadMyCustomerOption = async (query: string) => {
+// const loadMyCustomerOption = async (query: string) => {
+//   loadingCustomer.value = true;
+//   const res = await listCustomerInfoPageOption({
+//     name: query,
+//     pageNum: 1,
+//     pageSize: 40
+//   });
+//   myCustomerOptions.value = res.data.map((item) => ({
+//     id: item.id,
+//     name: item.name
+//   }));
+//   loadingCustomer.value = false;
+// };
+
+// const loadDefaultCustomerOption = async (id: string | number) => {
+//   // 加载客户
+//   const res = await getMyCustomer(id);
+//   myCustomerOptions.value = [
+//     {
+//       id: res.data.id,
+//       name: res.data.name
+//     }
+//   ];
+// };
+
+const loadMyCustomerOption = async () => {
   loadingCustomer.value = true;
-  const res = await listMyCustomer({
-    name: query,
-    pageNum: 1,
-    pageSize: 40
-  });
+  const res = await listCustomerInfoOption();
   myCustomerOptions.value = res.data.map((item) => ({
     id: item.id,
     name: item.name
   }));
   loadingCustomer.value = false;
-};
-
-const loadDefaultCustomerOption = async (id: string | number) => {
-  // 加载客户
-  const res = await getMyCustomer(id);
-  myCustomerOptions.value = [
-    {
-      id: res.data.id,
-      name: res.data.name
-    }
-  ];
 };
 </script>
