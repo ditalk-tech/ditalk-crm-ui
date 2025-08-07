@@ -1,6 +1,6 @@
 import request from '@/utils/request';
 import { AxiosPromise } from 'axios';
-import { InfoVO, InfoQuery, CustomerContactForm } from '@/api/customer/info/types';
+import { InfoVO, InfoQuery, InfoOptionVO, CustomerContactForm } from '@/api/customer/info/types';
 
 export const listInfo = (query?: InfoQuery): AxiosPromise<InfoVO[]> => {
   return request({
@@ -90,5 +90,31 @@ export const reclaimUserCustomer = (userId: string | number) => {
   return request({
     url: `/customer/info/my/reclaim/user/${userId}`,
     method: 'put'
+  });
+};
+
+/**
+ * 查询客户信息选项列表（下拉选择）
+ * @param query
+ * @returns {*}
+ */
+export const listInfoOption = (query?: InfoQuery): AxiosPromise<InfoOptionVO[]> => {
+  return request({
+    url: '/customer/info/my/list/option',
+    method: 'get',
+    params: query
+  });
+};
+
+/**
+ * 分页查询客户信息选项列表（下拉选择）
+ * @param query
+ * @returns {*}
+ */
+export const listInfoPageOption = (query?: InfoQuery): AxiosPromise<InfoOptionVO[]> => {
+  return request({
+    url: '/customer/info/my/list/page/option',
+    method: 'get',
+    params: query
   });
 };
