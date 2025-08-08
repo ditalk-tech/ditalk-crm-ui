@@ -18,8 +18,8 @@
                 :default-time="[new Date(2000, 1, 1, 0, 0, 0), new Date(2000, 1, 1, 23, 59, 59)]"
               />
             </el-form-item>
-            <el-form-item label="客户ID" prop="customerId">
-              <el-input v-model="queryParams.customerId" placeholder="请输入客户ID" clearable @keyup.enter="handleQuery" />
+            <el-form-item :label="typeName + 'ID'" prop="customerId">
+              <el-input v-model="queryParams.customerId" :placeholder="'请输入' + typeName + 'ID'" clearable @keyup.enter="handleQuery" />
             </el-form-item>
             <el-form-item label="姓氏" prop="lastName">
               <el-input v-model="queryParams.lastName" placeholder="请输入姓氏" clearable @keyup.enter="handleQuery" />
@@ -148,7 +148,7 @@
         <el-table-column type="selection" width="55" align="center" fixed="left" />
         <el-table-column label="ID" align="center" prop="id" v-if="true" />
         <el-table-column label="创建时间" align="center" prop="createTime" width="180" />
-        <el-table-column label="客户ID" align="center" prop="customerId" />
+        <el-table-column :label="typeName + 'ID'" align="center" prop="customerId" />
         <el-table-column label="姓氏" align="center" prop="lastName" />
         <el-table-column label="名称" align="center" prop="firstName" />
         <el-table-column label="头像" align="center" prop="avatarUrl" width="100">
@@ -212,8 +212,8 @@
     <!-- 添加或修改联系人信息对话框 -->
     <el-dialog :title="dialog.title" v-model="dialog.visible" width="960px" append-to-body>
       <el-form ref="infoFormRef" :model="form" :rules="rules" label-width="120px">
-        <el-form-item label="客户ID" prop="customerId">
-          <el-input v-model="form.customerId" placeholder="请输入客户ID" />
+        <el-form-item :label="typeName + 'ID'" prop="customerId">
+          <el-input v-model="form.customerId" :placeholder="'请输入' + typeName + 'ID'" />
         </el-form-item>
         <el-form-item label="姓氏" prop="lastName">
           <el-input v-model="form.lastName" placeholder="请输入姓氏" />
@@ -346,6 +346,7 @@ const queryFormRef = ref<ElFormInstance>();
 const infoFormRef = ref<ElFormInstance>();
 
 const showMoreConditions = ref<boolean>(false);
+const defaultType = ref<string>('');
 const defaultCustomerId = ref<string>('');
 
 const dialog = reactive<DialogOption>({
@@ -531,6 +532,10 @@ const handleExport = () => {
   );
 };
 
+const typeName = computed(() => {
+  return defaultType.value === 'lead' ? '线索' : '客户';
+});
+
 onMounted(() => {
   setDefualtCustomerId();
   getList();
@@ -538,6 +543,7 @@ onMounted(() => {
 
 /** 设置默认客户ID */
 const setDefualtCustomerId = async () => {
+  defaultType.value = route.params && (route.params.type as string);
   queryParams.value.customerId = route.params && (route.params.customerId as string);
   defaultCustomerId.value = route.params && (route.params.customerId as string);
 };

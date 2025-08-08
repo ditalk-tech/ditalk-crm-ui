@@ -18,8 +18,8 @@
                 :default-time="[new Date(2000, 1, 1, 0, 0, 0), new Date(2000, 1, 1, 23, 59, 59)]"
               />
             </el-form-item>
-            <el-form-item label="客户" prop="customerId">
-              <el-select v-model="queryParams.customerId" placeholder="请选择客户" filterable @change="getContactInfoOptionList">
+            <el-form-item :label="typeName" prop="customerId">
+              <el-select v-model="queryParams.customerId" :placeholder="'请选择' + typeName" filterable clearable @change="onChangeCustomerId">
                 <el-option v-for="dict in customerInfoOptionList" :key="dict.id" :label="dict.name + ' --- ' + dict.id" :value="dict.id"></el-option>
               </el-select>
             </el-form-item>
@@ -93,7 +93,8 @@
       <el-table v-loading="loading" border :data="activityList" @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="55" align="center" fixed="left" />
         <el-table-column label="ID" align="center" prop="id" v-if="true" />
-        <el-table-column label="客户ID" align="center" prop="customerId" />
+        <el-table-column :label="typeName + 'ID'" align="center" prop="customerId" />
+
         <el-table-column label="联系人ID" align="center" prop="contactId" />
         <el-table-column label="商机ID" align="center" prop="opportunityId" />
         <el-table-column label="活动类型" align="center" prop="type">
@@ -135,8 +136,8 @@
     <!-- 添加或修改客户活动记录对话框 -->
     <el-dialog :title="dialog.title" v-model="dialog.visible" width="960px" append-to-body>
       <el-form ref="activityFormRef" :model="form" :rules="rules" label-width="120px">
-        <el-form-item label="客户" prop="customerId">
-          <el-select v-model="form.customerId" placeholder="请选择客户" filterable @change="getContactInfoOptionList">
+        <el-form-item :label="typeName" prop="customerId">
+          <el-select v-model="form.customerId" :placeholder="'请选择' + typeName" filterable @change="onChangeCustomerId">
             <el-option v-for="dict in customerInfoOptionList" :key="dict.id" :label="dict.name + ' --- ' + dict.id" :value="dict.id"></el-option>
           </el-select>
         </el-form-item>
@@ -184,8 +185,14 @@ import { listActivity, getActivity, delActivity, addActivity, updateActivity } f
 import { ActivityVO, ActivityQuery, ActivityForm } from '@/api/customer/activity/types';
 import { InfoOptionVO as ContactInfoOptionVO } from '@/api/contact/info/types';
 import { listInfoOption as listContactOptionInfo } from '@/api/contact/info';
+// 客户API
 import { InfoOptionVO as CustomerInfoOptionVO } from '@/api/customer/info/types';
-import { listAllInfoOption as listAllCustomerInfoOption } from '@/api/customer/info';
+import { listInfoOption as listCustomerInfoOption } from '@/api/customer/my';
+// 线索API
+// import { InfoOptionVO as LeadInfoOptionVO } from '@/api/lead/info/types';
+import { listInfoOption as listLeadInfoOption } from '@/api/lead/my';
+// 全量客户API
+// import { listInfoOption as listCustomerInfoOptionAll } from '@/api/customer/info';
 
 const route = useRoute();
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
@@ -204,11 +211,12 @@ const dateRangeActivityTime = ref<[DateModelType, DateModelType]>(['', '']);
 
 const queryFormRef = ref<ElFormInstance>();
 const activityFormRef = ref<ElFormInstance>();
-const defaultCustomerId = ref<string>('');
-// const defaultContactId = ref<string>('');
+const defaultCustomerId = ref<string>(); // 默认客户ID，若路由过来时没有指定则没有此值
+const defaultCustomerType = ref<string>(); // 默认客户类型，区分是 线索 还是 客户
 
-const customerInfoOptionList = ref<CustomerInfoOptionVO[]>([]); // 客户详情选项列表
-const contactInfoOptionList = ref<ContactInfoOptionVO[]>([]); // 联系人详情选项列表
+const customerInfoOptionList = ref<CustomerInfoOptionVO[]>([]); // 客户选项列表，当 defaultType == customer 或 为空时
+// const leadInfoOptionList = ref<LeadInfoOptionVO[]>([]); // 线索选项列表，当 defaultType == lead 时
+const contactInfoOptionList = ref<ContactInfoOptionVO[]>([]); // 联系人选项列表
 
 const dialog = reactive<DialogOption>({
   visible: false,
@@ -277,7 +285,6 @@ const cancel = () => {
 const reset = () => {
   form.value = { ...initFormData };
   activityFormRef.value?.resetFields();
-  // customerInfoOptionList.value = []; // 目前加载页面时只请求一次后台
   contactInfoOptionList.value = [];
 };
 
@@ -293,7 +300,7 @@ const resetQuery = () => {
   dateRangeActivityTime.value = ['', ''];
   queryFormRef.value?.resetFields();
   queryParams.value.customerId = defaultCustomerId.value;
-  // queryParams.value.contactId = defaultContactId.value;
+  getContactInfoOptionList(defaultCustomerId.value); // 初始化联系人选项列表
   handleQuery();
 };
 
@@ -308,9 +315,8 @@ const handleSelectionChange = (selection: ActivityVO[]) => {
 const handleAdd = () => {
   reset();
   dialog.visible = true;
-  dialog.title = '添加客户活动记录';
+  dialog.title = '添加' + typeName.value + '活动记录';
   form.value.customerId = queryParams.value.customerId;
-  // form.value.contactId = queryParams.value.contactId;
   if (form.value.customerId) {
     getContactInfoOptionList(form.value.customerId);
   }
@@ -323,7 +329,7 @@ const handleUpdate = async (row?: ActivityVO) => {
   const res = await getActivity(_id);
   Object.assign(form.value, res.data);
   dialog.visible = true;
-  dialog.title = '修改客户活动记录';
+  dialog.title = '修改' + typeName.value + '活动记录';
   if (form.value.customerId) {
     getContactInfoOptionList(form.value.customerId);
   }
@@ -349,7 +355,7 @@ const submitForm = () => {
 /** 删除按钮操作 */
 const handleDelete = async (row?: ActivityVO) => {
   const _ids = row?.id || ids.value;
-  await proxy?.$modal.confirm('是否确认删除客户活动记录编号为"' + _ids + '"的数据项？').finally(() => (loading.value = false));
+  await proxy?.$modal.confirm('是否确认删除' + typeName.value + '活动记录编号为"' + _ids + '"的数据项？').finally(() => (loading.value = false));
   await delActivity(_ids);
   proxy?.$modal.msgSuccess('删除成功');
   await getList();
@@ -366,31 +372,65 @@ const handleExport = () => {
   );
 };
 
+/**
+ * 客户类型有客户和线索，分为 customer 与 lead，默认为 default 为也指向客户
+ */
+const typeName = computed(() => {
+  if (defaultCustomerType.value === 'lead') {
+    return '线索';
+  }
+  if (defaultCustomerType.value === 'customer') {
+    return '客户';
+  }
+  return '客户';
+});
+
 onMounted(() => {
   setDefualtCustomerId();
-  getCustomerInfoList();
+  getContactInfoOptionList(defaultCustomerId.value);
   getList();
 });
 
-/** 查询字典类型详细 */
+/** 处理路由参数，初始化客户选项列表 */
 const setDefualtCustomerId = async () => {
+  defaultCustomerType.value = route.params && (route.params.type as string);
   queryParams.value.customerId = route.params && (route.params.customerId as string);
   defaultCustomerId.value = route.params && (route.params.customerId as string);
+  // 初始化客户选项列表
+  if (defaultCustomerType.value === 'lead') {
+    const res = await listLeadInfoOption();
+    customerInfoOptionList.value = res.data;
+  } else if (defaultCustomerType.value === 'customer') {
+    const res = await listCustomerInfoOption();
+    customerInfoOptionList.value = res.data;
+  } else {
+    // const res = await listCustomerInfoOptionAll();
+    // customerInfoOptionList.value = res.data;
+    let res = await listCustomerInfoOption();
+    customerInfoOptionList.value = res.data;
+    res = await listLeadInfoOption();
+    customerInfoOptionList.value = [...customerInfoOptionList.value, ...res.data];
+  }
 };
-
 /** 获取联系人选项列表 */
-const getContactInfoOptionList = async (customerId: number | string) => {
+const onChangeCustomerId = async (customerId: number | string) => {
   // 切换客户清空查询条件中的联系人
   queryParams.value.contactId = undefined;
-  // 切换客户刷新联系人列表
-  const res = await listContactOptionInfo(customerId);
-  contactInfoOptionList.value = res.data;
+  form.value.contactId = undefined;
+  if (customerId) {
+    // 切换客户刷新联系人列表
+    const res = await listContactOptionInfo(customerId);
+    contactInfoOptionList.value = res.data;
+  }
 };
-
-/** 获取全量客户选项列表 */
-const getCustomerInfoList = async () => {
-  const res = await listAllCustomerInfoOption();
-  customerInfoOptionList.value = res.data;
+/** 获取联系人选项列表 */
+const getContactInfoOptionList = async (customerId: number | string) => {
+  if (customerId) {
+    const res = await listContactOptionInfo(customerId);
+    contactInfoOptionList.value = res.data;
+  } else {
+    contactInfoOptionList.value = [];
+  }
 };
 </script>
 <style scoped lang="scss">

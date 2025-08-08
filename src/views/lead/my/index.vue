@@ -142,6 +142,9 @@
             <el-button link type="success" size="small" @click="handleContactInfoList(scope.row)" v-hasPermi="['contact:info:list']"
               >联系人</el-button
             >
+            <el-button link type="warning" size="small" @click="handleOpportunityInfoList(scope.row)" v-hasPermi="['opportunity:info:list']"
+              >商机</el-button
+            >
             <el-button link size="small">
               <el-dropdown trigger="click">
                 <span>更多</span>
@@ -698,12 +701,17 @@ onMounted(() => {
 
 /** 路由到联系人页面 */
 const handleContactInfoList = (row: InfoVO) => {
-  router.push({ path: '/contact/info-list/' + row.id }); // :leadId
+  router.push({ path: '/contact/info-list/' + 'lead/' + row.id }); // :leadId
 };
 
 /** 路由到活动页面 */
 const handleActivityInfoList = (row: InfoVO) => {
-  router.push({ path: '/activity/info-list/' + row.id }); // :leadId
+  router.push({ path: '/activity/info-list/' + 'lead/' + row.id }); // :leadId
+};
+
+/** 路由到商机页面 */
+const handleOpportunityInfoList = (row: InfoVO) => {
+  router.push({ path: '/opportunity/info-list/' + row.id }); // :customerId
 };
 
 /** 获取用户选项列表 */

@@ -503,7 +503,7 @@ const handleContactInfoList = (row: InfoVO) => {
 
 /** 路由到活动页面 */
 const handleActivityInfoList = (row: InfoVO) => {
-  router.push({ path: '/activity/info-list/' + row.id }); // :leadId
+  router.push({ path: '/activity/lead/info-list/' + row.id }); // :leadId
 };
 
 const getUserOptionList = async () => {

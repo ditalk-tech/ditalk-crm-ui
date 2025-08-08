@@ -61,13 +61,26 @@ export const delInfo = (id: string | number | Array<string | number>) => {
   });
 };
 
-/**
- * 全量查询客户信息选择列表 —— 主要用于select组件
- * @returns {*}
- */
-export const listAllInfoOption = (): AxiosPromise<InfoVO[]> => {
-  return request({
-    url: '/customer/info/list/all/option',
-    method: 'get'
-  });
-};
+// /**
+//  * 全量查询客户信息选择列表 —— 主要用于select组件
+//  * @returns {*}
+//  */
+// export const listInfoOption = (query?: InfoQuery): AxiosPromise<InfoVO[]> => {
+//   return request({
+//     url: '/customer/info/list/option',
+//     method: 'get',
+//     params: query
+//   });
+// };
+
+// /**
+//  * 分页查询客户信息选择列表 —— 主要用于select组件
+//  * @returns {*}
+//  */
+// export const listPageInfoOption = (query?: InfoQuery): AxiosPromise<InfoVO[]> => {
+//   return request({
+//     url: '/customer/info/list/page/option',
+//     method: 'get',
+//     params: query
+//   });
+// };

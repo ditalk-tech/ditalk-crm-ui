@@ -266,6 +266,33 @@ export interface InfoQuery extends PageQuery {
   params?: any;
 }
 
+export interface InfoOptionVO {
+  /**
+   * ID
+   */
+  id: string | number;
+
+  /**
+   * 线索名称
+   */
+  name: string;
+
+  /**
+   * 线索类型
+   */
+  type: string;
+
+  /**
+   * 线索状态
+   */
+  state: string;
+
+  /**
+   * 主联系人ID
+   */
+  contactId: string | number;
+}
+
 export interface LeadContactForm {
   leadInfoBo?: InfoForm;
   contactInfoBo?: ContactForm;

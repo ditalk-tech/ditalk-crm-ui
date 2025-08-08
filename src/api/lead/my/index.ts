@@ -1,6 +1,6 @@
 import request from '@/utils/request';
 import { AxiosPromise } from 'axios';
-import { InfoVO, InfoForm, InfoQuery, LeadContactForm } from '@/api/lead/info/types';
+import { InfoVO, InfoForm, InfoQuery, InfoOptionVO, LeadContactForm } from '@/api/lead/info/types';
 
 /**
  * 查询线索信息列表
@@ -135,5 +135,31 @@ export const reclaimUserLead = (userId: string | number) => {
   return request({
     url: `/lead/info/my/reclaim/user/${userId}`,
     method: 'put'
+  });
+};
+
+/**
+ * 查询线索信息选项列表（下拉选择）
+ * @param query
+ * @returns {*}
+ */
+export const listInfoOption = (query?: InfoQuery): AxiosPromise<InfoOptionVO[]> => {
+  return request({
+    url: '/lead/info/my/list/option',
+    method: 'get',
+    params: query
+  });
+};
+
+/**
+ * 分页查询线索信息选项列表（下拉选择）
+ * @param query
+ * @returns {*}
+ */
+export const listInfoPageOption = (query?: InfoQuery): AxiosPromise<InfoOptionVO[]> => {
+  return request({
+    url: '/lead/info/my/list/page/option',
+    method: 'get',
+    params: query
   });
 };

@@ -520,7 +520,7 @@ const handleContactInfoList = (row: InfoVO) => {
 
 /** 路由到活动页面 */
 const handleActivityInfoList = (row: InfoVO) => {
-  router.push({ path: '/activity/info-list/' + row.id }); // :customerId
+  router.push({ path: '/activity/customer/info-list/' + row.id }); // :customerId
 };
 
 const getUserOptionList = async () => {
