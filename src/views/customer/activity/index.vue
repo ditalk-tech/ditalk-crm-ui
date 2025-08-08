@@ -19,14 +19,14 @@
               />
             </el-form-item>
             <el-form-item :label="typeName" prop="customerId">
-              <el-select v-model="queryParams.customerId" :placeholder="'请选择' + typeName" filterable clearable @change="onChangeCustomerId">
+              <el-select v-model="queryParams.customerId" :placeholder="'请选择' + typeName" filterable clearable @change="getQueryContactOption">
                 <el-option v-for="dict in customerInfoOptionList" :key="dict.id" :label="dict.name + ' --- ' + dict.id" :value="dict.id"></el-option>
               </el-select>
             </el-form-item>
             <el-form-item label="联系人" prop="contactId">
               <el-select v-model="queryParams.contactId" placeholder="请选择联系人" filterable clearable>
                 <el-option
-                  v-for="dict in contactInfoOptionList"
+                  v-for="dict in contactInfoQueryOptionList"
                   :key="dict.id"
                   :label="(dict.lastName ? dict.lastName : '') + dict.firstName + ' --- ' + dict.id"
                   :value="dict.id"
@@ -137,14 +137,14 @@
     <el-dialog :title="dialog.title" v-model="dialog.visible" width="960px" append-to-body>
       <el-form ref="activityFormRef" :model="form" :rules="rules" label-width="120px">
         <el-form-item :label="typeName" prop="customerId">
-          <el-select v-model="form.customerId" :placeholder="'请选择' + typeName" filterable @change="onChangeCustomerId">
+          <el-select v-model="form.customerId" :placeholder="'请选择' + typeName" filterable @change="getFormContactOption">
             <el-option v-for="dict in customerInfoOptionList" :key="dict.id" :label="dict.name + ' --- ' + dict.id" :value="dict.id"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="联系人" prop="contactId">
           <el-select v-model="form.contactId" placeholder="请选择联系人" filterable>
             <el-option
-              v-for="dict in contactInfoOptionList"
+              v-for="dict in contactInfoFormOptionList"
               :key="dict.id"
               :label="(dict.lastName ? dict.lastName : '') + dict.firstName + ' --- ' + dict.id"
               :value="dict.id"
@@ -191,8 +191,6 @@ import { listInfoOption as listCustomerInfoOption } from '@/api/customer/my';
 // 线索API
 // import { InfoOptionVO as LeadInfoOptionVO } from '@/api/lead/info/types';
 import { listInfoOption as listLeadInfoOption } from '@/api/lead/my';
-// 全量客户API
-// import { listInfoOption as listCustomerInfoOptionAll } from '@/api/customer/info';
 
 const route = useRoute();
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
@@ -215,8 +213,8 @@ const defaultCustomerId = ref<string>(); // 默认客户ID，若路由过来时�
 const defaultCustomerType = ref<string>(); // 默认客户类型，区分是 线索 还是 客户
 
 const customerInfoOptionList = ref<CustomerInfoOptionVO[]>([]); // 客户选项列表，当 defaultType == customer 或 为空时
-// const leadInfoOptionList = ref<LeadInfoOptionVO[]>([]); // 线索选项列表，当 defaultType == lead 时
-const contactInfoOptionList = ref<ContactInfoOptionVO[]>([]); // 联系人选项列表
+const contactInfoQueryOptionList = ref<ContactInfoOptionVO[]>([]); // 查询中的联系人选项列表
+const contactInfoFormOptionList = ref<ContactInfoOptionVO[]>([]); // 表单中的联系人选项列表
 
 const dialog = reactive<DialogOption>({
   visible: false,
@@ -285,7 +283,7 @@ const cancel = () => {
 const reset = () => {
   form.value = { ...initFormData };
   activityFormRef.value?.resetFields();
-  contactInfoOptionList.value = [];
+  contactInfoFormOptionList.value = [];
 };
 
 /** 搜索按钮操作 */
@@ -300,7 +298,7 @@ const resetQuery = () => {
   dateRangeActivityTime.value = ['', ''];
   queryFormRef.value?.resetFields();
   queryParams.value.customerId = defaultCustomerId.value;
-  getContactInfoOptionList(defaultCustomerId.value); // 初始化联系人选项列表
+  getQueryContactOption(defaultCustomerId.value); // 初始化联系人选项列表
   handleQuery();
 };
 
@@ -318,7 +316,7 @@ const handleAdd = () => {
   dialog.title = '添加' + typeName.value + '活动记录';
   form.value.customerId = queryParams.value.customerId;
   if (form.value.customerId) {
-    getContactInfoOptionList(form.value.customerId);
+    getFormContactOption(form.value.customerId);
   }
 };
 
@@ -331,7 +329,7 @@ const handleUpdate = async (row?: ActivityVO) => {
   dialog.visible = true;
   dialog.title = '修改' + typeName.value + '活动记录';
   if (form.value.customerId) {
-    getContactInfoOptionList(form.value.customerId);
+    getFormContactOption(form.value.customerId);
   }
 };
 
@@ -387,7 +385,7 @@ const typeName = computed(() => {
 
 onMounted(() => {
   setDefualtCustomerId();
-  getContactInfoOptionList(defaultCustomerId.value);
+  getQueryContactOption(defaultCustomerId.value);
   getList();
 });
 
@@ -404,8 +402,6 @@ const setDefualtCustomerId = async () => {
     const res = await listCustomerInfoOption();
     customerInfoOptionList.value = res.data;
   } else {
-    // const res = await listCustomerInfoOptionAll();
-    // customerInfoOptionList.value = res.data;
     let res = await listCustomerInfoOption();
     customerInfoOptionList.value = res.data;
     res = await listLeadInfoOption();
@@ -413,23 +409,23 @@ const setDefualtCustomerId = async () => {
   }
 };
 /** 获取联系人选项列表 */
-const onChangeCustomerId = async (customerId: number | string) => {
+const getQueryContactOption = async (customerId: number | string) => {
   // 切换客户清空查询条件中的联系人
   queryParams.value.contactId = undefined;
+  if (customerId) {
+    // 切换客户刷新联系人列表
+    const res = await listContactOptionInfo(customerId);
+    contactInfoQueryOptionList.value = res.data;
+  }
+};
+/** 获取联系人选项列表 */
+const getFormContactOption = async (customerId: number | string) => {
+  // 切换客户清空查询条件中的联系人
   form.value.contactId = undefined;
   if (customerId) {
     // 切换客户刷新联系人列表
     const res = await listContactOptionInfo(customerId);
-    contactInfoOptionList.value = res.data;
-  }
-};
-/** 获取联系人选项列表 */
-const getContactInfoOptionList = async (customerId: number | string) => {
-  if (customerId) {
-    const res = await listContactOptionInfo(customerId);
-    contactInfoOptionList.value = res.data;
-  } else {
-    contactInfoOptionList.value = [];
+    contactInfoFormOptionList.value = res.data;
   }
 };
 </script>
