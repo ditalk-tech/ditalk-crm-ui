@@ -60,17 +60,6 @@
             <el-form-item label="主联系人ID" prop="contactId">
               <el-input v-model="queryParams.contactId" placeholder="请输入主联系人ID" clearable @keyup.enter="handleQuery" />
             </el-form-item>
-            <el-form-item label="客户状态" prop="state">
-              <el-select v-model="queryParams.state" placeholder="请选择客户状态" clearable>
-                <el-option v-for="dict in ditalk_customer_state" :key="dict.value" :label="dict.label" :value="dict.value" />
-              </el-select>
-            </el-form-item>
-            <el-form-item label="转换时间" prop="convertedTime">
-              <el-date-picker clearable v-model="queryParams.convertedTime" type="date" value-format="YYYY-MM-DD" placeholder="请选择转换时间" />
-            </el-form-item>
-            <el-form-item label="转换人" prop="convertedBy">
-              <el-input v-model="queryParams.convertedBy" placeholder="请输入转换人" clearable @keyup.enter="handleQuery" />
-            </el-form-item>
             <el-form-item label="线索状态" prop="leadState">
               <el-select v-model="queryParams.leadState" placeholder="请选择线索状态" clearable>
                 <el-option v-for="dict in ditalk_lead_state" :key="dict.value" :label="dict.label" :value="dict.value" />
