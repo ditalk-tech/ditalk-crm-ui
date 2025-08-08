@@ -498,12 +498,12 @@ onMounted(() => {
 
 /** 路由到联系人页面 */
 const handleContactInfoList = (row: InfoVO) => {
-  router.push({ path: '/contact/info-list/' + row.id }); // :leadId
+  router.push({ path: '/contact/info-list/' + 'lead/' + row.id }); // :leadId
 };
 
 /** 路由到活动页面 */
 const handleActivityInfoList = (row: InfoVO) => {
-  router.push({ path: '/activity/lead/info-list/' + row.id }); // :leadId
+  router.push({ path: '/activity/info-list/' + 'lead/' + row.id }); // :leadId
 };
 
 const getUserOptionList = async () => {

@@ -515,12 +515,12 @@ onMounted(() => {
 
 /** 路由到联系人页面 */
 const handleContactInfoList = (row: InfoVO) => {
-  router.push({ path: '/contact/info-list/' + row.id }); // :customerId
+  router.push({ path: '/contact/info-list/' + 'customer/' + row.id }); // :customerId
 };
 
 /** 路由到活动页面 */
 const handleActivityInfoList = (row: InfoVO) => {
-  router.push({ path: '/activity/customer/info-list/' + row.id }); // :customerId
+  router.push({ path: '/activity/info-list/' + 'customer/' + row.id }); // :customerId
 };
 
 const getUserOptionList = async () => {
