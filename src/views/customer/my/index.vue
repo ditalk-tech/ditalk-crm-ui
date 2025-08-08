@@ -743,7 +743,7 @@ const handleActivityInfoList = (row: InfoVO) => {
 
 /** 路由到商机页面 */
 const handleOpportunityInfoList = (row: InfoVO) => {
-  router.push({ path: '/opportunity/info-list/' + row.id }); // :customerId
+  router.push({ path: '/opportunity/info-list/' + 'customer/' + row.id }); // :customerId
 };
 
 const getUserOptionList = async () => {

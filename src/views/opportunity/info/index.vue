@@ -21,17 +21,17 @@
             <el-form-item label="商机标题" prop="title">
               <el-input v-model="queryParams.title" placeholder="请输入商机标题" clearable @keyup.enter="handleQuery" />
             </el-form-item>
-            <el-form-item label="客户" prop="customerId">
+            <el-form-item :label="typeName" prop="customerId">
               <el-select
                 v-model="queryParams.customerId"
                 filterable
                 clearable
                 reserve-keyword
-                placeholder="输入客户名称"
+                :placeholder="'输入' + typeName + '名称'"
                 :loading="loadingCustomer"
                 style="width: 240px"
               >
-                <el-option v-for="item in myCustomerOptions" :key="item.id" :label="item.name + '-' + item.id" :value="item.id" />
+                <el-option v-for="item in customerInfoOptionList" :key="item.id" :label="item.name + '-' + item.id" :value="item.id" />
               </el-select>
             </el-form-item>
             <el-form-item label="预计成交日期" style="width: 308px">
@@ -90,7 +90,7 @@
         <el-table-column label="ID" align="center" prop="id" v-if="true" />
         <el-table-column label="创建时间" align="center" prop="createTime" width="180" />
         <el-table-column label="商机标题" align="center" prop="title" />
-        <el-table-column label="客户ID" align="center" prop="customerId" />
+        <el-table-column :label="typeName + 'ID'" align="center" prop="customerId" />
         <el-table-column label="预计销售金额" align="center" prop="amount" />
         <el-table-column label="预计成交日期" align="center" prop="closeDate" width="180" />
         <el-table-column label="描述内容" align="center" prop="remark" width="240">
@@ -128,16 +128,16 @@
         </el-form-item>
         <el-row>
           <el-col :span="12">
-            <el-form-item label="客户" prop="customerId">
+            <el-form-item :label="typeName" prop="customerId">
               <el-select
                 v-model="form.customerId"
                 filterable
                 reserve-keyword
-                placeholder="输入客户名称"
+                :placeholder="'输入' + typeName + '名称'"
                 :loading="loadingCustomer"
                 style="width: 240px"
               >
-                <el-option v-for="item in myCustomerOptions" :key="item.id" :label="item.name + '-' + item.id" :value="item.id" />
+                <el-option v-for="item in customerInfoOptionList" :key="item.id" :label="item.name + '-' + item.id" :value="item.id" />
               </el-select>
             </el-form-item>
           </el-col>
@@ -182,7 +182,11 @@
 <script setup name="Info" lang="ts">
 import { listInfo, getInfo, delInfo, addInfo, updateInfo } from '@/api/opportunity/info';
 import { InfoVO, InfoQuery, InfoForm } from '@/api/opportunity/info/types';
+// 客户API
+import { InfoOptionVO as CustomerInfoOptionVO } from '@/api/customer/info/types';
 import { listInfoOption as listCustomerInfoOption } from '@/api/customer/my';
+// 线索API
+import { listInfoOption as listLeadInfoOption } from '@/api/lead/my';
 
 const route = useRoute();
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
@@ -203,9 +207,11 @@ const queryFormRef = ref<ElFormInstance>();
 const infoFormRef = ref<ElFormInstance>();
 
 const amount = ref(0); // 预计销售金额，用于单位转换
-const myCustomerOptions = ref<{ id: number | string; name: string }[]>([]);
 const loadingCustomer = ref(false);
-const defaultCustomerId = ref<string>('');
+const defaultCustomerId = ref<string>(); // 默认客户ID，若路由过来时没有指定则没有此值
+const defaultCustomerType = ref<string>(); // 默认客户类型，区分是 线索 还是 客户
+
+const customerInfoOptionList = ref<CustomerInfoOptionVO[]>([]); // 客户选项列表，当 defaultType == customer 或 为空时
 
 const dialog = reactive<DialogOption>({
   visible: false,
@@ -357,27 +363,44 @@ const handleExport = () => {
   );
 };
 
+/**
+ * 客户类型有客户和线索，分为 customer 与 lead，默认为 default 为也指向客户
+ */
+const typeName = computed(() => {
+  if (defaultCustomerType.value === 'lead') {
+    return '线索';
+  }
+  if (defaultCustomerType.value === 'customer') {
+    return '客户';
+  }
+  return '客户';
+});
+
 onMounted(() => {
   setDefualtCustomerId();
-  loadMyCustomerOption();
   getList();
 });
 
-/** 获取全量客户选项列表 */
-const loadMyCustomerOption = async () => {
-  // loadingCustomer.value = true;
-  const res = await listCustomerInfoOption();
-  myCustomerOptions.value = res.data.map((item) => ({
-    id: item.id,
-    name: item.name
-  }));
-  // loadingCustomer.value = false;
-};
-
-/** 查询字典类型详细 */
+/** 处理路由参数，初始化客户选项列表 */
 const setDefualtCustomerId = async () => {
+  defaultCustomerType.value = route.params && (route.params.type as string);
   queryParams.value.customerId = route.params && (route.params.customerId as string);
   defaultCustomerId.value = route.params && (route.params.customerId as string);
+  // 初始化客户选项列表
+  if (defaultCustomerType.value === 'lead') {
+    const res = await listLeadInfoOption();
+    customerInfoOptionList.value = res.data;
+  } else if (defaultCustomerType.value === 'customer') {
+    const res = await listCustomerInfoOption();
+    customerInfoOptionList.value = res.data;
+  } else {
+    // const res = await listCustomerInfoOptionAll();
+    // customerInfoOptionList.value = res.data;
+    let res = await listCustomerInfoOption();
+    customerInfoOptionList.value = res.data;
+    res = await listLeadInfoOption();
+    customerInfoOptionList.value = [...customerInfoOptionList.value, ...res.data];
+  }
 };
 </script>
 <style scoped lang="scss">
