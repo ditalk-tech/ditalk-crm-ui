@@ -18,11 +18,11 @@
                 :default-time="[new Date(2000, 1, 1, 0, 0, 0), new Date(2000, 1, 1, 23, 59, 59)]"
               />
             </el-form-item>
-            <el-form-item label="客户名称" prop="name">
-              <el-input v-model="queryParams.name" placeholder="请输入客户名称" clearable @keyup.enter="handleQuery" />
+            <el-form-item label="线索名称" prop="name">
+              <el-input v-model="queryParams.name" placeholder="请输入线索名称" clearable @keyup.enter="handleQuery" />
             </el-form-item>
-            <el-form-item label="客户类型" prop="type">
-              <el-select v-model="queryParams.type" placeholder="请选择客户类型" clearable>
+            <el-form-item label="线索类型" prop="type">
+              <el-select v-model="queryParams.type" placeholder="请选择线索类型" clearable>
                 <el-option v-for="dict in ditalk_customer_type" :key="dict.value" :label="dict.label" :value="dict.value" />
               </el-select>
             </el-form-item>
@@ -36,8 +36,8 @@
                 <el-option v-for="dict in ditalk_customer_industry" :key="dict.value" :label="dict.label" :value="dict.value" />
               </el-select>
             </el-form-item>
-            <el-form-item label="客户级别" prop="tier">
-              <el-select v-model="queryParams.tier" placeholder="请选择客户级别" clearable filterable>
+            <el-form-item label="线索级别" prop="tier">
+              <el-select v-model="queryParams.tier" placeholder="请选择线索级别" clearable filterable>
                 <el-option v-for="dict in ditalk_customer_tier" :key="dict.value" :label="dict.label" :value="dict.value" />
               </el-select>
             </el-form-item>
@@ -104,8 +104,8 @@
         <el-table-column type="selection" width="55" align="center" fixed="left" />
         <el-table-column label="ID" align="center" prop="id" v-if="true" />
         <el-table-column label="创建时间" align="center" prop="createTime" />
-        <el-table-column label="客户名称" align="center" prop="name" />
-        <el-table-column label="客户类型" align="center" prop="type">
+        <el-table-column label="线索名称" align="center" prop="name" />
+        <el-table-column label="线索类型" align="center" prop="type">
           <template #default="scope">
             <dict-tag :options="ditalk_customer_type" :value="scope.row.type" />
           </template>
@@ -120,7 +120,7 @@
             <dict-tag :options="ditalk_customer_industry" :value="scope.row.industry ?? ''" />
           </template>
         </el-table-column>
-        <el-table-column label="客户级别" align="center" prop="tier" width="120">
+        <el-table-column label="线索级别" align="center" prop="tier" width="120">
           <template #default="scope">
             <dict-tag :options="ditalk_customer_tier" :value="scope.row.tier ?? ''" />
           </template>
@@ -175,7 +175,7 @@
     <el-dialog :title="dialog.title" v-model="dialog.visible" width="960px" append-to-body>
       <el-row>
         <el-col :span="12" align="center">
-          <el-text tag="b" size="large">客户</el-text>
+          <el-text tag="b" size="large">线索</el-text>
         </el-col>
         <el-col :span="12" align="center">
           <el-text tag="b" size="large">联系人</el-text>
@@ -184,10 +184,10 @@
       <el-row style="margin-top: 20px">
         <el-col :span="12">
           <el-form ref="infoFormRef" :model="form" :rules="rules" label-width="120px">
-            <el-form-item label="客户名称" prop="name">
-              <el-input v-model="form.name" placeholder="请输入客户名称" />
+            <el-form-item label="线索名称" prop="name">
+              <el-input v-model="form.name" placeholder="请输入线索名称" />
             </el-form-item>
-            <el-form-item label="客户类型" prop="type">
+            <el-form-item label="线索类型" prop="type">
               <el-radio-group v-model="form.type">
                 <el-radio v-for="dict in ditalk_customer_type" :key="dict.value" :value="dict.value">{{ dict.label }}</el-radio>
               </el-radio-group>
@@ -202,8 +202,8 @@
                 <el-option v-for="dict in ditalk_customer_industry" :key="dict.value" :label="dict.label" :value="dict.value"></el-option>
               </el-select>
             </el-form-item>
-            <el-form-item label="客户级别" prop="tier">
-              <el-select v-model="form.tier" placeholder="请选择客户级别" filterable clearable>
+            <el-form-item label="线索级别" prop="tier">
+              <el-select v-model="form.tier" placeholder="请选择线索级别" filterable clearable>
                 <el-option v-for="dict in ditalk_customer_tier" :key="dict.value" :label="dict.label" :value="dict.value"></el-option>
               </el-select>
             </el-form-item>
@@ -506,10 +506,10 @@ const data = reactive<PageData<InfoForm, InfoQuery>>({
   },
   rules: {
     id: [{ required: true, message: 'ID不能为空', trigger: 'blur' }],
-    name: [{ required: true, message: '客户名称不能为空', trigger: 'blur' }],
-    type: [{ required: true, message: '客户类型不能为空', trigger: 'change' }],
+    name: [{ required: true, message: '线索名称不能为空', trigger: 'blur' }],
+    type: [{ required: true, message: '线索类型不能为空', trigger: 'change' }],
     contactId: [{ required: true, message: '主联系人ID不能为空', trigger: 'blur' }],
-    state: [{ required: true, message: '客户状态不能为空', trigger: 'change' }],
+    state: [{ required: true, message: '状态不能为空', trigger: 'change' }],
     leadState: [{ required: true, message: '线索状态不能为空', trigger: 'change' }]
   }
 });
@@ -550,7 +550,7 @@ const initContactFormData: ContactInfoForm = {
 
 const contactRules = ref({
   id: [{ required: true, message: 'ID不能为空', trigger: 'blur' }],
-  customerId: [{ required: true, message: '客户ID不能为空', trigger: 'blur' }],
+  customerId: [{ required: true, message: '线索ID不能为空', trigger: 'blur' }],
   firstName: [{ required: true, message: '名称不能为空', trigger: 'blur' }],
   state: [{ required: true, message: '状态不能为空', trigger: 'change' }]
 });
