@@ -532,5 +532,6 @@ const handleClaimToMe = async (leadId?: string | number) => {
   const res = await getMyInfo().finally(() => loading.close());
   await claim(Number(res.data.userId), _ids);
   proxy?.$modal.msgSuccess('领取成功');
+  getList();
 };
 </script>
