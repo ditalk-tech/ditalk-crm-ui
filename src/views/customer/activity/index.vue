@@ -28,7 +28,7 @@
                 <el-option
                   v-for="dict in contactInfoOptionList"
                   :key="dict.id"
-                  :label="dict.lastName + ' ' + dict.firstName + ' --- ' + dict.id"
+                  :label="(dict.lastName ? dict.lastName : '') + dict.firstName + ' --- ' + dict.id"
                   :value="dict.id"
                 ></el-option>
               </el-select>
@@ -146,7 +146,7 @@
             <el-option
               v-for="dict in contactInfoOptionList"
               :key="dict.id"
-              :label="dict.lastName + ' ' + dict.firstName + ' --- ' + dict.id"
+              :label="(dict.lastName ? dict.lastName : '') + dict.firstName + ' --- ' + dict.id"
               :value="dict.id"
             ></el-option>
           </el-select>
