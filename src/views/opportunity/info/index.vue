@@ -95,7 +95,7 @@
         <el-table-column label="预计成交日期" align="center" prop="closeDate" width="180" />
         <el-table-column label="描述内容" align="center" prop="remark" width="240">
           <template #default="scope">
-            <el-tooltip :content="scope.row.remark" placement="top">
+            <el-tooltip :content="scope.row.remark" placement="top" :show-after="300">
               <p class="descStyle">{{ scope.row.remark }}</p>
             </el-tooltip>
           </template>
@@ -403,14 +403,3 @@ const setDefualtCustomerId = async () => {
   }
 };
 </script>
-<style scoped lang="scss">
-.descStyle {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  word-break: break-all;
-  display: -webkit-box;
-  line-clamp: 3;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-}
-</style>
