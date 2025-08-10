@@ -35,7 +35,7 @@ export interface OrderItemVO {
   goodsSnapshotId: string | number;
 
   /**
-   * 商品快照ID
+   * 商品SKU_ID
    */
   skuId: string | number;
 
@@ -131,7 +131,7 @@ export interface OrderItemForm extends BaseEntity {
   goodsSnapshotId?: string | number;
 
   /**
-   * 商品快照ID
+   * 商品SKU_ID
    */
   skuId?: string | number;
 
@@ -223,7 +223,7 @@ export interface OrderItemQuery extends PageQuery {
   goodsSnapshotId?: string | number;
 
   /**
-   * 商品快照ID
+   * 商品SKU_ID
    */
   skuId?: string | number;
 

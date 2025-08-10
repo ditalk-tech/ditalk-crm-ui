@@ -30,8 +30,8 @@
             <el-form-item label="商品快照ID" prop="goodsSnapshotId">
               <el-input v-model="queryParams.goodsSnapshotId" placeholder="请输入商品快照ID" clearable @keyup.enter="handleQuery" />
             </el-form-item>
-            <el-form-item label="商品快照ID" prop="skuId">
-              <el-input v-model="queryParams.skuId" placeholder="请输入商品快照ID" clearable @keyup.enter="handleQuery" />
+            <el-form-item label="商品SKU_ID" prop="skuId">
+              <el-input v-model="queryParams.skuId" placeholder="请输入商品SKU_ID" clearable @keyup.enter="handleQuery" />
             </el-form-item>
             <el-form-item label="SKU编码" prop="skuSn">
               <el-input v-model="queryParams.skuSn" placeholder="请输入SKU编码" clearable @keyup.enter="handleQuery" />
@@ -76,7 +76,7 @@
         <el-table-column label="店铺ID" align="center" prop="shopId" />
         <el-table-column label="客户ID" align="center" prop="customerId" />
         <el-table-column label="商品快照ID" align="center" prop="goodsSnapshotId" />
-        <el-table-column label="商品快照ID" align="center" prop="skuId" />
+        <el-table-column label="商品SKU_ID" align="center" prop="skuId" />
         <el-table-column label="SKU编码" align="center" prop="skuSn" />
         <el-table-column label="图片" align="center" prop="mainPicUrl" width="100">
           <template #default="scope">
@@ -121,8 +121,8 @@
         <el-form-item label="商品快照ID" prop="goodsSnapshotId">
           <el-input v-model="form.goodsSnapshotId" placeholder="请输入商品快照ID" />
         </el-form-item>
-        <el-form-item label="商品快照ID" prop="skuId">
-          <el-input v-model="form.skuId" placeholder="请输入商品快照ID" />
+        <el-form-item label="商品SKU_ID" prop="skuId">
+          <el-input v-model="form.skuId" placeholder="请输入商品SKU_ID" />
         </el-form-item>
         <el-form-item label="SKU编码" prop="skuSn">
           <el-input v-model="form.skuSn" placeholder="请输入SKU编码" />
@@ -234,7 +234,7 @@ const data = reactive<PageData<OrderItemForm, OrderItemQuery>>({
     shopId: [{ required: true, message: '店铺ID不能为空', trigger: 'blur' }],
     customerId: [{ required: true, message: '客户ID不能为空', trigger: 'blur' }],
     goodsSnapshotId: [{ required: true, message: '商品快照ID不能为空', trigger: 'blur' }],
-    skuId: [{ required: true, message: '商品快照ID不能为空', trigger: 'blur' }],
+    skuId: [{ required: true, message: '商品SKU_ID不能为空', trigger: 'blur' }],
     mainPic: [{ required: true, message: '图片不能为空', trigger: 'blur' }],
     specJson: [{ required: true, message: '规格JSON不能为空', trigger: 'blur' }],
     salePrice: [{ required: true, message: '售价不能为空', trigger: 'blur' }],
