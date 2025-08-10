@@ -73,10 +73,10 @@
         <el-table-column label="ID" align="center" prop="id" v-if="true" />
         <el-table-column label="创建时间" align="center" prop="createTime" />
         <el-table-column label="商机ID" align="center" prop="opportunityId" />
-        <el-table-column label="店铺ID" align="center" prop="shopId" />
+        <!-- <el-table-column label="店铺ID" align="center" prop="shopId" /> -->
         <el-table-column label="客户ID" align="center" prop="customerId" />
-        <el-table-column label="商品快照ID" align="center" prop="goodsSnapshotId" />
-        <el-table-column label="商品SKU_ID" align="center" prop="skuId" />
+        <!-- <el-table-column label="商品快照ID" align="center" prop="goodsSnapshotId" /> -->
+        <!-- <el-table-column label="商品SKU_ID" align="center" prop="skuId" /> -->
         <el-table-column label="SKU编码" align="center" prop="skuSn" />
         <el-table-column label="图片" align="center" prop="mainPicUrl" width="100">
           <template #default="scope">
@@ -84,14 +84,26 @@
           </template>
         </el-table-column>
         <el-table-column label="规格JSON" align="center" prop="specJson" />
-        <el-table-column label="售价" align="center" prop="salePrice" />
-        <el-table-column label="原价" align="center" prop="originalPrice" />
-        <el-table-column label="成本价" align="center" prop="costPrice" />
-        <el-table-column label="重量(kg)" align="center" prop="weight" />
-        <el-table-column label="体积(m³)" align="center" prop="volume" />
-        <el-table-column label="单价" align="center" prop="unitPrice" />
+        <el-table-column label="售价" align="center" prop="salePrice">
+          <template #default="scope">
+            <div>{{ scope.row.salePrice / 100 }}</div>
+          </template>
+        </el-table-column>
+        <!-- <el-table-column label="原价" align="center" prop="originalPrice" /> -->
+        <!-- <el-table-column label="成本价" align="center" prop="costPrice" /> -->
+        <!-- <el-table-column label="重量(kg)" align="center" prop="weight" /> -->
+        <!-- <el-table-column label="体积(m³)" align="center" prop="volume" /> -->
+        <el-table-column label="单价" align="center" prop="unitPrice">
+          <template #default="scope">
+            <div>{{ scope.row.unitPrice / 100 }}</div>
+          </template>
+        </el-table-column>
         <el-table-column label="购买数量" align="center" prop="quantity" />
-        <el-table-column label="总价" align="center" prop="totalPrice" />
+        <el-table-column label="总价" align="center" prop="totalPrice">
+          <template #default="scope">
+            <div>{{ scope.row.totalPrice / 100 }}</div>
+          </template>
+        </el-table-column>
         <el-table-column label="操作" align="center" class-name="small-padding fixed-width" fixed="right">
           <template #default="scope">
             <el-tooltip content="修改" placement="top">
@@ -112,7 +124,7 @@
         <el-form-item label="商机ID" prop="opportunityId">
           <el-input v-model="form.opportunityId" placeholder="请输入商机ID" />
         </el-form-item>
-        <el-form-item label="店铺ID" prop="shopId">
+        <!-- <el-form-item label="店铺ID" prop="shopId">
           <el-input v-model="form.shopId" placeholder="请输入店铺ID" />
         </el-form-item>
         <el-form-item label="客户ID" prop="customerId">
@@ -120,20 +132,20 @@
         </el-form-item>
         <el-form-item label="商品快照ID" prop="goodsSnapshotId">
           <el-input v-model="form.goodsSnapshotId" placeholder="请输入商品快照ID" />
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item label="商品SKU_ID" prop="skuId">
           <el-input v-model="form.skuId" placeholder="请输入商品SKU_ID" />
         </el-form-item>
-        <el-form-item label="SKU编码" prop="skuSn">
+        <!-- <el-form-item label="SKU编码" prop="skuSn">
           <el-input v-model="form.skuSn" placeholder="请输入SKU编码" />
-        </el-form-item>
-        <el-form-item label="图片" prop="mainPic">
+        </el-form-item> -->
+        <!-- <el-form-item label="图片" prop="mainPic">
           <image-upload v-model="form.mainPic" :limit="1" />
-        </el-form-item>
-        <el-form-item label="规格JSON" prop="specJson">
+        </el-form-item> -->
+        <!-- <el-form-item label="规格JSON" prop="specJson">
           <el-input v-model="form.specJson" placeholder="请输入规格JSON" />
-        </el-form-item>
-        <el-form-item label="售价" prop="salePrice">
+        </el-form-item> -->
+        <!-- <el-form-item label="售价" prop="salePrice">
           <el-input v-model="form.salePrice" placeholder="请输入售价" />
         </el-form-item>
         <el-form-item label="原价" prop="originalPrice">
@@ -147,16 +159,16 @@
         </el-form-item>
         <el-form-item label="体积(m³)" prop="volume">
           <el-input v-model="form.volume" placeholder="请输入体积(m³)" />
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item label="单价" prop="unitPrice">
-          <el-input v-model="form.unitPrice" placeholder="请输入单价" />
+          <el-input-number v-model="form.unitPrice" placeholder="请输入单价" :min="0.01" :precision="2" />
         </el-form-item>
         <el-form-item label="购买数量" prop="quantity">
-          <el-input v-model="form.quantity" placeholder="请输入购买数量" />
+          <el-input-number v-model="form.quantity" placeholder="请输入单价" :min="1" :precision="0" />
         </el-form-item>
-        <el-form-item label="总价" prop="totalPrice">
+        <!-- <el-form-item label="总价" prop="totalPrice">
           <el-input v-model="form.totalPrice" placeholder="请输入总价" />
-        </el-form-item>
+        </el-form-item> -->
       </el-form>
       <template #footer>
         <div class="dialog-footer">
@@ -172,6 +184,7 @@
 import { listOrderItem, getOrderItem, delOrderItem, addOrderItem, updateOrderItem } from '@/api/opportunity/orderItem';
 import { OrderItemVO, OrderItemQuery, OrderItemForm } from '@/api/opportunity/orderItem/types';
 
+const route = useRoute();
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 
 const orderItemList = ref<OrderItemVO[]>([]);
@@ -186,6 +199,8 @@ const dateRangeCreateTime = ref<[DateModelType, DateModelType]>(['', '']);
 
 const queryFormRef = ref<ElFormInstance>();
 const orderItemFormRef = ref<ElFormInstance>();
+
+const defaultOpportunityId = ref<string>();
 
 const dialog = reactive<DialogOption>({
   visible: false,
@@ -231,18 +246,18 @@ const data = reactive<PageData<OrderItemForm, OrderItemQuery>>({
   rules: {
     id: [{ required: true, message: 'ID不能为空', trigger: 'blur' }],
     opportunityId: [{ required: true, message: '商机ID不能为空', trigger: 'blur' }],
-    shopId: [{ required: true, message: '店铺ID不能为空', trigger: 'blur' }],
-    customerId: [{ required: true, message: '客户ID不能为空', trigger: 'blur' }],
-    goodsSnapshotId: [{ required: true, message: '商品快照ID不能为空', trigger: 'blur' }],
+    // shopId: [{ required: true, message: '店铺ID不能为空', trigger: 'blur' }],
+    // customerId: [{ required: true, message: '客户ID不能为空', trigger: 'blur' }],
+    // goodsSnapshotId: [{ required: true, message: '商品快照ID不能为空', trigger: 'blur' }],
     skuId: [{ required: true, message: '商品SKU_ID不能为空', trigger: 'blur' }],
-    mainPic: [{ required: true, message: '图片不能为空', trigger: 'blur' }],
-    specJson: [{ required: true, message: '规格JSON不能为空', trigger: 'blur' }],
-    salePrice: [{ required: true, message: '售价不能为空', trigger: 'blur' }],
-    weight: [{ required: true, message: '重量(kg)不能为空', trigger: 'blur' }],
-    volume: [{ required: true, message: '体积(m³)不能为空', trigger: 'blur' }],
+    // mainPic: [{ required: true, message: '图片不能为空', trigger: 'blur' }],
+    // specJson: [{ required: true, message: '规格JSON不能为空', trigger: 'blur' }],
+    // salePrice: [{ required: true, message: '售价不能为空', trigger: 'blur' }],
+    // weight: [{ required: true, message: '重量(kg)不能为空', trigger: 'blur' }],
+    // volume: [{ required: true, message: '体积(m³)不能为空', trigger: 'blur' }],
     unitPrice: [{ required: true, message: '单价不能为空', trigger: 'blur' }],
-    quantity: [{ required: true, message: '购买数量不能为空', trigger: 'blur' }],
-    totalPrice: [{ required: true, message: '总价不能为空', trigger: 'blur' }]
+    quantity: [{ required: true, message: '购买数量不能为空', trigger: 'blur' }]
+    // totalPrice: [{ required: true, message: '总价不能为空', trigger: 'blur' }]
   }
 });
 
@@ -281,6 +296,7 @@ const handleQuery = () => {
 const resetQuery = () => {
   dateRangeCreateTime.value = ['', ''];
   queryFormRef.value?.resetFields();
+  queryParams.value.opportunityId = defaultOpportunityId.value;
   handleQuery();
 };
 
@@ -296,6 +312,9 @@ const handleAdd = () => {
   reset();
   dialog.visible = true;
   dialog.title = '添加商机商品';
+  //
+  form.value.opportunityId = defaultOpportunityId.value;
+  form.value.unitPrice = form.value.unitPrice / 100;
 };
 
 /** 修改按钮操作 */
@@ -306,6 +325,8 @@ const handleUpdate = async (row?: OrderItemVO) => {
   Object.assign(form.value, res.data);
   dialog.visible = true;
   dialog.title = '修改商机商品';
+  //
+  form.value.unitPrice = form.value.unitPrice / 100;
 };
 
 /** 提交按钮 */
@@ -313,10 +334,12 @@ const submitForm = () => {
   orderItemFormRef.value?.validate(async (valid: boolean) => {
     if (valid) {
       buttonLoading.value = true;
-      if (form.value.id) {
-        await updateOrderItem(form.value).finally(() => (buttonLoading.value = false));
+      const copyForm = { ...form.value };
+      copyForm.unitPrice = copyForm.unitPrice * 100;
+      if (copyForm.id) {
+        await updateOrderItem(copyForm).finally(() => (buttonLoading.value = false));
       } else {
-        await addOrderItem(form.value).finally(() => (buttonLoading.value = false));
+        await addOrderItem(copyForm).finally(() => (buttonLoading.value = false));
       }
       proxy?.$modal.msgSuccess('操作成功');
       dialog.visible = false;
@@ -346,6 +369,13 @@ const handleExport = () => {
 };
 
 onMounted(() => {
+  handleRouteParams();
   getList();
 });
+
+/** 处理路由参数 */
+const handleRouteParams = async () => {
+  defaultOpportunityId.value = route.params && (route.params.id as string);
+  queryParams.value.opportunityId = route.params && (route.params.id as string);
+};
 </script>

@@ -108,6 +108,9 @@
         <el-table-column label="关联订单ID" align="center" prop="orderId" />
         <el-table-column label="操作" align="center" class-name="small-padding fixed-width" fixed="right">
           <template #default="scope">
+            <el-tooltip content="商品记录" placement="top">
+              <el-button link type="primary" icon="Goods" @click="routeToItemList(scope.row)" v-hasPermi="['opportunity:orderItem:list']"></el-button>
+            </el-tooltip>
             <el-tooltip content="修改" placement="top">
               <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['opportunity:info:edit']"></el-button>
             </el-tooltip>
@@ -189,6 +192,7 @@ import { listInfoOption as listCustomerInfoOption } from '@/api/customer/my';
 import { listInfoOption as listLeadInfoOption } from '@/api/lead/my';
 
 const route = useRoute();
+const router = useRouter();
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 const { ditalk_opportunity_state } = toRefs<any>(proxy?.useDict('ditalk_opportunity_state'));
 
@@ -380,6 +384,11 @@ onMounted(() => {
   setDefualtCustomerId();
   getList();
 });
+
+/** 路由到商机商品页面 */
+const routeToItemList = (row: InfoVO) => {
+  router.push({ path: '/opportunity/list-data/' + row.id }); // :opportunityId
+};
 
 /** 处理路由参数，初始化客户选项列表 */
 const setDefualtCustomerId = async () => {
