@@ -19,7 +19,7 @@
               />
             </el-form-item>
             <el-form-item :label="typeName" prop="customerId">
-              <el-select v-model="queryParams.customerId" :placeholder="'请选择' + typeName" filterable clearable @change="getQueryContactOption">
+              <el-select v-model="queryParams.customerId" :placeholder="'请选择' + typeName" filterable clearable @change="onQueryCustomerChange">
                 <el-option v-for="dict in customerInfoOptionList" :key="dict.id" :label="dict.name + ' --- ' + dict.id" :value="dict.id"></el-option>
               </el-select>
             </el-form-item>
@@ -137,7 +137,7 @@
     <el-dialog :title="dialog.title" v-model="dialog.visible" width="960px" append-to-body>
       <el-form ref="activityFormRef" :model="form" :rules="rules" label-width="120px">
         <el-form-item :label="typeName" prop="customerId">
-          <el-select v-model="form.customerId" :placeholder="'请选择' + typeName" filterable @change="getFormContactOption">
+          <el-select v-model="form.customerId" :placeholder="'请选择' + typeName" filterable @change="onFormCustomerChange">
             <el-option v-for="dict in customerInfoOptionList" :key="dict.id" :label="dict.name + ' --- ' + dict.id" :value="dict.id"></el-option>
           </el-select>
         </el-form-item>
@@ -410,8 +410,6 @@ const setDefualtCustomerId = async () => {
 };
 /** 获取联系人选项列表 */
 const getQueryContactOption = async (customerId: number | string) => {
-  // 切换客户清空查询条件中的联系人
-  queryParams.value.contactId = undefined;
   if (customerId) {
     // 切换客户刷新联系人列表
     const res = await listContactOptionInfo(customerId);
@@ -420,12 +418,20 @@ const getQueryContactOption = async (customerId: number | string) => {
 };
 /** 获取联系人选项列表 */
 const getFormContactOption = async (customerId: number | string) => {
-  // 切换客户清空查询条件中的联系人
-  form.value.contactId = undefined;
   if (customerId) {
     // 切换客户刷新联系人列表
     const res = await listContactOptionInfo(customerId);
     contactInfoFormOptionList.value = res.data;
   }
+};
+const onQueryCustomerChange = (customerId: number | string) => {
+  // 切换客户清空查询条件中的联系人
+  queryParams.value.contactId = undefined;
+  getQueryContactOption(customerId);
+};
+const onFormCustomerChange = (customerId: number | string) => {
+  // 切换客户清空查询条件中的联系人
+  form.value.contactId = undefined;
+  getFormContactOption(customerId);
 };
 </script>
