@@ -124,6 +124,9 @@
         </el-table-column>
         <el-table-column label="操作" align="center" class-name="small-padding fixed-width" fixed="right">
           <template #default="scope">
+            <el-tooltip content="SKU列表" placement="top">
+              <el-button link type="primary" icon="List" @click="routeToSkuList(scope.row)" v-hasPermi="['goods:sku:query']"></el-button>
+            </el-tooltip>
             <el-tooltip content="修改" placement="top">
               <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['goods:info:edit']"></el-button>
             </el-tooltip>
@@ -414,6 +417,7 @@ import { listBrand } from '@/api/goods/brand';
 import * as handleRes from '@/utils/handleRes';
 import * as valueCheck from '@/utils/valueCheck';
 
+const router = useRouter();
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 const { ditalk_goods_state } = toRefs<any>(proxy?.useDict('ditalk_goods_state'));
 
@@ -640,6 +644,13 @@ onMounted(() => {
   getBrandList();
   getList();
 });
+
+/**
+ * 路由到 SKU 列表页面
+ */
+const routeToSkuList = (row: InfoVO) => {
+  router.push({ path: '/goods/sku/' + row.id }); // :goodsId
+};
 
 const getShopList = async () => {
   const res = await listShopInfoOption();
