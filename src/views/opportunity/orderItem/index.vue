@@ -164,7 +164,7 @@
           <el-input-number v-model="form.unitPrice" placeholder="请输入单价" :min="0.01" :precision="2" />
         </el-form-item>
         <el-form-item label="购买数量" prop="quantity">
-          <el-input-number v-model="form.quantity" placeholder="请输入单价" :min="1" :precision="0" />
+          <el-input-number v-model="form.quantity" placeholder="请输入购买数量" :min="1" :precision="0" />
         </el-form-item>
         <!-- <el-form-item label="总价" prop="totalPrice">
           <el-input v-model="form.totalPrice" placeholder="请输入总价" />
@@ -201,6 +201,7 @@ const queryFormRef = ref<ElFormInstance>();
 const orderItemFormRef = ref<ElFormInstance>();
 
 const defaultOpportunityId = ref<string>();
+const defaultCustomerId = ref<string>();
 
 const dialog = reactive<DialogOption>({
   visible: false,
@@ -297,6 +298,7 @@ const resetQuery = () => {
   dateRangeCreateTime.value = ['', ''];
   queryFormRef.value?.resetFields();
   queryParams.value.opportunityId = defaultOpportunityId.value;
+  queryParams.value.customerId = defaultCustomerId.value;
   handleQuery();
 };
 
@@ -314,6 +316,7 @@ const handleAdd = () => {
   dialog.title = '添加商机商品';
   //
   form.value.opportunityId = defaultOpportunityId.value;
+  form.value.customerId = defaultCustomerId.value;
   form.value.unitPrice = form.value.unitPrice / 100;
 };
 
@@ -377,5 +380,7 @@ onMounted(() => {
 const handleRouteParams = async () => {
   defaultOpportunityId.value = route.params && (route.params.id as string);
   queryParams.value.opportunityId = route.params && (route.params.id as string);
+  defaultCustomerId.value = route.params && (route.params.customerId as string);
+  queryParams.value.customerId = route.params && (route.params.customerId as string);
 };
 </script>

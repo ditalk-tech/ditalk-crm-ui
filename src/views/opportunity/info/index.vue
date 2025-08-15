@@ -387,7 +387,7 @@ onMounted(() => {
 
 /** 路由到商机商品页面 */
 const routeToItemList = (row: InfoVO) => {
-  router.push({ path: '/opportunity/list-data/' + row.id }); // :opportunityId
+  router.push({ path: '/opportunity/list-data/' + row.id + '/' + row.customerId }); // :opportunityId
 };
 
 /** 处理路由参数，初始化客户选项列表 */
