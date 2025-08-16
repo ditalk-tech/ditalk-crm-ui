@@ -151,8 +151,10 @@
             ></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="商机ID" prop="opportunityId">
-          <el-input v-model="form.opportunityId" placeholder="请输入商机ID" />
+        <el-form-item label="商机" prop="opportunityId">
+          <el-select v-model="form.opportunityId" placeholder="请选择商机" filterable>
+            <el-option v-for="dict in opportunityInfoOptionList" :key="dict.id" :label="dict.title + ' --- ' + dict.id" :value="dict.id"></el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="活动类型" prop="type">
           <el-select v-model="form.type" placeholder="请选择活动类型">
@@ -191,6 +193,9 @@ import { listInfoOption as listCustomerInfoOption } from '@/api/customer/my';
 // 线索API
 // import { InfoOptionVO as LeadInfoOptionVO } from '@/api/lead/info/types';
 import { listInfoOption as listLeadInfoOption } from '@/api/lead/my';
+// 商机API
+import { InfoOptionVO as OpportunityInfoOptionVO } from '@/api/opportunity/info/types';
+import { listInfoOption as listOpportunityInfoOption } from '@/api/opportunity/info';
 
 const route = useRoute();
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
@@ -215,6 +220,7 @@ const defaultCustomerType = ref<string>(); // 默认客户类型，区分是 线
 const customerInfoOptionList = ref<CustomerInfoOptionVO[]>([]); // 客户选项列表，当 defaultType == customer 或 为空时
 const contactInfoQueryOptionList = ref<ContactInfoOptionVO[]>([]); // 查询中的联系人选项列表
 const contactInfoFormOptionList = ref<ContactInfoOptionVO[]>([]); // 表单中的联系人选项列表
+const opportunityInfoOptionList = ref<OpportunityInfoOptionVO[]>([]); // 商机选项列表
 
 const dialog = reactive<DialogOption>({
   visible: false,
@@ -386,6 +392,7 @@ const typeName = computed(() => {
 onMounted(() => {
   setDefualtCustomerId();
   getQueryContactOption(defaultCustomerId.value);
+  getFormOpportunityOption(defaultCustomerId.value);
   getList();
 });
 
@@ -433,5 +440,18 @@ const onFormCustomerChange = (customerId: number | string) => {
   // 切换客户清空查询条件中的联系人
   form.value.contactId = undefined;
   getFormContactOption(customerId);
+};
+
+/** 获取商机选项列表 */
+const getFormOpportunityOption = async (customerId: number | string) => {
+  if (customerId) {
+    // 切换客户刷新商机列表
+    const res = await listOpportunityInfoOption({
+      'customerId': customerId,
+      pageNum: 1,
+      pageSize: 200
+    });
+    opportunityInfoOptionList.value = res.data;
+  }
 };
 </script>

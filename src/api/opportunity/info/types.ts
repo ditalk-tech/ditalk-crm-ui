@@ -138,3 +138,15 @@ export interface InfoQuery extends PageQuery {
    */
   params?: any;
 }
+
+export interface InfoOptionVO {
+  /**
+   * ID
+   */
+  id: string | number;
+
+  /**
+   * 商机标题
+   */
+  title: string;
+}

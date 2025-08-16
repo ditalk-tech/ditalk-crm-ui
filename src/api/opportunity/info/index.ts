@@ -1,13 +1,25 @@
 import request from '@/utils/request';
 import { AxiosPromise } from 'axios';
-import { InfoVO, InfoForm, InfoQuery } from '@/api/opportunity/info/types';
+import { InfoVO, InfoForm, InfoQuery, InfoOptionVO } from '@/api/opportunity/info/types';
 
 /**
  * 查询商机信息列表
  * @param query
  * @returns {*}
  */
+export const listInfoOption = (query?: InfoQuery): AxiosPromise<InfoOptionVO[]> => {
+  return request({
+    url: '/opportunity/info/list/option',
+    method: 'get',
+    params: query
+  });
+};
 
+/**
+ * 查询商机信息列表
+ * @param query
+ * @returns {*}
+ */
 export const listInfo = (query?: InfoQuery): AxiosPromise<InfoVO[]> => {
   return request({
     url: '/opportunity/info/list',
