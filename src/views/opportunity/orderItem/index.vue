@@ -317,7 +317,6 @@ const handleAdd = () => {
   //
   form.value.opportunityId = defaultOpportunityId.value;
   form.value.customerId = defaultCustomerId.value;
-  form.value.unitPrice = form.value.unitPrice / 100;
 };
 
 /** 修改按钮操作 */
