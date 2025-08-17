@@ -1,3 +1,5 @@
+import { OssVO } from '@/api/system/oss/types';
+
 export interface InfoVO {
   /**
    * ID
@@ -83,6 +85,11 @@ export interface InfoVO {
    * 附件
    */
   terms: string;
+
+  /**
+   * 附件OSS列表
+   */
+  termOss: OssVO[];
 
   /**
    * 状态

@@ -118,9 +118,21 @@
         <el-table-column label="客户ID" align="center" prop="customerId" />
         <el-table-column label="联系人ID" align="center" prop="contactId" />
         <el-table-column label="商机ID" align="center" prop="opportunityId" />
-        <el-table-column label="签约日期" align="center" prop="signDate" />
-        <el-table-column label="开始日期" align="center" prop="startDate" />
-        <el-table-column label="结束日期" align="center" prop="endDate" />
+        <el-table-column label="签约日期" align="center" prop="signDate">
+          <template #default="scope">
+            <span>{{ proxy.parseTime(scope.row.signDate, '{y}-{m}-{d}') }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="开始日期" align="center" prop="startDate">
+          <template #default="scope">
+            <span>{{ proxy.parseTime(scope.row.startDate, '{y}-{m}-{d}') }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="结束日期" align="center" prop="endDate">
+          <template #default="scope">
+            <span>{{ proxy.parseTime(scope.row.endDate, '{y}-{m}-{d}') }}</span>
+          </template>
+        </el-table-column>
         <el-table-column label="含税总额" align="center" prop="totalAmount">
           <template #default="scope">
             {{ scope.row.totalAmount / 100 }}
@@ -131,13 +143,24 @@
             {{ scope.row.taxAmount / 100 }}
           </template>
         </el-table-column>
-        <el-table-column label="备注说明" align="center" prop="remark" />
         <el-table-column label="指派给" align="center" prop="assignedTo" />
         <el-table-column label="指派部门" align="center" prop="assignedDept" />
         <!-- <el-table-column label="附件" align="center" prop="terms" /> -->
-        <el-table-column label="附件" align="center" prop="terms">
+        <el-table-column label="附件" align="center" prop="termOss" width="200">
           <template #default="scope">
-            {{ scope.row.terms }}
+            <div v-for="item in scope.row.termOss" :key="item.ossId">
+              <el-link style="font-size: 11px" icon="download" type="info" target="_blank" @click="handleDownload(item.ossId)">{{
+                item.originalName
+              }}</el-link>
+              <!-- <el-text size="small" type="info" tag="div" @click="handleDownload(item.ossId)">{{ item.originalName }}</el-text> -->
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column label="备注说明" align="center" prop="remark" width="240">
+          <template #default="scope">
+            <el-tooltip :content="scope.row.remark" placement="top" :show-after="300">
+              <p class="descStyle">{{ scope.row.remark }}</p>
+            </el-tooltip>
           </template>
         </el-table-column>
         <el-table-column label="状态" align="center" prop="state">
@@ -178,16 +201,13 @@
           <el-input v-model="form.opportunityId" placeholder="请输入商机ID" />
         </el-form-item>
         <el-form-item label="签约日期" prop="signDate">
-          <el-date-picker clearable v-model="form.signDate" type="datetime" value-format="YYYY-MM-DD HH:mm:ss" placeholder="请选择签约日期">
-          </el-date-picker>
+          <el-date-picker clearable v-model="form.signDate" type="date" value-format="YYYY-MM-DD" placeholder="请选择签约日期"></el-date-picker>
         </el-form-item>
         <el-form-item label="开始日期" prop="startDate">
-          <el-date-picker clearable v-model="form.startDate" type="datetime" value-format="YYYY-MM-DD HH:mm:ss" placeholder="请选择开始日期">
-          </el-date-picker>
+          <el-date-picker clearable v-model="form.startDate" type="date" value-format="YYYY-MM-DD" placeholder="请选择开始日期"></el-date-picker>
         </el-form-item>
         <el-form-item label="结束日期" prop="endDate">
-          <el-date-picker clearable v-model="form.endDate" type="datetime" value-format="YYYY-MM-DD HH:mm:ss" placeholder="请选择结束日期">
-          </el-date-picker>
+          <el-date-picker clearable v-model="form.endDate" type="date" value-format="YYYY-MM-DD" placeholder="请选择结束日期"></el-date-picker>
         </el-form-item>
         <el-form-item label="含税总额" prop="totalAmount">
           <el-input-number v-model="form.totalAmount" placeholder="请输入含税总额" :min="0.01" :precision="2" />
@@ -303,7 +323,8 @@ const data = reactive<PageData<InfoForm, InfoQuery>>({
     totalAmount: [{ required: true, message: '含税总额不能为空', trigger: 'blur' }],
     assignedTo: [{ required: true, message: '指派给不能为空', trigger: 'blur' }],
     assignedDept: [{ required: true, message: '指派部门不能为空', trigger: 'blur' }],
-    state: [{ required: true, message: '状态不能为空', trigger: 'change' }]
+    state: [{ required: true, message: '状态不能为空', trigger: 'change' }],
+    remark: [{ max: 255, message: '备注不超过255字', trigger: 'blur' }]
   }
 });
 
@@ -420,4 +441,9 @@ const handleExport = () => {
 onMounted(() => {
   getList();
 });
+
+/** 下载文件 */
+const handleDownload = (id: number) => {
+  proxy?.$download.oss(id);
+};
 </script>
