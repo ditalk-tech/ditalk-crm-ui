@@ -108,15 +108,26 @@
         <el-table-column label="关联订单ID" align="center" prop="orderId" />
         <el-table-column label="操作" align="center" class-name="small-padding fixed-width" fixed="right">
           <template #default="scope">
-            <el-tooltip content="商品记录" placement="top">
-              <el-button link type="primary" icon="Goods" @click="routeToItemList(scope.row)" v-hasPermi="['opportunity:orderItem:list']"></el-button>
-            </el-tooltip>
-            <el-tooltip content="修改" placement="top">
-              <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['opportunity:info:edit']"></el-button>
-            </el-tooltip>
-            <el-tooltip content="删除" placement="top">
-              <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['opportunity:info:remove']"></el-button>
-            </el-tooltip>
+            <el-button-group>
+              <el-tooltip content="商品记录" placement="top">
+                <el-button
+                  link
+                  type="primary"
+                  icon="Goods"
+                  @click="routeToItemList(scope.row)"
+                  v-hasPermi="['opportunity:orderItem:list']"
+                ></el-button>
+              </el-tooltip>
+              <el-tooltip content="生成合同" placement="top">
+                <el-button link type="primary" icon="Collection" @click="handleContract(scope.row)" v-hasPermi="['contract:info:add']"></el-button>
+              </el-tooltip>
+              <el-tooltip content="修改" placement="top">
+                <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['opportunity:info:edit']"></el-button>
+              </el-tooltip>
+              <el-tooltip content="删除" placement="top">
+                <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['opportunity:info:remove']"></el-button>
+              </el-tooltip>
+            </el-button-group>
           </template>
         </el-table-column>
       </el-table>
@@ -410,5 +421,17 @@ const setDefualtCustomerId = async () => {
     res = await listLeadInfoOption();
     customerInfoOptionList.value = [...customerInfoOptionList.value, ...res.data];
   }
+};
+
+/**
+ * 打开生成合同对话框
+ * @param row
+ */
+const handleContract = (row: InfoVO) => {
+  // if (row.state === 'closed') {
+  //   proxy?.$modal.msgError('已关闭的商机不能生成合同');
+  //   return;
+  // }
+  proxy?.$modal.msgError('建设中...');
 };
 </script>
