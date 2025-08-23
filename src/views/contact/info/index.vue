@@ -537,12 +537,12 @@ const typeName = computed(() => {
 });
 
 onMounted(() => {
-  setDefualtCustomerId();
+  setDefaultRouteParams();
   getList();
 });
 
 /** 设置默认客户ID */
-const setDefualtCustomerId = async () => {
+const setDefaultRouteParams = () => {
   defaultType.value = route.params && (route.params.type as string);
   queryParams.value.customerId = route.params && (route.params.customerId as string);
   defaultCustomerId.value = route.params && (route.params.customerId as string);

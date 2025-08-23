@@ -390,14 +390,14 @@ const typeName = computed(() => {
 });
 
 onMounted(() => {
-  setDefualtCustomerId();
+  setDefualtParams();
   getQueryContactOption(defaultCustomerId.value);
   getFormOpportunityOption(defaultCustomerId.value);
   getList();
 });
 
 /** 处理路由参数，初始化客户选项列表 */
-const setDefualtCustomerId = async () => {
+const setDefualtParams = async () => {
   defaultCustomerType.value = route.params && (route.params.type as string);
   queryParams.value.customerId = route.params && (route.params.customerId as string);
   defaultCustomerId.value = route.params && (route.params.customerId as string);

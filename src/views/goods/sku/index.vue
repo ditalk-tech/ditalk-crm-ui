@@ -363,7 +363,7 @@ onMounted(() => {
 });
 
 /** 初始化路由参数 */
-const setDefaultRouteParams = async () => {
+const setDefaultRouteParams = () => {
   defaultGoodsId.value = route.params && (route.params.goodsId as string);
   queryParams.value.goodsId = route.params && (route.params.goodsId as string);
 };

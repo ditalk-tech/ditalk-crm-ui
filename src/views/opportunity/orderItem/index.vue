@@ -376,7 +376,7 @@ onMounted(() => {
 });
 
 /** 处理路由参数 */
-const handleRouteParams = async () => {
+const handleRouteParams = () => {
   defaultOpportunityId.value = route.params && (route.params.id as string);
   queryParams.value.opportunityId = route.params && (route.params.id as string);
   defaultCustomerId.value = route.params && (route.params.customerId as string);

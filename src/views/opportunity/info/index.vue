@@ -119,7 +119,7 @@
                 ></el-button>
               </el-tooltip>
               <el-tooltip content="生成合同" placement="top">
-                <el-button link type="primary" icon="Collection" @click="handleContract(scope.row)" v-hasPermi="['contract:info:add']"></el-button>
+                <el-button link type="primary" icon="Collection" @click="routeToContract(scope.row)" v-hasPermi="['contract:info:add']"></el-button>
               </el-tooltip>
               <el-tooltip content="修改" placement="top">
                 <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['opportunity:info:edit']"></el-button>
@@ -392,17 +392,22 @@ const typeName = computed(() => {
 });
 
 onMounted(() => {
-  setDefualtCustomerId();
+  setDefualtParams();
   getList();
 });
 
 /** 路由到商机商品页面 */
 const routeToItemList = (row: InfoVO) => {
-  router.push({ path: '/opportunity/info-list/' + row.id }); // :opportunityId
+  router.push({ path: '/opportunity/order-item/info-list/' + row.id });
+};
+
+/** 路由到合同页面 */
+const routeToContract = (row: InfoVO) => {
+  router.push({ path: '/contract/info-list/' + row.id + '/' + row.customerId });
 };
 
 /** 处理路由参数，初始化客户选项列表 */
-const setDefualtCustomerId = async () => {
+const setDefualtParams = async () => {
   defaultCustomerType.value = route.params && (route.params.type as string);
   queryParams.value.customerId = route.params && (route.params.customerId as string);
   defaultCustomerId.value = route.params && (route.params.customerId as string);
@@ -414,24 +419,10 @@ const setDefualtCustomerId = async () => {
     const res = await listCustomerInfoOption();
     customerInfoOptionList.value = res.data;
   } else {
-    // const res = await listCustomerInfoOptionAll();
-    // customerInfoOptionList.value = res.data;
     let res = await listCustomerInfoOption();
     customerInfoOptionList.value = res.data;
     res = await listLeadInfoOption();
     customerInfoOptionList.value = [...customerInfoOptionList.value, ...res.data];
   }
-};
-
-/**
- * 打开生成合同对话框
- * @param row
- */
-const handleContract = (row: InfoVO) => {
-  // if (row.state === 'closed') {
-  //   proxy?.$modal.msgError('已关闭的商机不能生成合同');
-  //   return;
-  // }
-  proxy?.$modal.msgError('建设中...');
 };
 </script>

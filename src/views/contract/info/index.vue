@@ -247,6 +247,7 @@
 import { listInfo, getInfo, delInfo, addInfo, updateInfo } from '@/api/contract/info';
 import { InfoVO, InfoQuery, InfoForm } from '@/api/contract/info/types';
 
+const route = useRoute();
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 const { ditalk_contract_state } = toRefs<any>(proxy?.useDict('ditalk_contract_state'));
 
@@ -265,6 +266,9 @@ const dateRangeEndDate = ref<[DateModelType, DateModelType]>(['', '']);
 
 const queryFormRef = ref<ElFormInstance>();
 const infoFormRef = ref<ElFormInstance>();
+
+const defaultOpportunityId = ref<string | number>();
+const defaultCustomerId = ref<string | number>();
 
 const dialog = reactive<DialogOption>({
   visible: false,
@@ -369,6 +373,9 @@ const resetQuery = () => {
   dateRangeStartDate.value = ['', ''];
   dateRangeEndDate.value = ['', ''];
   queryFormRef.value?.resetFields();
+  // 默认的路由参数
+  queryParams.value.opportunityId = defaultOpportunityId.value;
+  queryParams.value.customerId = defaultCustomerId.value;
   handleQuery();
 };
 
@@ -384,6 +391,10 @@ const handleAdd = () => {
   reset();
   dialog.visible = true;
   dialog.title = '添加合同信息';
+  // form.value.opportunityId = defaultOpportunityId.value;
+  form.value.opportunityId = queryParams.value.opportunityId;
+  // form.value.customerId = defaultCustomerId.value;
+  form.value.customerId = queryParams.value.customerId;
 };
 
 /** 修改按钮操作 */
@@ -439,8 +450,17 @@ const handleExport = () => {
 };
 
 onMounted(() => {
+  setDefaultRouteParams();
   getList();
 });
+
+/** 设置默认路由参数 */
+const setDefaultRouteParams = () => {
+  defaultOpportunityId.value = route.params && (route.params.opportunityId as string);
+  queryParams.value.opportunityId = route.params && (route.params.opportunityId as string);
+  defaultCustomerId.value = route.params && (route.params.customerId as string);
+  queryParams.value.customerId = route.params && (route.params.customerId as string);
+};
 
 /** 下载文件 */
 const handleDownload = (id: number) => {
