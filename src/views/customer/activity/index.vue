@@ -325,8 +325,8 @@ const handleAdd = async () => {
   form.value.customerId = queryParams.value.customerId;
   if (form.value.customerId) {
     await getFormContactOption(form.value.customerId);
+    form.value.contactId = queryParams.value.contactId;
   }
-  form.value.contactId = queryParams.value.contactId;
 };
 
 /** 修改按钮操作 */
@@ -418,6 +418,9 @@ const setDefualtParams = async () => {
     customerInfoOptionList.value = res.data;
     res = await listLeadInfoOption();
     customerInfoOptionList.value = [...customerInfoOptionList.value, ...res.data];
+  }
+  if (queryParams.value.customerId) {
+    await getQueryContactOption(queryParams.value.customerId);
   }
 };
 /** 获取联系人选项列表 */

@@ -28,7 +28,6 @@
                 clearable
                 reserve-keyword
                 :placeholder="'输入' + typeName + '名称'"
-                :loading="loadingCustomer"
                 style="width: 240px"
               >
                 <el-option v-for="item in customerInfoOptionList" :key="item.id" :label="item.name + '-' + item.id" :value="item.id" />
@@ -152,14 +151,7 @@
         <el-row>
           <el-col :span="12">
             <el-form-item :label="typeName" prop="customerId">
-              <el-select
-                v-model="form.customerId"
-                filterable
-                reserve-keyword
-                :placeholder="'输入' + typeName + '名称'"
-                :loading="loadingCustomer"
-                style="width: 240px"
-              >
+              <el-select v-model="form.customerId" filterable reserve-keyword :placeholder="'输入' + typeName + '名称'" style="width: 240px">
                 <el-option v-for="item in customerInfoOptionList" :key="item.id" :label="item.name + '-' + item.id" :value="item.id" />
               </el-select>
             </el-form-item>
@@ -232,7 +224,6 @@ const queryFormRef = ref<ElFormInstance>();
 const infoFormRef = ref<ElFormInstance>();
 
 const amount = ref(0); // 预计销售金额，用于单位转换
-const loadingCustomer = ref(false);
 const defaultCustomerId = ref<string>(); // 默认客户ID，若路由过来时没有指定则没有此值
 const defaultCustomerType = ref<string>(); // 默认客户类型，区分是 线索 还是 客户
 
@@ -413,7 +404,7 @@ const routeToItemList = (row: InfoVO) => {
 
 /** 路由到合同页面 */
 const routeToContract = (row: InfoVO) => {
-  router.push({ path: '/contract/info-list/opportunity/' + row.id });
+  router.push({ path: '/contract/info-list/opportunity/' + row.id + '/' + row.customerId });
 };
 
 /** 路由到活动页面 */

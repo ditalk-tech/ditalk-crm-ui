@@ -25,10 +25,19 @@
               <el-input v-model="queryParams.title" placeholder="请输入标题" clearable @keyup.enter="handleQuery" />
             </el-form-item>
             <el-form-item label="客户ID" prop="customerId">
-              <el-input v-model="queryParams.customerId" placeholder="请输入客户ID" clearable @keyup.enter="handleQuery" />
+              <el-select v-model="queryParams.customerId" placeholder="请选择客户" filterable clearable @change="onQueryCustomerChange">
+                <el-option v-for="dict in customerInfoOptionList" :key="dict.id" :label="dict.name + ' --- ' + dict.id" :value="dict.id"></el-option>
+              </el-select>
             </el-form-item>
             <el-form-item label="联系人ID" prop="contactId">
-              <el-input v-model="queryParams.contactId" placeholder="请输入联系人ID" clearable @keyup.enter="handleQuery" />
+              <el-select v-model="queryParams.contactId" placeholder="请选择联系人" filterable clearable>
+                <el-option
+                  v-for="dict in contactInfoQueryOptionList"
+                  :key="dict.id"
+                  :label="(dict.lastName ? dict.lastName : '') + dict.firstName + ' --- ' + dict.id"
+                  :value="dict.id"
+                ></el-option>
+              </el-select>
             </el-form-item>
             <el-form-item label="商机ID" prop="opportunityId">
               <el-input v-model="queryParams.opportunityId" placeholder="请输入商机ID" clearable @keyup.enter="handleQuery" />
@@ -208,10 +217,19 @@
           <el-input v-model="form.title" placeholder="请输入标题" />
         </el-form-item>
         <el-form-item label="客户ID" prop="customerId">
-          <el-input v-model="form.customerId" placeholder="请输入客户ID" />
+          <el-select v-model="form.customerId" placeholder="请选择客户" filterable @change="onFormCustomerChange">
+            <el-option v-for="dict in customerInfoOptionList" :key="dict.id" :label="dict.name + ' --- ' + dict.id" :value="dict.id"></el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="联系人ID" prop="contactId">
-          <el-input v-model="form.contactId" placeholder="请输入联系人ID" />
+          <el-select v-model="form.contactId" placeholder="请选择联系人" filterable>
+            <el-option
+              v-for="dict in contactInfoFormOptionList"
+              :key="dict.id"
+              :label="(dict.lastName ? dict.lastName : '') + dict.firstName + ' --- ' + dict.id"
+              :value="dict.id"
+            ></el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="商机ID" prop="opportunityId">
           <el-input v-model="form.opportunityId" placeholder="请输入商机ID" />
@@ -262,8 +280,13 @@
 <script setup name="Info" lang="ts">
 import { listInfo, getInfo, delInfo, addInfo, updateInfo } from '@/api/contract/info';
 import { InfoVO, InfoQuery, InfoForm } from '@/api/contract/info/types';
-// customer api
+// 客户API
+import { InfoOptionVO as CustomerInfoOptionVO } from '@/api/customer/info/types';
+import { listInfoOption as listCustomerInfoOption } from '@/api/customer/my';
 import { getInfo as getCustomerInfo } from '@/api/customer/common/info';
+// 联系人API
+import { InfoOptionVO as ContactInfoOptionVO } from '@/api/contact/info/types';
+import { listInfoOption as listContactOptionInfo } from '@/api/contact/info';
 
 const route = useRoute();
 const router = useRouter();
@@ -288,6 +311,9 @@ const infoFormRef = ref<ElFormInstance>();
 
 const defaultOpportunityId = ref<string | number>();
 const defaultCustomerId = ref<string | number>();
+const customerInfoOptionList = ref<CustomerInfoOptionVO[]>([]); // 客户选项列表
+const contactInfoQueryOptionList = ref<ContactInfoOptionVO[]>([]); // 查询中的联系人选项列表
+const contactInfoFormOptionList = ref<ContactInfoOptionVO[]>([]); // 表单中的联系人选项列表
 
 const dialog = reactive<DialogOption>({
   visible: false,
@@ -377,6 +403,7 @@ const cancel = () => {
 const reset = () => {
   form.value = { ...initFormData };
   infoFormRef.value?.resetFields();
+  contactInfoFormOptionList.value = [];
 };
 
 /** 搜索按钮操作 */
@@ -406,14 +433,16 @@ const handleSelectionChange = (selection: InfoVO[]) => {
 };
 
 /** 新增按钮操作 */
-const handleAdd = () => {
+const handleAdd = async () => {
   reset();
   dialog.visible = true;
   dialog.title = '添加合同信息';
-  // form.value.opportunityId = defaultOpportunityId.value;
   form.value.opportunityId = queryParams.value.opportunityId;
-  // form.value.customerId = defaultCustomerId.value;
   form.value.customerId = queryParams.value.customerId;
+  if (form.value.customerId) {
+    await getFormContactOption(form.value.customerId);
+    form.value.contactId = queryParams.value.contactId;
+  }
 };
 
 /** 修改按钮操作 */
@@ -426,6 +455,9 @@ const handleUpdate = async (row?: InfoVO) => {
   dialog.title = '修改合同信息';
   form.value.totalAmount = form.value.totalAmount / 100;
   form.value.taxAmount = form.value.taxAmount / 100;
+  if (form.value.customerId) {
+    getFormContactOption(form.value.customerId);
+  }
 };
 
 /** 提交按钮 */
@@ -473,19 +505,51 @@ onMounted(() => {
   getList();
 });
 
-/** 设置默认路由参数 */
-const setDefaultRouteParams = () => {
-  defaultOpportunityId.value = route.params && (route.params.opportunityId as string);
-  queryParams.value.opportunityId = route.params && (route.params.opportunityId as string);
-  defaultCustomerId.value = route.params && (route.params.customerId as string);
-  queryParams.value.customerId = route.params && (route.params.customerId as string);
-};
-
 /** 路由到活动页面 */
 const routeToActivity = async (row: InfoVO) => {
   const res = await getCustomerInfo(row.customerId);
   const type = res.data.convertedTime ? 'customer' : 'lead';
   router.push({ path: '/activity/info-list/' + type + '/' + res.data.id });
+};
+
+/** 设置默认路由参数 */
+const setDefaultRouteParams = async () => {
+  defaultOpportunityId.value = route.params && (route.params.opportunityId as string);
+  queryParams.value.opportunityId = route.params && (route.params.opportunityId as string);
+  defaultCustomerId.value = route.params && (route.params.customerId as string);
+  queryParams.value.customerId = route.params && (route.params.customerId as string);
+  // 初始化客户选项列表
+  const res = await listCustomerInfoOption();
+  customerInfoOptionList.value = res.data;
+  if (queryParams.value.customerId) {
+    await getQueryContactOption(queryParams.value.customerId);
+  }
+};
+/** 获取联系人选项列表 */
+const getQueryContactOption = async (customerId: number | string) => {
+  if (customerId) {
+    // 切换客户刷新联系人列表
+    const res = await listContactOptionInfo(customerId);
+    contactInfoQueryOptionList.value = res.data;
+  }
+};
+/** 获取联系人选项列表 */
+const getFormContactOption = async (customerId: number | string) => {
+  if (customerId) {
+    // 切换客户刷新联系人列表
+    const res = await listContactOptionInfo(customerId);
+    contactInfoFormOptionList.value = res.data;
+  }
+};
+const onQueryCustomerChange = (customerId: number | string) => {
+  // 切换客户清空查询条件中的联系人
+  queryParams.value.contactId = undefined;
+  getQueryContactOption(customerId);
+};
+const onFormCustomerChange = (customerId: number | string) => {
+  // 切换客户清空查询条件中的联系人
+  form.value.contactId = undefined;
+  getFormContactOption(customerId);
 };
 
 /** 下载文件 */
