@@ -185,7 +185,11 @@
                 @click="handleOpportunityInfoList(scope.row)"
                 v-hasPermi="['opportunity:info:list']"
                 >商机</el-button
-              ><el-button
+              >
+              <el-button style="margin: 0px 2px" link type="" size="small" @click="routeToContract(scope.row)" v-hasPermi="['contract:info:list']"
+                >合同</el-button
+              >
+              <el-button
                 style="margin: 0px 2px"
                 link
                 type="danger"
@@ -790,6 +794,11 @@ const handleActivityInfoList = (row: InfoVO) => {
 /** 路由到商机页面 */
 const handleOpportunityInfoList = (row: InfoVO) => {
   router.push({ path: '/opportunity/info-list/' + 'customer/' + row.id }); // :customerId
+};
+
+/** 路由到合同页面 */
+const routeToContract = (row: InfoVO) => {
+  router.push({ path: '/contract/info-list/customer/' + row.id });
 };
 
 const getUserOptionList = async () => {

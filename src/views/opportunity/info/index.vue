@@ -413,7 +413,7 @@ const routeToItemList = (row: InfoVO) => {
 
 /** 路由到合同页面 */
 const routeToContract = (row: InfoVO) => {
-  router.push({ path: '/contract/info-list/' + row.id + '/' + row.customerId });
+  router.push({ path: '/contract/info-list/opportunity/' + row.id });
 };
 
 /** 路由到活动页面 */
