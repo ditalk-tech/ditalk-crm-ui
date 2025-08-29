@@ -127,7 +127,7 @@
                   type="primary"
                   icon="ChatLineRound"
                   @click="routeToActivity(scope.row)"
-                  v-hasPermi="['activity:info:list']"
+                  v-hasPermi="['customer:activity:list']"
                 ></el-button>
               </el-tooltip>
               <el-tooltip content="修改" placement="top">

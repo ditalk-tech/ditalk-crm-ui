@@ -197,12 +197,23 @@
         <el-table-column label="分配部门" align="center" prop="assignedDept" />
         <el-table-column label="操作" align="center" class-name="small-padding fixed-width" fixed="right">
           <template #default="scope">
-            <el-tooltip content="修改" placement="top">
-              <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['contact:info:edit']"></el-button>
-            </el-tooltip>
-            <el-tooltip content="删除" placement="top">
-              <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['contact:info:remove']"></el-button>
-            </el-tooltip>
+            <el-button-group>
+              <el-tooltip content="活动信息" placement="top">
+                <el-button
+                  link
+                  type="primary"
+                  icon="ChatLineRound"
+                  @click="routeToActivity(scope.row)"
+                  v-hasPermi="['customer:activity:list']"
+                ></el-button>
+              </el-tooltip>
+              <el-tooltip content="修改" placement="top">
+                <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['contact:info:edit']"></el-button>
+              </el-tooltip>
+              <el-tooltip content="删除" placement="top">
+                <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['contact:info:remove']"></el-button>
+              </el-tooltip>
+            </el-button-group>
           </template>
         </el-table-column>
       </el-table>
@@ -323,8 +334,11 @@
 <script setup name="Info" lang="ts">
 import { listInfo, getInfo, delInfo, addInfo, updateInfo } from '@/api/contact/info';
 import { InfoVO, InfoQuery, InfoForm } from '@/api/contact/info/types';
+// customer api
+import { getInfo as getCustomerInfo } from '@/api/customer/common/info';
 
 const route = useRoute();
+const router = useRouter();
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 const { ditalk_educational_qualification, ditalk_contact_frequency, ditalk_contact_state, sys_user_sex } = toRefs<any>(
   proxy?.useDict('ditalk_educational_qualification', 'ditalk_contact_frequency', 'ditalk_contact_state', 'sys_user_sex')
@@ -540,6 +554,13 @@ onMounted(() => {
   setDefaultRouteParams();
   getList();
 });
+
+/** 路由到活动页面 */
+const routeToActivity = async (row: InfoVO) => {
+  const res = await getCustomerInfo(row.customerId);
+  const type = res.data.convertedTime ? 'customer' : 'lead';
+  router.push({ path: '/activity/info-list/' + type + '/' + row.customerId + '/' + row.id });
+};
 
 /** 设置默认客户ID */
 const setDefaultRouteParams = () => {

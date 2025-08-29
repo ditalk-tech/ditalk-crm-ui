@@ -215,6 +215,7 @@ const dateRangeActivityTime = ref<[DateModelType, DateModelType]>(['', '']);
 const queryFormRef = ref<ElFormInstance>();
 const activityFormRef = ref<ElFormInstance>();
 const defaultCustomerId = ref<string>(); // 默认客户ID，若路由过来时没有指定则没有此值
+const defaultContactId = ref<string>(); // 默认联系人ID，若路由过来时没有指定则没有此值
 const defaultCustomerType = ref<string>(); // 默认客户类型，区分是 线索 还是 客户
 
 const customerInfoOptionList = ref<CustomerInfoOptionVO[]>([]); // 客户选项列表，当 defaultType == customer 或 为空时
@@ -304,6 +305,7 @@ const resetQuery = () => {
   dateRangeActivityTime.value = ['', ''];
   queryFormRef.value?.resetFields();
   queryParams.value.customerId = defaultCustomerId.value;
+  queryParams.value.contactId = defaultContactId.value;
   getQueryContactOption(defaultCustomerId.value); // 初始化联系人选项列表
   handleQuery();
 };
@@ -316,14 +318,15 @@ const handleSelectionChange = (selection: ActivityVO[]) => {
 };
 
 /** 新增按钮操作 */
-const handleAdd = () => {
+const handleAdd = async () => {
   reset();
   dialog.visible = true;
   dialog.title = '添加' + typeName.value + '活动记录';
   form.value.customerId = queryParams.value.customerId;
   if (form.value.customerId) {
-    getFormContactOption(form.value.customerId);
+    await getFormContactOption(form.value.customerId);
   }
+  form.value.contactId = queryParams.value.contactId;
 };
 
 /** 修改按钮操作 */
@@ -401,6 +404,8 @@ const setDefualtParams = async () => {
   defaultCustomerType.value = route.params && (route.params.type as string);
   queryParams.value.customerId = route.params && (route.params.customerId as string);
   defaultCustomerId.value = route.params && (route.params.customerId as string);
+  queryParams.value.contactId = route.params && (route.params.contactId as string);
+  defaultContactId.value = route.params && (route.params.contactId as string);
   // 初始化客户选项列表
   if (defaultCustomerType.value === 'lead') {
     const res = await listLeadInfoOption();
