@@ -118,8 +118,17 @@
                   v-hasPermi="['opportunity:orderItem:list']"
                 ></el-button>
               </el-tooltip>
-              <el-tooltip content="生成合同" placement="top">
-                <el-button link type="primary" icon="Collection" @click="routeToContract(scope.row)" v-hasPermi="['contract:info:add']"></el-button>
+              <el-tooltip content="合同信息" placement="top">
+                <el-button link type="primary" icon="Collection" @click="routeToContract(scope.row)" v-hasPermi="['contract:info:list']"></el-button>
+              </el-tooltip>
+              <el-tooltip content="活动信息" placement="top">
+                <el-button
+                  link
+                  type="primary"
+                  icon="ChatLineRound"
+                  @click="routeToActivity(scope.row)"
+                  v-hasPermi="['activity:info:list']"
+                ></el-button>
               </el-tooltip>
               <el-tooltip content="修改" placement="top">
                 <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['opportunity:info:edit']"></el-button>
@@ -199,6 +208,7 @@ import { InfoVO, InfoQuery, InfoForm } from '@/api/opportunity/info/types';
 // 客户API
 import { InfoOptionVO as CustomerInfoOptionVO } from '@/api/customer/info/types';
 import { listInfoOption as listCustomerInfoOption } from '@/api/customer/my';
+import { getInfo as getCustomerInfo } from '@/api/customer/common/info';
 // 线索API
 import { listInfoOption as listLeadInfoOption } from '@/api/lead/my';
 
@@ -404,6 +414,13 @@ const routeToItemList = (row: InfoVO) => {
 /** 路由到合同页面 */
 const routeToContract = (row: InfoVO) => {
   router.push({ path: '/contract/info-list/' + row.id + '/' + row.customerId });
+};
+
+/** 路由到活动页面 */
+const routeToActivity = async (row: InfoVO) => {
+  const res = await getCustomerInfo(row.customerId);
+  const type = res.data.convertedTime ? 'customer' : 'lead';
+  router.push({ path: '/activity/info-list/' + type + '/' + res.data.id });
 };
 
 /** 处理路由参数，初始化客户选项列表 */
