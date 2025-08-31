@@ -122,7 +122,13 @@
         <el-table-column type="selection" width="55" align="center" fixed="left" />
         <el-table-column label="ID" align="center" prop="id" v-if="true" />
         <el-table-column label="创建时间" align="center" prop="createTime" />
-        <el-table-column label="编号" align="center" prop="code" />
+        <el-table-column label="编号" align="center" prop="code" width="120">
+          <template #default="scope">
+            <el-tooltip :content="scope.row.code" placement="top" :show-after="300">
+              <p class="text-eclipse-2">{{ scope.row.code }}</p>
+            </el-tooltip>
+          </template>
+        </el-table-column>
         <el-table-column label="标题" align="center" prop="title" />
         <el-table-column label="客户ID" align="center" prop="customerId" />
         <el-table-column label="联系人ID" align="center" prop="contactId" />
@@ -168,7 +174,7 @@
         <el-table-column label="备注说明" align="center" prop="remark" width="240">
           <template #default="scope">
             <el-tooltip :content="scope.row.remark" placement="top" :show-after="300">
-              <p class="descStyle">{{ scope.row.remark }}</p>
+              <p class="text-eclipse">{{ scope.row.remark }}</p>
             </el-tooltip>
           </template>
         </el-table-column>
@@ -210,8 +216,8 @@
     <!-- 添加或修改合同信息对话框 -->
     <el-dialog :title="dialog.title" v-model="dialog.visible" width="960px" append-to-body>
       <el-form ref="infoFormRef" :model="form" :rules="rules" label-width="120px">
-        <el-form-item label="编号" prop="code">
-          <el-input v-model="form.code" placeholder="请输入编号" />
+        <el-form-item label="编号" prop="code" v-if="form.id">
+          <el-input v-model="form.code" placeholder="请输入编号" disabled />
         </el-form-item>
         <el-form-item label="标题" prop="title">
           <el-input v-model="form.title" placeholder="请输入标题" />
@@ -252,12 +258,12 @@
         <el-form-item label="备注说明" prop="remark">
           <el-input v-model="form.remark" type="textarea" placeholder="请输入内容" />
         </el-form-item>
-        <el-form-item label="指派给" prop="assignedTo">
+        <!-- <el-form-item label="指派给" prop="assignedTo">
           <el-input v-model="form.assignedTo" placeholder="请输入指派给" />
         </el-form-item>
         <el-form-item label="指派部门" prop="assignedDept">
           <el-input v-model="form.assignedDept" placeholder="请输入指派部门" />
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item label="附件" prop="terms">
           <file-upload v-model="form.terms" />
         </el-form-item>
@@ -362,7 +368,7 @@ const data = reactive<PageData<InfoForm, InfoQuery>>({
   },
   rules: {
     id: [{ required: true, message: 'ID不能为空', trigger: 'blur' }],
-    code: [{ required: true, message: '编号不能为空', trigger: 'blur' }],
+    // code: [{ required: true, message: '编号不能为空', trigger: 'blur' }],
     title: [{ required: true, message: '标题不能为空', trigger: 'blur' }],
     customerId: [{ required: true, message: '客户ID不能为空', trigger: 'blur' }],
     contactId: [{ required: true, message: '联系人ID不能为空', trigger: 'blur' }],

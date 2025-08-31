@@ -111,14 +111,14 @@
         <el-table-column label="属性JSON" align="center" prop="attrJson" width="240">
           <template #default="scope">
             <el-tooltip :content="scope.row.attrJson" placement="top" :show-after="300">
-              <p class="descStyle">{{ scope.row.attrJson }}</p>
+              <p class="text-eclipse">{{ scope.row.attrJson }}</p>
             </el-tooltip>
           </template>
         </el-table-column>
         <el-table-column label="规格JSON" align="center" prop="specJson" width="240">
           <template #default="scope">
             <el-tooltip :content="scope.row.specJson" placement="top" :show-after="300">
-              <p class="descStyle">{{ scope.row.specJson }}</p>
+              <p class="text-eclipse">{{ scope.row.specJson }}</p>
             </el-tooltip>
           </template>
         </el-table-column>

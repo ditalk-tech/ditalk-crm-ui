@@ -105,14 +105,14 @@
         <el-table-column label="主题" align="center" prop="subject" width="160">
           <template #default="scope">
             <el-tooltip :content="scope.row.subject" placement="top" :show-after="300">
-              <p class="descStyle">{{ scope.row.subject }}</p>
+              <p class="text-eclipse">{{ scope.row.subject }}</p>
             </el-tooltip>
           </template>
         </el-table-column>
         <el-table-column label="描述内容" align="center" prop="description" width="240">
           <template #default="scope">
             <el-tooltip :content="scope.row.description" placement="top" :show-after="300">
-              <p class="descStyle">{{ scope.row.description }}</p>
+              <p class="text-eclipse">{{ scope.row.description }}</p>
             </el-tooltip>
           </template>
         </el-table-column>

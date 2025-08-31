@@ -95,7 +95,7 @@
         <el-table-column label="描述内容" align="center" prop="remark" width="240">
           <template #default="scope">
             <el-tooltip :content="scope.row.remark" placement="top" :show-after="300">
-              <p class="descStyle">{{ scope.row.remark }}</p>
+              <p class="text-eclipse">{{ scope.row.remark }}</p>
             </el-tooltip>
           </template>
         </el-table-column>
