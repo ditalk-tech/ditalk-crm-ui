@@ -11,9 +11,17 @@ class MoneyConverter {
    * @param decimalPlaces 小数位数，默认2位
    * @returns 带小数位的金额字符串
    */
-  static longToAmount(amount: number, decimalPlaces: number = 2): string {
+  static longToAmountStr(amount: number | string, decimalPlaces: number = 2): string {
+    // 统一转换为数字处理
+    let numericAmount: number;
+    if (typeof amount === 'string') {
+      numericAmount = parseInt(amount, 10);
+    } else {
+      numericAmount = amount;
+    }
+
     // 验证输入
-    if (!Number.isInteger(amount)) {
+    if (!Number.isInteger(numericAmount)) {
       throw new Error('金额必须是整数（long类型）');
     }
     if (decimalPlaces < 0 || !Number.isInteger(decimalPlaces)) {
@@ -21,13 +29,13 @@ class MoneyConverter {
     }
 
     // 处理0的情况
-    if (amount === 0) {
+    if (numericAmount === 0) {
       return `0.${'0'.repeat(decimalPlaces)}`;
     }
 
     // 处理负数
-    const isNegative = amount < 0;
-    const absAmount = Math.abs(amount);
+    const isNegative = numericAmount < 0;
+    const absAmount = Math.abs(numericAmount);
     const amountStr = absAmount.toString();
 
     // 计算整数部分和小数部分
@@ -53,19 +61,62 @@ class MoneyConverter {
   }
 
   /**
-   * 将带小数位的金额字符串转换为long类型（用于存储）
-   * 采用金融进位算法（四舍五入）
-   * @param amountStr 带小数位的金额字符串
+   * 将long类型金额转换为带小数位的金额数值
+   * @param amount 以long类型表示的金额（无小数位）
    * @param decimalPlaces 小数位数，默认2位
-   * @returns 转换后的long类型金额
+   * @returns 带小数位的金额数值
    */
-  static amountToLong(amountStr: string, decimalPlaces: number = 2): number {
+  static longToAmount(amount: number | string, decimalPlaces: number = 2): number {
+    // 统一转换为数字处理
+    let numericAmount: number;
+    if (typeof amount === 'string') {
+      numericAmount = parseInt(amount, 10);
+    } else {
+      numericAmount = amount;
+    }
+
     // 验证输入
-    if (typeof amountStr !== 'string' || amountStr.trim() === '') {
-      throw new Error('金额字符串不能为空');
+    if (!Number.isInteger(numericAmount)) {
+      throw new Error('金额必须是整数（long类型）');
     }
     if (decimalPlaces < 0 || !Number.isInteger(decimalPlaces)) {
       throw new Error('小数位数必须是非负整数');
+    }
+
+    // 处理0的情况
+    if (numericAmount === 0) {
+      return 0;
+    }
+
+    // 计算除数
+    const divisor = Math.pow(10, decimalPlaces);
+
+    // 直接进行数值计算并返回
+    return numericAmount / divisor;
+  }
+
+  /**
+   * 将带小数位的金额转换为long类型（用于存储）
+   * 采用金融进位算法（四舍五入）
+   * @param amount 带小数位的金额，可以是数字或字符串形式
+   * @param decimalPlaces 小数位数，默认2位
+   * @returns 转换后的long类型金额
+   */
+  static amountToLong(amount: string | number, decimalPlaces: number = 2): number {
+    // 验证输入
+    if (amount === null || amount === undefined || (typeof amount === 'string' && amount.trim() === '')) {
+      throw new Error('金额不能为空');
+    }
+    if (decimalPlaces < 0 || !Number.isInteger(decimalPlaces)) {
+      throw new Error('小数位数必须是非负整数');
+    }
+
+    // 统一转换为字符串处理
+    let amountStr: string;
+    if (typeof amount === 'number') {
+      amountStr = amount.toString();
+    } else {
+      amountStr = amount;
     }
 
     // 移除任何可能存在的千位分隔符
