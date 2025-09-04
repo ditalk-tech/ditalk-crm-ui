@@ -58,10 +58,16 @@ export interface QuotationItemVO {
    * 图片Url
    */
   mainPicUrl: string;
+
   /**
    * 规格JSON
    */
   specJson: string;
+
+  /**
+   * 单位
+   */
+  unitName: string;
 
   /**
    * 售价
@@ -102,6 +108,11 @@ export interface QuotationItemVO {
    * 总价
    */
   totalPrice: number;
+
+  /**
+   * 交付日期
+   */
+  deliveryDate: string;
 }
 
 export interface QuotationItemForm extends BaseEntity {
@@ -161,6 +172,11 @@ export interface QuotationItemForm extends BaseEntity {
   specJson?: string;
 
   /**
+   * 单位
+   */
+  unitName: string;
+
+  /**
    * 售价
    */
   salePrice?: number;
@@ -199,6 +215,11 @@ export interface QuotationItemForm extends BaseEntity {
    * 总价
    */
   totalPrice?: number;
+
+  /**
+   * 交付日期
+   */
+  deliveryDate: string;
 }
 
 export interface QuotationItemQuery extends PageQuery {

@@ -94,6 +94,7 @@
           </template>
         </el-table-column>
         <el-table-column label="规格JSON" align="center" prop="specJson" />
+        <el-table-column label="单位" align="center" prop="unitName" />
         <el-table-column label="售价" align="center" prop="salePrice" />
         <el-table-column label="原价" align="center" prop="originalPrice" />
         <el-table-column label="成本价" align="center" prop="costPrice" />
@@ -102,6 +103,11 @@
         <el-table-column label="单价" align="center" prop="unitPrice" />
         <el-table-column label="购买数量" align="center" prop="quantity" />
         <el-table-column label="总价" align="center" prop="totalPrice" />
+        <el-table-column label="交付日期" align="center" prop="deliveryDate">
+          <template #default="scope">
+            <span>{{ proxy.parseTime(scope.row.deliveryDate, '{y}-{m}-{d}') }}</span>
+          </template>
+        </el-table-column>
         <el-table-column label="操作" align="center" class-name="small-padding fixed-width" fixed="right">
           <template #default="scope">
             <el-button-group>
@@ -160,6 +166,9 @@
         <el-form-item label="规格JSON" prop="specJson">
           <el-input v-model="form.specJson" type="textarea" placeholder="请输入内容" />
         </el-form-item>
+        <el-form-item label="单位" prop="unitName">
+          <el-input v-model="form.unitName" placeholder="请输入单位" />
+        </el-form-item>
         <el-form-item label="售价" prop="salePrice">
           <el-input v-model="form.salePrice" placeholder="请输入售价" />
         </el-form-item>
@@ -183,6 +192,9 @@
         </el-form-item>
         <el-form-item label="总价" prop="totalPrice">
           <el-input v-model="form.totalPrice" placeholder="请输入总价" />
+        </el-form-item>
+        <el-form-item label="交付日期" prop="deliveryDate">
+          <el-date-picker clearable v-model="form.deliveryDate" type="date" value-format="YYYY-MM-DD" placeholder="请选择交付日期"></el-date-picker>
         </el-form-item>
       </el-form>
       <template #footer>
@@ -231,6 +243,7 @@ const initFormData: QuotationItemForm = {
   skuSn: undefined,
   mainPic: undefined,
   specJson: undefined,
+  unitName: undefined,
   salePrice: undefined,
   originalPrice: undefined,
   costPrice: undefined,
@@ -238,7 +251,8 @@ const initFormData: QuotationItemForm = {
   volume: undefined,
   unitPrice: undefined,
   quantity: undefined,
-  totalPrice: undefined
+  totalPrice: undefined,
+  deliveryDate: undefined
 };
 const data = reactive<PageData<QuotationItemForm, QuotationItemQuery>>({
   form: { ...initFormData },
