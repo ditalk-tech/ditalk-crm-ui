@@ -33,7 +33,7 @@
             <el-form-item label="有效期到" style="width: 308px">
               <el-date-picker
                 v-model="dateRangeValidUntil"
-                value-format="YYYY-MM-DD HH:mm:ss"
+                value-format="YYYY-MM-DD"
                 type="daterange"
                 range-separator="-"
                 start-placeholder="开始日期"
@@ -105,7 +105,11 @@
         <el-table-column label="总售价" align="center" prop="totalSalePrice" />
         <el-table-column label="总定价" align="center" prop="totalOriginalPrice" />
         <el-table-column label="总成本" align="center" prop="totalCostPrice" />
-        <el-table-column label="有效期到" align="center" prop="validUntil" width="180" />
+        <el-table-column label="有效期到" align="center" prop="validUntil">
+          <template #default="scope">
+            <span>{{ proxy.parseTime(scope.row.validUntil, '{y}-{m}-{d}') }}</span>
+          </template>
+        </el-table-column>
         <el-table-column label="引用状态" align="center" prop="quoted">
           <template #default="scope">
             <dict-tag :options="sys_yes_no" :value="scope.row.quoted" />
@@ -171,8 +175,7 @@
           <el-input v-model="form.totalCostPrice" placeholder="请输入总成本" />
         </el-form-item> -->
         <el-form-item label="有效期到" prop="validUntil">
-          <el-date-picker clearable v-model="form.validUntil" type="datetime" value-format="YYYY-MM-DD HH:mm:ss" placeholder="请选择有效期到">
-          </el-date-picker>
+          <el-date-picker clearable v-model="form.validUntil" type="date" value-format="YYYY-MM-DD" placeholder="请选择有效期到"> </el-date-picker>
         </el-form-item>
         <!-- <el-form-item label="分派给" prop="assignedTo">
           <el-input v-model="form.assignedTo" placeholder="请输入分派给" />

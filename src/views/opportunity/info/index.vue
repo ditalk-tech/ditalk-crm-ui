@@ -36,7 +36,7 @@
             <el-form-item label="预计成交日期" style="width: 308px">
               <el-date-picker
                 v-model="dateRangeCloseDate"
-                value-format="YYYY-MM-DD HH:mm:ss"
+                value-format="YYYY-MM-DD"
                 type="daterange"
                 range-separator="-"
                 start-placeholder="开始日期"
@@ -91,7 +91,11 @@
         <el-table-column label="商机标题" align="center" prop="title" />
         <el-table-column :label="typeName + 'ID'" align="center" prop="customerId" />
         <el-table-column label="预计销售金额" align="center" prop="amount" />
-        <el-table-column label="预计成交日期" align="center" prop="closeDate" width="180" />
+        <el-table-column label="预计成交日期" align="center" prop="closeDate">
+          <template #default="scope">
+            <span>{{ proxy.parseTime(scope.row.closeDate, '{y}-{m}-{d}') }}</span>
+          </template>
+        </el-table-column>
         <el-table-column label="描述内容" align="center" prop="remark" width="240">
           <template #default="scope">
             <el-tooltip :content="scope.row.remark" placement="top" :show-after="300">
@@ -181,7 +185,7 @@
           </el-col>
           <el-col :span="12">
             <el-form-item label="预计成交日期" prop="closeDate">
-              <el-date-picker clearable v-model="form.closeDate" type="datetime" value-format="YYYY-MM-DD HH:mm:ss" placeholder="请选择预计成交日期">
+              <el-date-picker clearable v-model="form.closeDate" type="date" value-format="YYYY-MM-DD" placeholder="请选择预计成交日期">
               </el-date-picker>
             </el-form-item>
           </el-col>
