@@ -87,7 +87,7 @@
       <el-table v-loading="loading" border :data="infoList" @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="55" align="center" fixed="left" />
         <el-table-column label="ID" align="center" prop="id" v-if="true" />
-        <el-table-column label="创建时间" align="center" prop="createTime" width="180" />
+        <el-table-column label="创建时间" align="center" prop="createTime" />
         <el-table-column label="商机标题" align="center" prop="title" />
         <el-table-column :label="typeName + 'ID'" align="center" prop="customerId" />
         <el-table-column label="预计销售金额" align="center" prop="amount" />

@@ -86,7 +86,7 @@
             :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
           >
             <el-table-column label="ID" align="center" prop="id" width="280" />
-            <el-table-column label="创建时间" align="center" prop="createTime" width="180" />
+            <el-table-column label="创建时间" align="center" prop="createTime" />
             <!-- <el-table-column label="店铺ID" align="center" prop="shopId" /> -->
             <el-table-column label="父类ID" align="center" prop="parentId" />
             <!-- <el-table-column label="祖级列表" align="center" prop="ancestors" /> -->

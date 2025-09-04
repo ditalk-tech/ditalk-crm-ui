@@ -70,7 +70,7 @@
       <el-table v-loading="loading" border :data="openidList" @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="55" align="center" fixed="left" />
         <el-table-column label="主键" align="center" prop="id" v-if="true" />
-        <el-table-column label="创建时间" align="center" prop="createTime" width="180" />
+        <el-table-column label="创建时间" align="center" prop="createTime" />
         <!-- <el-table-column label="乐观锁" align="center" prop="version" /> -->
         <el-table-column label="会员ID" align="center" prop="memberId" />
         <el-table-column label="App应用ID" align="center" prop="appId" />

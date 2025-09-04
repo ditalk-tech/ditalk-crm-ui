@@ -62,7 +62,7 @@
       <el-table v-loading="loading" border :data="memberList" @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="55" align="center" fixed="left" />
         <el-table-column label="ID" align="center" prop="id" v-if="true" />
-        <el-table-column label="创建时间" align="center" prop="createTime" width="180" />
+        <el-table-column label="创建时间" align="center" prop="createTime" />
         <el-table-column label="活动ID" align="center" prop="eventId" />
         <el-table-column label="会员ID" align="center" prop="memberId" />
         <el-table-column label="开始时间" align="center" prop="startTime" width="180" />

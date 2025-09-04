@@ -59,7 +59,7 @@
       <el-table v-loading="loading" border :data="photoList" @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="55" align="center" fixed="left" />
         <el-table-column label="ID" align="center" prop="id" v-if="true" />
-        <el-table-column label="创建时间" align="center" prop="createTime" width="180" />
+        <el-table-column label="创建时间" align="center" prop="createTime" />
         <el-table-column label="照片" align="center" prop="photoUrl" width="100">
           <template #default="scope">
             <image-preview :src="scope.row.photoUrl" :width="50" :height="50" />
