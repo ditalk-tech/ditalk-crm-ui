@@ -38,10 +38,16 @@ export interface SkuVO {
    * 图片Url
    */
   mainPicUrl: string;
+
   /**
    * 规格JSON
    */
   specJson: string;
+
+  /**
+   * 单位
+   */
+  unitName: string;
 
   /**
    * 售价
@@ -139,6 +145,11 @@ export interface SkuForm extends BaseEntity {
    * 规格JSON
    */
   specJson?: string;
+
+  /**
+   * 单位
+   */
+  unitName?: string;
 
   /**
    * 售价

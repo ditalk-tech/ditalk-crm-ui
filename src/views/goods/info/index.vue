@@ -374,6 +374,11 @@
                     <el-input-number v-model="scope.row.volume" :min="0" :precision="4" :controls="false" style="width: 100%"></el-input-number>
                   </template>
                 </el-table-column>
+                <el-table-column label="单位" align="center" prop="unitName" width="80">
+                  <template #default="scope">
+                    <el-input v-model="scope.row.unitName"></el-input>
+                  </template>
+                </el-table-column>
                 <el-table-column label="可用库存" align="center" prop="availableStock" width="100">
                   <template #default="scope">
                     <el-input-number
@@ -848,6 +853,7 @@ const saveSku = () => {
       skuSn: sku.skuSn,
       mainPic: sku.mainPic,
       specJson: sku.specJson,
+      unitName: sku.unitName,
       salePrice: sku.salePrice * 100,
       originalPrice: sku.originalPrice * 100,
       costPrice: sku.costPrice * 100,

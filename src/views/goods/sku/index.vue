@@ -90,6 +90,7 @@
         <el-table-column label="体积(m³)" align="center" prop="volume">
           <template #default="scope"> {{ scope.row.volume / 10000 }} </template>
         </el-table-column>
+        <el-table-column label="单位" align="center" prop="unitName" />
         <el-table-column label="可用库存" align="center" prop="availableStock" />
         <!-- <el-table-column label="锁定库存" align="center" prop="reservedStock" />
         <el-table-column label="已占库存" align="center" prop="allocatedStock" />
@@ -133,6 +134,9 @@
         <el-form-item label="规格JSON" prop="specJson">
           <el-input v-model="form.specJson" type="textarea" placeholder="请输入内容" />
         </el-form-item>
+        <el-form-item label="单位" prop="unitName">
+          <el-input v-model="form.unitName" placeholder="请输入单位" />
+        </el-form-item>
         <el-form-item label="售价" prop="salePrice">
           <el-input v-model="form.salePrice" placeholder="请输入售价" />
         </el-form-item>
@@ -147,6 +151,9 @@
         </el-form-item>
         <el-form-item label="体积(m³)" prop="volume">
           <el-input v-model="form.volume" placeholder="请输入体积(m³)" />
+        </el-form-item>
+        <el-form-item label="单位" prop="unitName">
+          <el-input v-model="form.unitName" placeholder="请输入单位" />
         </el-form-item>
         <el-form-item label="可用库存" prop="availableStock">
           <el-input v-model="form.availableStock" placeholder="请输入可用库存" />
@@ -217,6 +224,7 @@ const initFormData: SkuForm = {
   skuSn: undefined,
   mainPic: undefined,
   specJson: undefined,
+  unitName: undefined,
   salePrice: undefined,
   originalPrice: undefined,
   costPrice: undefined,

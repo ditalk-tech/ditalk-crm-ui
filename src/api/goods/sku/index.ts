@@ -13,6 +13,7 @@ export const initSkuVO = (): SkuVO => {
     mainPic: 0,
     mainPicUrl: '',
     specJson: '',
+    unitName: '',
     salePrice: 0,
     originalPrice: 0,
     costPrice: 0,
