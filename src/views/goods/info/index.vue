@@ -415,7 +415,7 @@ import { getTreeSelect } from '@/api/goods/category';
 import { BrandVO } from '@/api/goods/brand/types';
 import { listBrand } from '@/api/goods/brand';
 import * as handleRes from '@/utils/handleRes';
-import * as valueCheck from '@/utils/valueCheck';
+import * as ValueCheck from '@/utils/ditalk/ValueCheck';
 
 const router = useRouter();
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
@@ -826,7 +826,7 @@ const saveContent = async () => {
 const saveSku = () => {
   // 表单校验
   for (const sku of skuList.value) {
-    if (valueCheck.isNullOrUndefined(sku.mainPic) || sku.mainPic === 0) {
+    if (ValueCheck.isEmpty(sku.mainPic) || sku.mainPic === 0) {
       proxy?.$modal.msgError('请上传SKU主图');
       return;
     }
@@ -941,7 +941,7 @@ const mergeIntoSkuList = () => {
       spec.map((item) => item.split(':'))
     );
     // 判断 skuList 中有没有 specJson 等于 spec 的 sku
-    let sku = skuList.value.find((sku) => valueCheck.isEqualObject(JSON.parse(sku.specJson), specObject));
+    let sku = skuList.value.find((sku) => ValueCheck.isEqual(JSON.parse(sku.specJson), specObject));
     if (sku) {
       return; // 有则跳过
     } else {
@@ -1049,7 +1049,7 @@ const handleSpecArray = async () => {
     const goodsSkuSpecRes = await listSkuSpecByShopIdAndCategoryId(form.value.shopId, form.value.categoryId);
     const goodsSkuSpecList: SkuSpecVO[] = goodsSkuSpecRes.data;
     // 把 goodsSkuSpecList 转成 specArray
-    if (!valueCheck.isEmptyArr(goodsSkuSpecList)) {
+    if (!ValueCheck.isEmpty(goodsSkuSpecList)) {
       goodsSkuSpecList.forEach((skuSpec) => {
         specArray.value[skuSpec.name] = JSON.parse(skuSpec.specJson || '');
       });

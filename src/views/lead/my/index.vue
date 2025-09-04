@@ -459,7 +459,7 @@ import { listInfo, getInfo, addLeadContact, updateLeadContact, reclaim, transfer
 import { listOption } from '@/api/app/sys/user';
 import { UserOption } from '@/api/app/sys/user/types';
 import { InfoForm as ContactInfoForm } from '@/api/contact/info/types';
-import * as valueCheck from '@/utils/valueCheck';
+import * as ValueCheck from '@/utils/ditalk/ValueCheck';
 
 const router = useRouter();
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
@@ -701,10 +701,10 @@ const handleUpdate = async (row?: InfoVO) => {
 /** 提交按钮 */
 const submitForm = async () => {
   let flag = true;
-  if (valueCheck.isNullOrUndefined(form.value.contactId)) {
+  if (ValueCheck.isEmpty(form.value.contactId)) {
     form.value.contactId = 1; // 临时值，本方法后台不使用
   }
-  if (valueCheck.isNullOrUndefined(contactForm.value.customerId)) {
+  if (ValueCheck.isEmpty(contactForm.value.customerId)) {
     contactForm.value.customerId = 1; // 临时值，本方法后台不使用
   }
   infoFormRef.value?.validate((valid: boolean) => {
