@@ -78,6 +78,11 @@ export interface QuotationVO {
    * 备注
    */
   remark: string;
+
+  /**
+   * 引用状态
+   */
+  quoted: string;
 }
 
 export interface QuotationForm extends BaseEntity {
@@ -155,6 +160,11 @@ export interface QuotationForm extends BaseEntity {
    * 备注
    */
   remark?: string;
+
+  /**
+   * 引用状态
+   */
+  quoted?: string;
 }
 
 export interface QuotationQuery extends PageQuery {
@@ -212,6 +222,11 @@ export interface QuotationQuery extends PageQuery {
    * 交互状态
    */
   quotationState?: string;
+
+  /**
+   * 引用状态
+   */
+  quoted?: string;
 
   /**
    * 日期范围参数

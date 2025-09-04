@@ -57,6 +57,11 @@
                 <el-option v-for="dict in ditalk_opportunity_quotation_state" :key="dict.value" :label="dict.label" :value="dict.value" />
               </el-select>
             </el-form-item>
+            <el-form-item label="引用状态" prop="quoted">
+              <el-select v-model="queryParams.quoted" placeholder="请选择引用状态" clearable>
+                <el-option v-for="dict in sys_yes_no" :key="dict.value" :label="dict.label" :value="dict.value" />
+              </el-select>
+            </el-form-item>
             <el-form-item>
               <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
               <el-button icon="Refresh" @click="resetQuery">重置</el-button>
@@ -101,6 +106,11 @@
         <el-table-column label="总定价" align="center" prop="totalOriginalPrice" />
         <el-table-column label="总成本" align="center" prop="totalCostPrice" />
         <el-table-column label="有效期到" align="center" prop="validUntil" width="180" />
+        <el-table-column label="引用状态" align="center" prop="quoted">
+          <template #default="scope">
+            <dict-tag :options="sys_yes_no" :value="scope.row.quoted" />
+          </template>
+        </el-table-column>
         <el-table-column label="分派给" align="center" prop="assignedTo" />
         <el-table-column label="分派部门" align="center" prop="assignedDept" />
         <el-table-column label="审批状态" align="center" prop="approvalState">
@@ -139,19 +149,19 @@
     <!-- 添加或修改商机报价单对话框 -->
     <el-dialog :title="dialog.title" v-model="dialog.visible" width="960px" append-to-body>
       <el-form ref="quotationFormRef" :model="form" :rules="rules" label-width="120px">
+        <el-form-item label="编号" prop="code" v-if="!!form.id">
+          <el-input v-model="form.code" placeholder="请输入编号" :disabled="!!form.id" />
+        </el-form-item>
         <el-form-item label="商机ID" prop="opportunityId">
-          <el-input v-model="form.opportunityId" placeholder="请输入商机ID" />
+          <el-input v-model="form.opportunityId" placeholder="请输入商机ID" :disabled="!!form.id" />
         </el-form-item>
         <el-form-item label="客户ID" prop="customerId">
-          <el-input v-model="form.customerId" placeholder="请输入客户ID" />
+          <el-input v-model="form.customerId" placeholder="请输入客户ID" :disabled="!!form.id" />
         </el-form-item>
         <el-form-item label="联系人ID" prop="contactId">
-          <el-input v-model="form.contactId" placeholder="请输入联系人ID" />
+          <el-input v-model="form.contactId" placeholder="请输入联系人ID" :disabled="!!form.id" />
         </el-form-item>
-        <el-form-item label="编号" prop="code">
-          <el-input v-model="form.code" placeholder="请输入编号" />
-        </el-form-item>
-        <el-form-item label="总售价" prop="totalSalePrice">
+        <!-- <el-form-item label="总售价" prop="totalSalePrice">
           <el-input v-model="form.totalSalePrice" placeholder="请输入总售价" />
         </el-form-item>
         <el-form-item label="总定价" prop="totalOriginalPrice">
@@ -159,29 +169,34 @@
         </el-form-item>
         <el-form-item label="总成本" prop="totalCostPrice">
           <el-input v-model="form.totalCostPrice" placeholder="请输入总成本" />
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item label="有效期到" prop="validUntil">
           <el-date-picker clearable v-model="form.validUntil" type="datetime" value-format="YYYY-MM-DD HH:mm:ss" placeholder="请选择有效期到">
           </el-date-picker>
         </el-form-item>
-        <el-form-item label="分派给" prop="assignedTo">
+        <!-- <el-form-item label="分派给" prop="assignedTo">
           <el-input v-model="form.assignedTo" placeholder="请输入分派给" />
         </el-form-item>
         <el-form-item label="分派部门" prop="assignedDept">
           <el-input v-model="form.assignedDept" placeholder="请输入分派部门" />
-        </el-form-item>
-        <el-form-item label="审批状态" prop="approvalState">
+        </el-form-item> -->
+        <!-- <el-form-item label="审批状态" prop="approvalState">
           <el-radio-group v-model="form.approvalState">
             <el-radio v-for="dict in wf_business_status" :key="dict.value" :value="dict.value">{{ dict.label }}</el-radio>
           </el-radio-group>
-        </el-form-item>
-        <el-form-item label="交互状态" prop="quotationState">
+        </el-form-item> -->
+        <!-- <el-form-item label="交互状态" prop="quotationState">
           <el-radio-group v-model="form.quotationState">
             <el-radio v-for="dict in ditalk_opportunity_quotation_state" :key="dict.value" :value="dict.value">{{ dict.label }}</el-radio>
           </el-radio-group>
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item label="备注" prop="remark">
           <el-input v-model="form.remark" type="textarea" placeholder="请输入内容" />
+        </el-form-item>
+        <el-form-item label="引用状态" prop="quoted">
+          <el-radio-group v-model="form.quoted">
+            <el-radio v-for="dict in sys_yes_no" :key="dict.value" :value="dict.value">{{ dict.label }}</el-radio>
+          </el-radio-group>
         </el-form-item>
       </el-form>
       <template #footer>
@@ -201,8 +216,8 @@ import { QuotationVO, QuotationQuery, QuotationForm } from '@/api/opportunity/qu
 const route = useRoute();
 const router = useRouter();
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
-const { wf_business_status, ditalk_opportunity_quotation_state } = toRefs<any>(
-  proxy?.useDict('wf_business_status', 'ditalk_opportunity_quotation_state')
+const { wf_business_status, ditalk_opportunity_quotation_state, sys_yes_no } = toRefs<any>(
+  proxy?.useDict('wf_business_status', 'ditalk_opportunity_quotation_state', 'sys_yes_no')
 );
 
 const quotationList = ref<QuotationVO[]>([]);
@@ -242,7 +257,8 @@ const initFormData: QuotationForm = {
   assignedDept: undefined,
   approvalState: undefined,
   quotationState: undefined,
-  remark: undefined
+  remark: undefined,
+  quoted: undefined
 };
 const data = reactive<PageData<QuotationForm, QuotationQuery>>({
   form: { ...initFormData },
@@ -258,6 +274,7 @@ const data = reactive<PageData<QuotationForm, QuotationQuery>>({
     assignedDept: undefined,
     approvalState: undefined,
     quotationState: undefined,
+    quoted: undefined,
     params: {
       createTime: undefined,
       validUntil: undefined
@@ -268,13 +285,14 @@ const data = reactive<PageData<QuotationForm, QuotationQuery>>({
     opportunityId: [{ required: true, message: '商机ID不能为空', trigger: 'blur' }],
     customerId: [{ required: true, message: '客户ID不能为空', trigger: 'blur' }],
     contactId: [{ required: true, message: '联系人ID不能为空', trigger: 'blur' }],
-    code: [{ required: true, message: '编号不能为空', trigger: 'blur' }],
-    totalSalePrice: [{ required: true, message: '总售价不能为空', trigger: 'blur' }],
-    totalOriginalPrice: [{ required: true, message: '总定价不能为空', trigger: 'blur' }],
-    totalCostPrice: [{ required: true, message: '总成本不能为空', trigger: 'blur' }],
+    // code: [{ required: true, message: '编号不能为空', trigger: 'blur' }],
+    // totalSalePrice: [{ required: true, message: '总售价不能为空', trigger: 'blur' }],
+    // totalOriginalPrice: [{ required: true, message: '总定价不能为空', trigger: 'blur' }],
+    // totalCostPrice: [{ required: true, message: '总成本不能为空', trigger: 'blur' }],
     validUntil: [{ required: true, message: '有效期到不能为空', trigger: 'blur' }],
-    approvalState: [{ required: true, message: '审批状态不能为空', trigger: 'change' }],
-    quotationState: [{ required: true, message: '交互状态不能为空', trigger: 'change' }]
+    // approvalState: [{ required: true, message: '审批状态不能为空', trigger: 'change' }],
+    // quotationState: [{ required: true, message: '交互状态不能为空', trigger: 'change' }],
+    quoted: [{ required: true, message: '引用状态', trigger: 'change' }]
   }
 });
 
