@@ -25,6 +25,11 @@ export interface QuotationVO {
   customerId: string | number;
 
   /**
+   * 联系人ID
+   */
+  contactId: string | number;
+
+  /**
    * 编号
    */
   code: string;
@@ -97,6 +102,11 @@ export interface QuotationForm extends BaseEntity {
   customerId?: string | number;
 
   /**
+   * 联系人ID
+   */
+  contactId?: string | number;
+
+  /**
    * 编号
    */
   code?: string;
@@ -167,6 +177,11 @@ export interface QuotationQuery extends PageQuery {
    * 客户ID
    */
   customerId?: string | number;
+
+  /**
+   * 联系人ID
+   */
+  contactId?: string | number;
 
   /**
    * 编号

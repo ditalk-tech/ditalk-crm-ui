@@ -24,6 +24,9 @@
             <el-form-item label="客户ID" prop="customerId">
               <el-input v-model="queryParams.customerId" placeholder="请输入客户ID" clearable @keyup.enter="handleQuery" />
             </el-form-item>
+            <el-form-item label="联系人ID" prop="contactId">
+              <el-input v-model="queryParams.contactId" placeholder="请输入联系人ID" clearable @keyup.enter="handleQuery" />
+            </el-form-item>
             <el-form-item label="编号" prop="code">
               <el-input v-model="queryParams.code" placeholder="请输入编号" clearable @keyup.enter="handleQuery" />
             </el-form-item>
@@ -92,6 +95,7 @@
         <el-table-column label="创建时间" align="center" prop="createTime" width="180" />
         <el-table-column label="商机ID" align="center" prop="opportunityId" />
         <el-table-column label="客户ID" align="center" prop="customerId" />
+        <el-table-column label="联系人ID" align="center" prop="contactId" />
         <el-table-column label="编号" align="center" prop="code" />
         <el-table-column label="总售价" align="center" prop="totalSalePrice" />
         <el-table-column label="总定价" align="center" prop="totalOriginalPrice" />
@@ -140,6 +144,9 @@
         </el-form-item>
         <el-form-item label="客户ID" prop="customerId">
           <el-input v-model="form.customerId" placeholder="请输入客户ID" />
+        </el-form-item>
+        <el-form-item label="联系人ID" prop="contactId">
+          <el-input v-model="form.contactId" placeholder="请输入联系人ID" />
         </el-form-item>
         <el-form-item label="编号" prop="code">
           <el-input v-model="form.code" placeholder="请输入编号" />
@@ -225,6 +232,7 @@ const initFormData: QuotationForm = {
   version: undefined,
   opportunityId: undefined,
   customerId: undefined,
+  contactId: undefined,
   code: undefined,
   totalSalePrice: undefined,
   totalOriginalPrice: undefined,
@@ -244,6 +252,7 @@ const data = reactive<PageData<QuotationForm, QuotationQuery>>({
     id: undefined,
     opportunityId: undefined,
     customerId: undefined,
+    contactId: undefined,
     code: undefined,
     assignedTo: undefined,
     assignedDept: undefined,
@@ -258,6 +267,7 @@ const data = reactive<PageData<QuotationForm, QuotationQuery>>({
     id: [{ required: true, message: 'ID不能为空', trigger: 'blur' }],
     opportunityId: [{ required: true, message: '商机ID不能为空', trigger: 'blur' }],
     customerId: [{ required: true, message: '客户ID不能为空', trigger: 'blur' }],
+    contactId: [{ required: true, message: '联系人ID不能为空', trigger: 'blur' }],
     code: [{ required: true, message: '编号不能为空', trigger: 'blur' }],
     totalSalePrice: [{ required: true, message: '总售价不能为空', trigger: 'blur' }],
     totalOriginalPrice: [{ required: true, message: '总定价不能为空', trigger: 'blur' }],
