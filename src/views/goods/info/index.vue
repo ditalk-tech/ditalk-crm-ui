@@ -123,16 +123,23 @@
           </template>
         </el-table-column>
         <el-table-column label="操作" align="center" class-name="small-padding fixed-width" fixed="right">
-          <template #default="scope">
-            <el-tooltip content="SKU列表" placement="top">
-              <el-button link type="primary" icon="List" @click="routeToSkuList(scope.row)" v-hasPermi="['goods:sku:query']"></el-button>
-            </el-tooltip>
-            <el-tooltip content="修改" placement="top">
-              <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['goods:info:edit']"></el-button>
-            </el-tooltip>
-            <el-tooltip content="删除" placement="top">
-              <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['goods:info:remove']"></el-button>
-            </el-tooltip>
+          <template #default="scope"
+            ><el-button-group>
+              <el-tooltip content="SKU列表" placement="top">
+                <el-button link type="primary" icon="List" @click="routeToSkuList(scope.row)" v-hasPermi="['goods:sku:query']"></el-button>
+              </el-tooltip>
+              <el-tooltip content="修改" placement="top">
+                <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['goods:info:edit']"></el-button>
+              </el-tooltip>
+              <el-tooltip content="删除" placement="top">
+                <el-button
+                  link
+                  type="primary"
+                  icon="Delete"
+                  @click="handleDelete(scope.row)"
+                  v-hasPermi="['goods:info:remove']"
+                ></el-button> </el-tooltip
+            ></el-button-group>
           </template>
         </el-table-column>
       </el-table>

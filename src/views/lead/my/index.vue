@@ -135,69 +135,51 @@
         <el-table-column label="分配到" align="center" prop="assignedTo" />
         <el-table-column label="分配部门" align="center" prop="assignedDept" />
         <el-table-column label="操作" align="center" class-name="small-padding fixed-width" :width="140" fixed="right">
-          <template #default="scope">
-            <el-button
-              style="margin: 0px 2px"
-              link
-              type="primary"
-              size="small"
-              @click="handleActivityInfoList(scope.row)"
-              v-hasPermi="['customer:activity:list']"
-              >活动</el-button
+          <template #default="scope"
+            ><el-button-group>
+              <el-button
+                style="margin: 0px 2px"
+                link
+                type="primary"
+                size="small"
+                @click="handleActivityInfoList(scope.row)"
+                v-hasPermi="['customer:activity:list']"
+                >活动</el-button
+              >
+              <el-button
+                style="margin: 0px 2px"
+                link
+                type="success"
+                size="small"
+                @click="handleContactInfoList(scope.row)"
+                v-hasPermi="['contact:info:list']"
+                >联系人</el-button
+              >
+              <el-button
+                style="margin: 0px 2px"
+                link
+                type="warning"
+                size="small"
+                @click="handleOpportunityInfoList(scope.row)"
+                v-hasPermi="['opportunity:info:list']"
+                >商机</el-button
+              >
+              <el-button style="margin: 0px 2px" link type="danger" size="small" @click="reclaimLead(scope.row.id)" v-hasPermi="['lead:my:reclaim']"
+                >回收</el-button
+              >
+              <el-button
+                style="margin: 0px 2px"
+                link
+                type="warning"
+                size="small"
+                @click="handleTransferLead(scope.row.id)"
+                v-hasPermi="['lead:my:transfer']"
+                >转移</el-button
+              >
+              <el-button style="margin: 0px 2px" link type="primary" size="small" @click="handleUpdate(scope.row)" v-hasPermi="['lead:my:edit']"
+                >编辑</el-button
+              ></el-button-group
             >
-            <el-button
-              style="margin: 0px 2px"
-              link
-              type="success"
-              size="small"
-              @click="handleContactInfoList(scope.row)"
-              v-hasPermi="['contact:info:list']"
-              >联系人</el-button
-            >
-            <el-button
-              style="margin: 0px 2px"
-              link
-              type="warning"
-              size="small"
-              @click="handleOpportunityInfoList(scope.row)"
-              v-hasPermi="['opportunity:info:list']"
-              >商机</el-button
-            >
-            <el-button style="margin: 0px 2px" link type="danger" size="small" @click="reclaimLead(scope.row.id)" v-hasPermi="['lead:my:reclaim']"
-              >回收</el-button
-            >
-            <el-button
-              style="margin: 0px 2px"
-              link
-              type="warning"
-              size="small"
-              @click="handleTransferLead(scope.row.id)"
-              v-hasPermi="['lead:my:transfer']"
-              >转移</el-button
-            >
-            <el-button style="margin: 0px 2px" link type="primary" size="small" @click="handleUpdate(scope.row)" v-hasPermi="['lead:my:edit']"
-              >编辑</el-button
-            >
-            <!-- <el-button link size="small">
-              <el-dropdown trigger="click">
-                <span>更多</span>
-                <template #dropdown>
-                  <el-dropdown-menu>
-                    <el-dropdown-item>
-                      <el-button link type="primary" size="small" @click="handleUpdate(scope.row)" v-hasPermi="['lead:my:edit']">编辑</el-button>
-                    </el-dropdown-item>
-                    <el-dropdown-item>
-                      <el-button link type="danger" size="small" @click="reclaimLead(scope.row.id)" v-hasPermi="['lead:my:reclaim']">回收</el-button>
-                    </el-dropdown-item>
-                    <el-dropdown-item>
-                      <el-button link type="warning" size="small" @click="handleTransferLead(scope.row.id)" v-hasPermi="['lead:my:transfer']"
-                        >转移</el-button
-                      >
-                    </el-dropdown-item>
-                  </el-dropdown-menu>
-                </template>
-              </el-dropdown>
-            </el-button> -->
           </template>
         </el-table-column>
       </el-table>

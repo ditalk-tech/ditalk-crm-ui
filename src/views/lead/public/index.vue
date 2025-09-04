@@ -104,13 +104,35 @@
         </el-table-column>
         <el-table-column label="操作" align="center" class-name="small-padding fixed-width" fixed="right" width="140">
           <template #default="scope">
-            <el-button link type="primary" size="small" @click="handleActivityInfoList(scope.row)" v-hasPermi="['customer:activity:list']"
-              >活动</el-button
+            <el-button-group>
+              <el-button
+                style="margin: 0px 2px"
+                link
+                type="primary"
+                size="small"
+                @click="handleActivityInfoList(scope.row)"
+                v-hasPermi="['customer:activity:list']"
+                >活动</el-button
+              >
+              <el-button
+                style="margin: 0px 2px"
+                link
+                type="success"
+                size="small"
+                @click="handleContactInfoList(scope.row)"
+                v-hasPermi="['contact:info:list']"
+                >联系人</el-button
+              >
+              <el-button
+                style="margin: 0px 2px"
+                link
+                type="primary"
+                size="small"
+                @click="handleClaimToMe(scope.row.id)"
+                v-hasPermi="['customer:public:claim']"
+                >领取</el-button
+              ></el-button-group
             >
-            <el-button link type="success" size="small" @click="handleContactInfoList(scope.row)" v-hasPermi="['contact:info:list']"
-              >联系人</el-button
-            >
-            <el-button link type="primary" size="small" @click="handleClaimToMe(scope.row.id)" v-hasPermi="['customer:public:claim']">领取</el-button>
           </template>
         </el-table-column>
       </el-table>

@@ -102,17 +102,24 @@
                 <dict-tag :options="sys_normal_disable" :value="scope.row.state" />
               </template>
             </el-table-column>
-            <el-table-column label="操作" align="center" class-name="small-padding fixed-width" width="110" fixed="right">
-              <template #default="scope">
-                <el-tooltip content="修改" placement="top">
-                  <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['goods:category:edit']" />
-                </el-tooltip>
-                <el-tooltip content="新增" placement="top">
-                  <el-button link type="primary" icon="Plus" @click="handleAdd(scope.row)" v-hasPermi="['goods:category:add']" />
-                </el-tooltip>
-                <el-tooltip content="删除" placement="top">
-                  <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['goods:category:remove']" />
-                </el-tooltip>
+            <el-table-column label="操作" align="center" class-name="small-padding fixed-width" fixed="right">
+              <template #default="scope"
+                ><el-button-group>
+                  <el-tooltip content="修改" placement="top">
+                    <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['goods:category:edit']" />
+                  </el-tooltip>
+                  <el-tooltip content="新增" placement="top">
+                    <el-button link type="primary" icon="Plus" @click="handleAdd(scope.row)" v-hasPermi="['goods:category:add']" />
+                  </el-tooltip>
+                  <el-tooltip content="删除" placement="top">
+                    <el-button
+                      link
+                      type="primary"
+                      icon="Delete"
+                      @click="handleDelete(scope.row)"
+                      v-hasPermi="['goods:category:remove']"
+                    /> </el-tooltip
+                ></el-button-group>
               </template>
             </el-table-column>
           </el-table>
