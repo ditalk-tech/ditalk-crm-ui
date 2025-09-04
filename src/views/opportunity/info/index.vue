@@ -117,6 +117,15 @@
                   v-hasPermi="['opportunity:orderItem:list']"
                 ></el-button>
               </el-tooltip>
+              <el-tooltip content="报价单" placement="top">
+                <el-button
+                  link
+                  type="primary"
+                  icon="Tickets"
+                  @click="routeToQuotationItemList(scope.row)"
+                  v-hasPermi="['opportunity:quotation:list']"
+                ></el-button>
+              </el-tooltip>
               <el-tooltip content="合同信息" placement="top">
                 <el-button link type="primary" icon="Collection" @click="routeToContract(scope.row)" v-hasPermi="['contract:info:list']"></el-button>
               </el-tooltip>
@@ -203,6 +212,8 @@ import { listInfoOption as listCustomerInfoOption } from '@/api/customer/my';
 import { getInfo as getCustomerInfo } from '@/api/customer/common/info';
 // 线索API
 import { listInfoOption as listLeadInfoOption } from '@/api/lead/my';
+//
+import MoneyConverter from '@/utils/ditalk/MoneyConverter';
 
 const route = useRoute();
 const router = useRouter();
@@ -278,7 +289,7 @@ const getList = async () => {
   proxy?.addDateRange(queryParams.value, dateRangeCloseDate.value, 'CloseDate');
   const res = await listInfo(queryParams.value);
   res.rows.forEach((item) => {
-    item.amount = item.amount / 100; // 单位转换
+    item.amount = MoneyConverter.longToAmountStr(item.amount);
   });
   infoList.value = res.rows;
   total.value = res.total;
@@ -337,7 +348,7 @@ const handleUpdate = async (row?: InfoVO) => {
   dialog.visible = true;
   dialog.title = '修改商机信息';
   // 单位转换
-  amount.value = form.value.amount / 100;
+  amount.value = MoneyConverter.longToAmount(form.value.amount);
 };
 
 /** 提交按钮 */
@@ -346,7 +357,7 @@ const submitForm = () => {
     if (valid) {
       buttonLoading.value = true;
       // 单位转换
-      form.value.amount = amount.value * 100;
+      form.value.amount = MoneyConverter.amountToLong(amount.value);
       if (form.value.id) {
         await updateInfo(form.value).finally(() => (buttonLoading.value = false));
       } else {
@@ -400,6 +411,11 @@ onMounted(() => {
 /** 路由到商机商品页面 */
 const routeToItemList = (row: InfoVO) => {
   router.push({ path: '/opportunity/order-item/info-list/' + row.id });
+};
+
+/** 路由到报价单页面 */
+const routeToQuotationItemList = (row: InfoVO) => {
+  router.push({ path: '/opportunity/quotation/info-list/' + row.id });
 };
 
 /** 路由到合同页面 */

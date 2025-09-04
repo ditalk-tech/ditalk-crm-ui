@@ -27,7 +27,7 @@ export interface InfoVO {
   /**
    * 预计销售金额
    */
-  amount: number;
+  amount: string | number;
 
   /**
    * 订单ID

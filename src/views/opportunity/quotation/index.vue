@@ -191,6 +191,8 @@
 import { listQuotation, getQuotation, delQuotation, addQuotation, updateQuotation } from '@/api/opportunity/quotation';
 import { QuotationVO, QuotationQuery, QuotationForm } from '@/api/opportunity/quotation/types';
 
+const route = useRoute();
+const router = useRouter();
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 const { wf_business_status, ditalk_opportunity_quotation_state } = toRefs<any>(
   proxy?.useDict('wf_business_status', 'ditalk_opportunity_quotation_state')
@@ -209,6 +211,9 @@ const dateRangeValidUntil = ref<[DateModelType, DateModelType]>(['', '']);
 
 const queryFormRef = ref<ElFormInstance>();
 const quotationFormRef = ref<ElFormInstance>();
+
+const defaultOpportunityId = ref<string>();
+const defaultCustomerId = ref<string>();
 
 const dialog = reactive<DialogOption>({
   visible: false,
@@ -301,6 +306,8 @@ const resetQuery = () => {
   dateRangeValidUntil.value = ['', ''];
   queryFormRef.value?.resetFields();
   handleQuery();
+  queryParams.value.customerId = defaultCustomerId.value;
+  queryParams.value.opportunityId = defaultOpportunityId.value;
 };
 
 /** 多选框选中数据 */
@@ -315,6 +322,8 @@ const handleAdd = () => {
   reset();
   dialog.visible = true;
   dialog.title = '添加商机报价单';
+  form.value.customerId = queryParams.value.customerId;
+  form.value.opportunityId = queryParams.value.opportunityId;
 };
 
 /** 修改按钮操作 */
@@ -365,6 +374,15 @@ const handleExport = () => {
 };
 
 onMounted(() => {
+  setDefualtParams();
   getList();
 });
+
+/** 处理路由参数，初始化客户选项列表 */
+const setDefualtParams = async () => {
+  defaultCustomerId.value = route.params && (route.params.customerId as string);
+  queryParams.value.customerId = defaultCustomerId.value;
+  defaultOpportunityId.value = route.params && (route.params.opportunityId as string);
+  queryParams.value.opportunityId = defaultOpportunityId.value;
+};
 </script>
