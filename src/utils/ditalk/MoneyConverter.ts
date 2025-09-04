@@ -12,6 +12,9 @@ class MoneyConverter {
    * @returns 带小数位的金额字符串
    */
   static longToAmountStr(amount: number | string, decimalPlaces: number = 2): string {
+    if (amount === null || amount === undefined) {
+      return undefined;
+    }
     // 统一转换为数字处理
     let numericAmount: number;
     if (typeof amount === 'string') {
@@ -67,6 +70,9 @@ class MoneyConverter {
    * @returns 带小数位的金额数值
    */
   static longToAmount(amount: number | string, decimalPlaces: number = 2): number {
+    if (amount === null || amount === undefined) {
+      return undefined;
+    }
     // 统一转换为数字处理
     let numericAmount: number;
     if (typeof amount === 'string') {
@@ -103,6 +109,9 @@ class MoneyConverter {
    * @returns 转换后的long类型金额
    */
   static amountToLong(amount: string | number, decimalPlaces: number = 2): number {
+    if (amount === null || amount === undefined) {
+      return undefined;
+    }
     // 验证输入
     if (amount === null || amount === undefined || (typeof amount === 'string' && amount.trim() === '')) {
       throw new Error('金额不能为空');
