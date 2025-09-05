@@ -96,6 +96,11 @@
             <span>{{ proxy.parseTime(scope.row.closeDate, '{y}-{m}-{d}') }}</span>
           </template>
         </el-table-column>
+        <el-table-column label="商机阶段" align="center" prop="state">
+          <template #default="scope">
+            <dict-tag :options="ditalk_opportunity_state" :value="scope.row.state" />
+          </template>
+        </el-table-column>
         <el-table-column label="描述内容" align="center" prop="remark" width="240">
           <template #default="scope">
             <el-tooltip :content="scope.row.remark" placement="top" :show-after="300">
@@ -103,24 +108,10 @@
             </el-tooltip>
           </template>
         </el-table-column>
-        <el-table-column label="商机阶段" align="center" prop="state">
-          <template #default="scope">
-            <dict-tag :options="ditalk_opportunity_state" :value="scope.row.state" />
-          </template>
-        </el-table-column>
-        <el-table-column label="关联订单ID" align="center" prop="orderId" />
+        <!-- <el-table-column label="关联订单ID" align="center" prop="orderId" /> -->
         <el-table-column label="操作" align="center" class-name="small-padding fixed-width" fixed="right">
           <template #default="scope">
             <el-button-group>
-              <el-tooltip content="商品记录" placement="top">
-                <el-button
-                  link
-                  type="primary"
-                  icon="Goods"
-                  @click="routeToItemList(scope.row)"
-                  v-hasPermi="['opportunity:orderItem:list']"
-                ></el-button>
-              </el-tooltip>
               <el-tooltip content="报价单" placement="top">
                 <el-button
                   link
@@ -411,11 +402,6 @@ onMounted(() => {
   setDefualtParams();
   getList();
 });
-
-/** 路由到商机商品页面 */
-const routeToItemList = (row: InfoVO) => {
-  router.push({ path: '/opportunity/order-item/info-list/' + row.id });
-};
 
 /** 路由到报价单页面 */
 const routeToQuotationItemList = (row: InfoVO) => {
