@@ -131,6 +131,15 @@
         <el-table-column label="操作" align="center" class-name="small-padding fixed-width" fixed="right">
           <template #default="scope">
             <el-button-group>
+              <el-tooltip content="商品记录" placement="top">
+                <el-button
+                  link
+                  type="primary"
+                  icon="Goods"
+                  @click="routeToItemList(scope.row)"
+                  v-hasPermi="['opportunity:orderItem:list']"
+                ></el-button>
+              </el-tooltip>
               <el-tooltip content="修改" placement="top">
                 <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['opportunity:quotation:edit']"></el-button>
               </el-tooltip>
@@ -408,6 +417,11 @@ onMounted(() => {
   setDefualtParams();
   getList();
 });
+
+/** 路由到商机商品页面 */
+const routeToItemList = (row: QuotationVO) => {
+  router.push({ path: '/opportunity/quotationItem/info-list/' + row.id });
+};
 
 /** 处理路由参数，初始化客户选项列表 */
 const setDefualtParams = async () => {

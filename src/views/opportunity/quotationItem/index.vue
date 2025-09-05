@@ -139,13 +139,13 @@
     <!-- 添加或修改商机报价单明细对话框 -->
     <el-dialog :title="dialog.title" v-model="dialog.visible" width="960px" append-to-body>
       <el-form ref="quotationItemFormRef" :model="form" :rules="rules" label-width="120px">
-        <el-form-item label="商机ID" prop="opportunityId">
+        <!-- <el-form-item label="商机ID" prop="opportunityId">
           <el-input v-model="form.opportunityId" placeholder="请输入商机ID" />
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item label="报价单ID" prop="quotationId">
           <el-input v-model="form.quotationId" placeholder="请输入报价单ID" />
         </el-form-item>
-        <el-form-item label="店铺ID" prop="shopId">
+        <!-- <el-form-item label="店铺ID" prop="shopId">
           <el-input v-model="form.shopId" placeholder="请输入店铺ID" />
         </el-form-item>
         <el-form-item label="客户ID" prop="customerId">
@@ -153,11 +153,11 @@
         </el-form-item>
         <el-form-item label="商品快照ID" prop="goodsSnapshotId">
           <el-input v-model="form.goodsSnapshotId" placeholder="请输入商品快照ID" />
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item label="SKU_ID" prop="skuId">
           <el-input v-model="form.skuId" placeholder="请输入SKU_ID" />
         </el-form-item>
-        <el-form-item label="SKU编码" prop="skuSn">
+        <!-- <el-form-item label="SKU编码" prop="skuSn">
           <el-input v-model="form.skuSn" placeholder="请输入SKU编码" />
         </el-form-item>
         <el-form-item label="图片" prop="mainPic">
@@ -183,16 +183,16 @@
         </el-form-item>
         <el-form-item label="体积(m³)" prop="volume">
           <el-input v-model="form.volume" placeholder="请输入体积(m³)" />
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item label="单价" prop="unitPrice">
-          <el-input v-model="form.unitPrice" placeholder="请输入单价" />
+          <el-input-number v-model="form.unitPrice" placeholder="请输入单价" :min="0.01" :precision="2" style="width: 180px" />
         </el-form-item>
         <el-form-item label="购买数量" prop="quantity">
-          <el-input v-model="form.quantity" placeholder="请输入购买数量" />
+          <el-input-number v-model="form.quantity" placeholder="请输入购买数量" :min="1" :precision="0" style="width: 180px" />
         </el-form-item>
-        <el-form-item label="总价" prop="totalPrice">
+        <!-- <el-form-item label="总价" prop="totalPrice">
           <el-input v-model="form.totalPrice" placeholder="请输入总价" />
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item label="交付日期" prop="deliveryDate">
           <el-date-picker clearable v-model="form.deliveryDate" type="date" value-format="YYYY-MM-DD" placeholder="请选择交付日期"></el-date-picker>
         </el-form-item>
@@ -211,6 +211,7 @@
 import { listQuotationItem, getQuotationItem, delQuotationItem, addQuotationItem, updateQuotationItem } from '@/api/opportunity/quotationItem';
 import { QuotationItemVO, QuotationItemQuery, QuotationItemForm } from '@/api/opportunity/quotationItem/types';
 
+const route = useRoute();
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 
 const quotationItemList = ref<QuotationItemVO[]>([]);
@@ -225,6 +226,8 @@ const dateRangeCreateTime = ref<[DateModelType, DateModelType]>(['', '']);
 
 const queryFormRef = ref<ElFormInstance>();
 const quotationItemFormRef = ref<ElFormInstance>();
+
+const defaultQuotationId = ref<string>();
 
 const dialog = reactive<DialogOption>({
   visible: false,
@@ -273,20 +276,20 @@ const data = reactive<PageData<QuotationItemForm, QuotationItemQuery>>({
   },
   rules: {
     id: [{ required: true, message: 'ID不能为空', trigger: 'blur' }],
-    opportunityId: [{ required: true, message: '商机ID不能为空', trigger: 'blur' }],
+    // opportunityId: [{ required: true, message: '商机ID不能为空', trigger: 'blur' }],
     quotationId: [{ required: true, message: '报价单ID不能为空', trigger: 'blur' }],
-    shopId: [{ required: true, message: '店铺ID不能为空', trigger: 'blur' }],
-    customerId: [{ required: true, message: '客户ID不能为空', trigger: 'blur' }],
-    goodsSnapshotId: [{ required: true, message: '商品快照ID不能为空', trigger: 'blur' }],
+    // shopId: [{ required: true, message: '店铺ID不能为空', trigger: 'blur' }],
+    // customerId: [{ required: true, message: '客户ID不能为空', trigger: 'blur' }],
+    // goodsSnapshotId: [{ required: true, message: '商品快照ID不能为空', trigger: 'blur' }],
     skuId: [{ required: true, message: 'SKU_ID不能为空', trigger: 'blur' }],
-    mainPic: [{ required: true, message: '图片不能为空', trigger: 'blur' }],
-    specJson: [{ required: true, message: '规格JSON不能为空', trigger: 'blur' }],
-    salePrice: [{ required: true, message: '售价不能为空', trigger: 'blur' }],
-    weight: [{ required: true, message: '重量(kg)不能为空', trigger: 'blur' }],
-    volume: [{ required: true, message: '体积(m³)不能为空', trigger: 'blur' }],
+    // mainPic: [{ required: true, message: '图片不能为空', trigger: 'blur' }],
+    // specJson: [{ required: true, message: '规格JSON不能为空', trigger: 'blur' }],
+    // salePrice: [{ required: true, message: '售价不能为空', trigger: 'blur' }],
+    // weight: [{ required: true, message: '重量(kg)不能为空', trigger: 'blur' }],
+    // volume: [{ required: true, message: '体积(m³)不能为空', trigger: 'blur' }],
     unitPrice: [{ required: true, message: '单价不能为空', trigger: 'blur' }],
-    quantity: [{ required: true, message: '购买数量不能为空', trigger: 'blur' }],
-    totalPrice: [{ required: true, message: '总价不能为空', trigger: 'blur' }]
+    quantity: [{ required: true, message: '购买数量不能为空', trigger: 'blur' }]
+    // totalPrice: [{ required: true, message: '总价不能为空', trigger: 'blur' }]
   }
 });
 
@@ -326,6 +329,7 @@ const resetQuery = () => {
   dateRangeCreateTime.value = ['', ''];
   queryFormRef.value?.resetFields();
   handleQuery();
+  queryParams.value.quotationId = defaultQuotationId.value;
 };
 
 /** 多选框选中数据 */
@@ -340,6 +344,7 @@ const handleAdd = () => {
   reset();
   dialog.visible = true;
   dialog.title = '添加商机报价单明细';
+  form.value.quotationId = queryParams.value.quotationId;
 };
 
 /** 修改按钮操作 */
@@ -390,6 +395,13 @@ const handleExport = () => {
 };
 
 onMounted(() => {
+  setDefualtParams();
   getList();
 });
+
+/** 处理路由参数，初始化客户选项列表 */
+const setDefualtParams = async () => {
+  defaultQuotationId.value = route.params && (route.params.quotationId as string);
+  queryParams.value.quotationId = defaultQuotationId.value;
+};
 </script>
