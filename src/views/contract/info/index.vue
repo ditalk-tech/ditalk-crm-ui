@@ -148,16 +148,8 @@
             <span>{{ proxy.parseTime(scope.row.endDate, '{y}-{m}-{d}') }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="含税总额" align="center" prop="totalAmount">
-          <template #default="scope">
-            {{ scope.row.totalAmount / 100 }}
-          </template>
-        </el-table-column>
-        <el-table-column label="税费金额" align="center" prop="taxAmount">
-          <template #default="scope">
-            {{ scope.row.taxAmount / 100 }}
-          </template>
-        </el-table-column>
+        <el-table-column label="含税总额" align="center" prop="totalAmount" />
+        <el-table-column label="税费金额" align="center" prop="taxAmount" />
         <el-table-column label="指派给" align="center" prop="assignedTo" />
         <el-table-column label="指派部门" align="center" prop="assignedDept" />
         <!-- <el-table-column label="附件" align="center" prop="terms" /> -->
@@ -293,6 +285,8 @@ import { getInfo as getCustomerInfo } from '@/api/customer/common/info';
 // 联系人API
 import { InfoOptionVO as ContactInfoOptionVO } from '@/api/contact/info/types';
 import { listInfoOption as listContactOptionInfo } from '@/api/contact/info';
+//
+import MoneyConverter from '@/utils/ditalk/MoneyConverter';
 
 const route = useRoute();
 const router = useRouter();
@@ -394,6 +388,9 @@ const getList = async () => {
   proxy?.addDateRange(queryParams.value, dateRangeStartDate.value, 'StartDate');
   proxy?.addDateRange(queryParams.value, dateRangeEndDate.value, 'EndDate');
   const res = await listInfo(queryParams.value);
+  res.rows.forEach((item) => {
+    longToAmount(item);
+  });
   infoList.value = res.rows;
   total.value = res.total;
   loading.value = false;
@@ -456,11 +453,10 @@ const handleUpdate = async (row?: InfoVO) => {
   reset();
   const _id = row?.id || ids.value[0];
   const res = await getInfo(_id);
-  Object.assign(form.value, res.data);
+  // 单位转换
+  Object.assign(form.value, longToAmount(res.data));
   dialog.visible = true;
   dialog.title = '修改合同信息';
-  form.value.totalAmount = form.value.totalAmount / 100;
-  form.value.taxAmount = form.value.taxAmount / 100;
   if (form.value.customerId) {
     getFormContactOption(form.value.customerId);
   }
@@ -471,9 +467,8 @@ const submitForm = () => {
   infoFormRef.value?.validate(async (valid: boolean) => {
     if (valid) {
       buttonLoading.value = true;
-      const copyForm = { ...form.value };
-      copyForm.totalAmount = copyForm.totalAmount * 100;
-      copyForm.taxAmount = copyForm.taxAmount * 100;
+      let copyForm = { ...form.value };
+      copyForm = amountToLong(copyForm);
       if (form.value.id) {
         await updateInfo(copyForm).finally(() => (buttonLoading.value = false));
       } else {
@@ -504,6 +499,19 @@ const handleExport = () => {
     },
     `info_${new Date().getTime()}.xlsx`
   );
+};
+
+/** 单位转换 */
+const longToAmount = (item: InfoVO) => {
+  item.totalAmount = MoneyConverter.longToAmountStr(item.totalAmount);
+  item.taxAmount = MoneyConverter.longToAmountStr(item.taxAmount);
+  return item;
+};
+/** 单位转换 */
+const amountToLong = (item: InfoForm) => {
+  item.totalAmount = MoneyConverter.amountToLong(item.totalAmount);
+  item.taxAmount = MoneyConverter.amountToLong(item.taxAmount);
+  return item;
 };
 
 onMounted(() => {

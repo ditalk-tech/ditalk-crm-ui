@@ -75,21 +75,11 @@
           </template>
         </el-table-column>
         <el-table-column label="规格JSON" align="center" prop="specJson" />
-        <el-table-column label="售价" align="center" prop="salePrice">
-          <template #default="scope"> {{ scope.row.salePrice / 100 }} </template>
-        </el-table-column>
-        <el-table-column label="原价" align="center" prop="originalPrice">
-          <template #default="scope"> {{ scope.row.originalPrice / 100 }} </template>
-        </el-table-column>
-        <el-table-column label="成本价" align="center" prop="costPrice">
-          <template #default="scope"> {{ scope.row.costPrice / 100 }} </template>
-        </el-table-column>
-        <el-table-column label="重量(kg)" align="center" prop="weight">
-          <template #default="scope"> {{ scope.row.weight / 100 }} </template>
-        </el-table-column>
-        <el-table-column label="体积(m³)" align="center" prop="volume">
-          <template #default="scope"> {{ scope.row.volume / 10000 }} </template>
-        </el-table-column>
+        <el-table-column label="售价" align="center" prop="salePrice" />
+        <el-table-column label="原价" align="center" prop="originalPrice" />
+        <el-table-column label="成本价" align="center" prop="costPrice" />
+        <el-table-column label="重量(kg)" align="center" prop="weight" />
+        <el-table-column label="体积(m³)" align="center" prop="volume" />
         <el-table-column label="单位" align="center" prop="unitName" />
         <el-table-column label="可用库存" align="center" prop="availableStock" />
         <!-- <el-table-column label="锁定库存" align="center" prop="reservedStock" />
@@ -192,6 +182,8 @@
 <script setup name="Sku" lang="ts">
 import { listSku, getSku, delSku, addSku, updateSku } from '@/api/goods/sku';
 import { SkuVO, SkuQuery, SkuForm } from '@/api/goods/sku/types';
+//
+import MoneyConverter from '@/utils/ditalk/MoneyConverter';
 
 const route = useRoute();
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
@@ -273,6 +265,9 @@ const getList = async () => {
   queryParams.value.params = {};
   proxy?.addDateRange(queryParams.value, dateRangeCreateTime.value, 'CreateTime');
   const res = await listSku(queryParams.value);
+  res.rows.forEach((item) => {
+    longToAmount(item);
+  });
   skuList.value = res.rows;
   total.value = res.total;
   loading.value = false;
@@ -333,10 +328,13 @@ const submitForm = () => {
   skuFormRef.value?.validate(async (valid: boolean) => {
     if (valid) {
       buttonLoading.value = true;
+      let copyForm = { ...form.value };
+      // 单位转换
+      copyForm = amountToLong(copyForm);
       if (form.value.id) {
-        await updateSku(form.value).finally(() => (buttonLoading.value = false));
+        await updateSku(copyForm).finally(() => (buttonLoading.value = false));
       } else {
-        await addSku(form.value).finally(() => (buttonLoading.value = false));
+        await addSku(copyForm).finally(() => (buttonLoading.value = false));
       }
       proxy?.$modal.msgSuccess('操作成功');
       dialog.visible = false;
@@ -363,6 +361,25 @@ const handleExport = () => {
     },
     `sku_${new Date().getTime()}.xlsx`
   );
+};
+
+/** 单位转换 */
+const longToAmount = (item: SkuVO) => {
+  item.salePrice = MoneyConverter.longToAmountStr(item.salePrice);
+  item.originalPrice = MoneyConverter.longToAmountStr(item.originalPrice);
+  item.costPrice = MoneyConverter.longToAmountStr(item.costPrice);
+  item.weight = MoneyConverter.longToAmountStr(item.weight);
+  item.volume = MoneyConverter.longToAmountStr(item.volume, 4);
+  return item;
+};
+/** 单位转换 */
+const amountToLong = (item: SkuForm) => {
+  item.salePrice = MoneyConverter.amountToLong(item.salePrice);
+  item.originalPrice = MoneyConverter.amountToLong(item.originalPrice);
+  item.costPrice = MoneyConverter.amountToLong(item.costPrice);
+  item.weight = MoneyConverter.amountToLong(item.weight);
+  item.volume = MoneyConverter.amountToLong(item.volume, 4);
+  return item;
 };
 
 onMounted(() => {

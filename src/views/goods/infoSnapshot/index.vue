@@ -102,11 +102,7 @@
         <el-table-column label="条形码" align="center" prop="barCode" />
         <el-table-column label="品牌" align="center" prop="brandName" />
         <!-- <el-table-column label="商品说明" align="center" prop="content" /> -->
-        <el-table-column label="最低价" align="center" prop="minPrice">
-          <template #default="scope">
-            {{ scope.row.minPrice / 100 }}
-          </template>
-        </el-table-column>
+        <el-table-column label="最低价" align="center" prop="minPrice" />
         <el-table-column label="综合评分" align="center" prop="overallScore" />
         <el-table-column label="属性JSON" align="center" prop="attrJson" width="240">
           <template #default="scope">
@@ -208,6 +204,8 @@
 <script setup name="InfoSnapshot" lang="ts">
 import { listInfoSnapshot, getInfoSnapshot, delInfoSnapshot, addInfoSnapshot, updateInfoSnapshot } from '@/api/goods/infoSnapshot';
 import { InfoSnapshotVO, InfoSnapshotQuery, InfoSnapshotForm } from '@/api/goods/infoSnapshot/types';
+//
+import MoneyConverter from '@/utils/ditalk/MoneyConverter';
 
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 const { ditalk_goods_state } = toRefs<any>(proxy?.useDict('ditalk_goods_state'));
@@ -224,8 +222,6 @@ const dateRangeCreateTime = ref<[DateModelType, DateModelType]>(['', '']);
 
 const queryFormRef = ref<ElFormInstance>();
 const infoSnapshotFormRef = ref<ElFormInstance>();
-// 单位转换
-const minPrice = ref<number>(0); // 用于提交时转换为分
 
 const dialog = reactive<DialogOption>({
   visible: false,
@@ -292,6 +288,9 @@ const getList = async () => {
   queryParams.value.params = {};
   proxy?.addDateRange(queryParams.value, dateRangeCreateTime.value, 'CreateTime');
   const res = await listInfoSnapshot(queryParams.value);
+  res.rows.forEach((item) => {
+    longToAmount(item);
+  });
   infoSnapshotList.value = res.rows;
   total.value = res.total;
   loading.value = false;
@@ -341,24 +340,24 @@ const handleUpdate = async (row?: InfoSnapshotVO) => {
   reset();
   const _id = row?.id || ids.value[0];
   const res = await getInfoSnapshot(_id);
-  Object.assign(form.value, res.data);
+  // 单位转换
+  Object.assign(form.value, longToAmount(res.data));
   dialog.visible = true;
   dialog.title = '修改商品信息快照';
-  // 处理单位转换
-  minPrice.value = form.value.minPrice / 100;
 };
 
 /** 提交按钮 */
 const submitForm = () => {
-  // 单位转换
-  form.value.minPrice = minPrice.value * 100;
   infoSnapshotFormRef.value?.validate(async (valid: boolean) => {
     if (valid) {
       buttonLoading.value = true;
+      let copyForm = { ...form.value };
+      // 单位转换
+      copyForm = amountToLong(copyForm);
       if (form.value.id) {
-        await updateInfoSnapshot(form.value).finally(() => (buttonLoading.value = false));
+        await updateInfoSnapshot(copyForm).finally(() => (buttonLoading.value = false));
       } else {
-        await addInfoSnapshot(form.value).finally(() => (buttonLoading.value = false));
+        await addInfoSnapshot(copyForm).finally(() => (buttonLoading.value = false));
       }
       proxy?.$modal.msgSuccess('操作成功');
       dialog.visible = false;
@@ -385,6 +384,17 @@ const handleExport = () => {
     },
     `infoSnapshot_${new Date().getTime()}.xlsx`
   );
+};
+
+/** 单位转换 */
+const longToAmount = (item: InfoSnapshotVO) => {
+  item.minPrice = MoneyConverter.longToAmountStr(item.minPrice);
+  return item;
+};
+/** 单位转换 */
+const amountToLong = (item: InfoSnapshotForm) => {
+  item.minPrice = MoneyConverter.amountToLong(item.minPrice);
+  return item;
 };
 
 onMounted(() => {

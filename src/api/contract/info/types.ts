@@ -59,12 +59,12 @@ export interface InfoVO {
   /**
    * 含税总额
    */
-  totalAmount: number;
+  totalAmount: number | string;
 
   /**
    * 税费金额
    */
-  taxAmount: number;
+  taxAmount: number | string;
 
   /**
    * 备注说明

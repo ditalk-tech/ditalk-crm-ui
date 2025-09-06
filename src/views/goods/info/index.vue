@@ -108,11 +108,7 @@
         <el-table-column label="条形码" align="center" prop="barCode" />
         <el-table-column label="品牌" align="center" prop="brandName" />
         <!-- <el-table-column label="商品说明" align="center" prop="content" /> -->
-        <el-table-column label="最低价" align="center" prop="minPrice">
-          <template #default="scope">
-            {{ scope.row.minPrice / 100 }}
-          </template>
-        </el-table-column>
+        <el-table-column label="最低价" align="center" prop="minPrice" />
         <el-table-column label="总销量" align="center" prop="totalSales" />
         <el-table-column label="可用库存" align="center" prop="availableStock" />
         <el-table-column label="综合评分" align="center" prop="overallScore" />
@@ -428,6 +424,8 @@ import { BrandVO } from '@/api/goods/brand/types';
 import { listBrand } from '@/api/goods/brand';
 import * as handleRes from '@/utils/handleRes';
 import * as ValueCheck from '@/utils/ditalk/ValueCheck';
+//
+import MoneyConverter from '@/utils/ditalk/MoneyConverter';
 
 const router = useRouter();
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
@@ -461,8 +459,6 @@ const skuSpecArray = ref<string[][]>([]); // 通过预定义规格生成的 skuS
 const skuFormList = ref<SkuForm[]>([]); // 管理 sku 提交的数据集合，从 skuList 中获取数据
 const skuSpecTableHead = ref<string[]>([]); // 在 SkuForm 数据表格中管理动态表头
 const showImageUploadColumn = ref<boolean>(false); // 使 SkuForm 数据表格 ImageUpload 在最后加载，解决会加载多次，多个请求后台的问题
-// 单位转换
-const minPrice = ref<number>(0); // 用于提交时转换为分
 
 const dialog = reactive<DialogOption>({
   visible: false,
@@ -537,6 +533,9 @@ const getList = async () => {
   queryParams.value.params = {};
   proxy?.addDateRange(queryParams.value, dateRangeCreateTime.value, 'CreateTime');
   const res = await listInfo(queryParams.value);
+  res.rows.forEach((item) => {
+    longToAmount(item);
+  });
   infoList.value = res.rows;
   total.value = res.total;
   loading.value = false;
@@ -612,13 +611,12 @@ const handleUpdate = async (row?: InfoVO) => {
   reset();
   const _id = row?.id || ids.value[0];
   const res = await getInfo(_id);
-  Object.assign(form.value, res.data);
+  // 单位转换
+  Object.assign(form.value, longToAmount(res.data));
   dialog.visible = true;
   dialog.title = '修改商品信息';
   // 读取分类树 列表选项使用
   await getFormCategoryTree(form.value.shopId);
-  // 处理单位转换
-  minPrice.value = form.value.minPrice / 100;
   // 初始化contentForm，需要与form相对应，同步form到contentForm
   syncFormToContentForm();
   // 处理普通属性
@@ -649,6 +647,35 @@ const handleExport = () => {
     },
     `info_${new Date().getTime()}.xlsx`
   );
+};
+
+/** 单位转换 */
+const longToAmount = (item: InfoVO) => {
+  item.minPrice = MoneyConverter.longToAmountStr(item.minPrice);
+  return item;
+};
+/** 单位转换 */
+const amountToLong = (item: InfoForm) => {
+  item.minPrice = MoneyConverter.amountToLong(item.minPrice);
+  return item;
+};
+/** 单位转换 */
+const skuLongToAmount = (item: SkuVO) => {
+  item.salePrice = MoneyConverter.longToAmountStr(item.salePrice);
+  item.originalPrice = MoneyConverter.longToAmountStr(item.originalPrice);
+  item.costPrice = MoneyConverter.longToAmountStr(item.costPrice);
+  item.weight = MoneyConverter.longToAmountStr(item.weight);
+  item.volume = MoneyConverter.longToAmountStr(item.volume, 4);
+  return item;
+};
+/** 单位转换 */
+const skuAmountToLong = (item: SkuForm) => {
+  item.salePrice = MoneyConverter.amountToLong(item.salePrice);
+  item.originalPrice = MoneyConverter.amountToLong(item.originalPrice);
+  item.costPrice = MoneyConverter.amountToLong(item.costPrice);
+  item.weight = MoneyConverter.amountToLong(item.weight);
+  item.volume = MoneyConverter.amountToLong(item.volume, 4);
+  return item;
 };
 
 onMounted(() => {
@@ -785,17 +812,18 @@ const saveInfo = () => {
   // 参数格式转换
   form.value.attrJson = array2json(attrArray.value);
   form.value.specJson = buildSpecArray();
-  // 单位转换
-  form.value.minPrice = minPrice.value * 100;
   // 保存数据
   infoFormRef.value?.validate(async (valid: boolean) => {
     if (valid) {
       buttonLoading.value = true;
+      let formCopy = { ...form.value };
+      // 单位转换
+      formCopy = amountToLong(formCopy);
       let res: any;
       if (form.value.id) {
-        res = await updateInfo(form.value);
+        res = await updateInfo(formCopy);
       } else {
-        res = await addInfo(form.value);
+        res = await addInfo(formCopy);
       }
       handleRes.showMsg(res);
       form.value.id = res.data.id;
@@ -847,20 +875,22 @@ const saveSku = () => {
   // skuList 转换到 skuFormList
   skuFormList.value = [];
   skuList.value.forEach((sku) => {
-    skuFormList.value.push({
+    let skuForm: SkuForm = {
       id: sku.id,
       version: sku.version,
       skuSn: sku.skuSn,
       mainPic: sku.mainPic,
       specJson: sku.specJson,
       unitName: sku.unitName,
-      salePrice: sku.salePrice * 100,
-      originalPrice: sku.originalPrice * 100,
-      costPrice: sku.costPrice * 100,
-      weight: sku.weight * 100,
-      volume: sku.volume * 10000,
+      salePrice: Number(sku.salePrice),
+      originalPrice: Number(sku.originalPrice),
+      costPrice: Number(sku.costPrice),
+      weight: Number(sku.weight),
+      volume: Number(sku.volume),
       availableStock: sku.availableStock
-    });
+    };
+    skuForm = skuAmountToLong(skuForm);
+    skuFormList.value.push(skuForm);
   });
   // 提交保存
   const skuBatchForm: SkuBatchForm = {
@@ -1103,13 +1133,8 @@ const handleSkuList = async () => {
   };
   const skuListRes = await listSku(skuQuery);
   skuListRes.rows.forEach((row) => {
-    row.salePrice = row.salePrice / 100;
-    row.originalPrice = row.originalPrice / 100;
-    row.costPrice = row.costPrice / 100;
-    row.weight = row.weight / 100;
-    row.volume = row.volume / 10000;
     row['specObject'] = JSON.parse(row.specJson);
-    skuList.value.push(row);
+    skuList.value.push(skuLongToAmount(row));
   });
 };
 

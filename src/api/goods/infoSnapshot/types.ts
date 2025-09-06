@@ -80,7 +80,7 @@ export interface InfoSnapshotVO {
   /**
    * 最低价
    */
-  minPrice: number;
+  minPrice: number | string;
 
   /**
    * 综合评分（满10分）

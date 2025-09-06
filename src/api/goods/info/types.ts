@@ -75,7 +75,7 @@ export interface InfoVO {
   /**
    * 最低价
    */
-  minPrice: number;
+  minPrice: number | string;
 
   /**
    * 总销量

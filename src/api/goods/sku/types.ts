@@ -52,27 +52,27 @@ export interface SkuVO {
   /**
    * 售价
    */
-  salePrice: number;
+  salePrice: number | string;
 
   /**
    * 原价
    */
-  originalPrice: number;
+  originalPrice: number | string;
 
   /**
    * 成本价
    */
-  costPrice: number;
+  costPrice: number | string;
 
   /**
    * 重量(kg)
    */
-  weight: number;
+  weight: number | string;
 
   /**
    * 体积(m³)
    */
-  volume: number;
+  volume: number | string;
 
   /**
    * 可用库存
@@ -140,6 +140,7 @@ export interface SkuForm extends BaseEntity {
    * 图片
    */
   mainPic?: number;
+  mainPicUrl?: string;
 
   /**
    * 规格JSON
