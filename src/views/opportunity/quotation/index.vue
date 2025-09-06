@@ -224,6 +224,7 @@
 <script setup name="Quotation" lang="ts">
 import { listQuotation, getQuotation, delQuotation, addQuotation, updateQuotation } from '@/api/opportunity/quotation';
 import { QuotationVO, QuotationQuery, QuotationForm } from '@/api/opportunity/quotation/types';
+import MoneyConverter from '@/utils/ditalk/MoneyConverter';
 
 const route = useRoute();
 const router = useRouter();
@@ -317,6 +318,9 @@ const getList = async () => {
   proxy?.addDateRange(queryParams.value, dateRangeCreateTime.value, 'CreateTime');
   proxy?.addDateRange(queryParams.value, dateRangeValidUntil.value, 'ValidUntil');
   const res = await listQuotation(queryParams.value);
+  res.rows.forEach((item) => {
+    longToAmount(item);
+  });
   quotationList.value = res.rows;
   total.value = res.total;
   loading.value = false;
@@ -371,7 +375,9 @@ const handleUpdate = async (row?: QuotationVO) => {
   reset();
   const _id = row?.id || ids.value[0];
   const res = await getQuotation(_id);
-  Object.assign(form.value, res.data);
+  // 单位转换
+  // Object.assign(form.value, res.data);
+  Object.assign(form.value, longToAmount(res.data));
   dialog.visible = true;
   dialog.title = '修改商机报价单';
 };
@@ -381,10 +387,13 @@ const submitForm = () => {
   quotationFormRef.value?.validate(async (valid: boolean) => {
     if (valid) {
       buttonLoading.value = true;
+      let copyForm = { ...form.value };
+      // 单位转换
+      copyForm = amountToLong(copyForm);
       if (form.value.id) {
-        await updateQuotation(form.value).finally(() => (buttonLoading.value = false));
+        await updateQuotation(copyForm).finally(() => (buttonLoading.value = false));
       } else {
-        await addQuotation(form.value).finally(() => (buttonLoading.value = false));
+        await addQuotation(copyForm).finally(() => (buttonLoading.value = false));
       }
       proxy?.$modal.msgSuccess('操作成功');
       dialog.visible = false;
@@ -411,6 +420,21 @@ const handleExport = () => {
     },
     `quotation_${new Date().getTime()}.xlsx`
   );
+};
+
+/** 单位转换 */
+const longToAmount = (item: QuotationVO) => {
+  item.totalSalePrice = MoneyConverter.longToAmountStr(item.totalSalePrice);
+  item.totalCostPrice = MoneyConverter.longToAmountStr(item.totalCostPrice);
+  item.totalOriginalPrice = MoneyConverter.longToAmountStr(item.totalOriginalPrice);
+  return item;
+};
+/** 单位转换 */
+const amountToLong = (item: QuotationForm) => {
+  item.totalSalePrice = undefined;
+  item.totalCostPrice = undefined;
+  item.totalOriginalPrice = undefined;
+  return item;
 };
 
 onMounted(() => {

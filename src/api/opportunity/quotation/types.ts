@@ -37,17 +37,17 @@ export interface QuotationVO {
   /**
    * 总售价
    */
-  totalSalePrice: number;
+  totalSalePrice: number | string;
 
   /**
    * 总定价
    */
-  totalOriginalPrice: number;
+  totalOriginalPrice: number | string;
 
   /**
    * 总成本
    */
-  totalCostPrice: number;
+  totalCostPrice: number | string;
 
   /**
    * 有效期到

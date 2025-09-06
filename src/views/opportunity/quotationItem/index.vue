@@ -210,6 +210,7 @@
 <script setup name="QuotationItem" lang="ts">
 import { listQuotationItem, getQuotationItem, delQuotationItem, addQuotationItem, updateQuotationItem } from '@/api/opportunity/quotationItem';
 import { QuotationItemVO, QuotationItemQuery, QuotationItemForm } from '@/api/opportunity/quotationItem/types';
+import MoneyConverter from '@/utils/ditalk/MoneyConverter';
 
 const route = useRoute();
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
@@ -301,6 +302,9 @@ const getList = async () => {
   queryParams.value.params = {};
   proxy?.addDateRange(queryParams.value, dateRangeCreateTime.value, 'CreateTime');
   const res = await listQuotationItem(queryParams.value);
+  res.rows.forEach((item) => {
+    longToAmount(item);
+  });
   quotationItemList.value = res.rows;
   total.value = res.total;
   loading.value = false;
@@ -352,7 +356,8 @@ const handleUpdate = async (row?: QuotationItemVO) => {
   reset();
   const _id = row?.id || ids.value[0];
   const res = await getQuotationItem(_id);
-  Object.assign(form.value, res.data);
+  // 单位转换
+  Object.assign(form.value, longToAmount(res.data));
   dialog.visible = true;
   dialog.title = '修改商机报价单明细';
 };
@@ -362,10 +367,13 @@ const submitForm = () => {
   quotationItemFormRef.value?.validate(async (valid: boolean) => {
     if (valid) {
       buttonLoading.value = true;
+      let formCopy = { ...form.value };
+      // 单位转换
+      formCopy = amountToLong(formCopy);
       if (form.value.id) {
-        await updateQuotationItem(form.value).finally(() => (buttonLoading.value = false));
+        await updateQuotationItem(formCopy).finally(() => (buttonLoading.value = false));
       } else {
-        await addQuotationItem(form.value).finally(() => (buttonLoading.value = false));
+        await addQuotationItem(formCopy).finally(() => (buttonLoading.value = false));
       }
       proxy?.$modal.msgSuccess('操作成功');
       dialog.visible = false;
@@ -392,6 +400,29 @@ const handleExport = () => {
     },
     `quotationItem_${new Date().getTime()}.xlsx`
   );
+};
+
+/** 单位转换 */
+const longToAmount = (item: QuotationItemVO) => {
+  item.salePrice = MoneyConverter.longToAmountStr(item.salePrice);
+  item.costPrice = MoneyConverter.longToAmountStr(item.costPrice);
+  item.originalPrice = MoneyConverter.longToAmountStr(item.originalPrice);
+  item.unitPrice = MoneyConverter.longToAmountStr(item.unitPrice);
+  item.totalPrice = MoneyConverter.longToAmountStr(item.totalPrice);
+  item.weight = MoneyConverter.longToAmountStr(item.weight);
+  item.volume = MoneyConverter.longToAmountStr(item.volume, 4);
+  return item;
+};
+/** 单位转换 */
+const amountToLong = (item: QuotationItemForm) => {
+  item.unitPrice = MoneyConverter.amountToLong(item.unitPrice);
+  item.salePrice = undefined;
+  item.costPrice = undefined;
+  item.originalPrice = undefined;
+  item.totalPrice = undefined;
+  item.weight = undefined;
+  item.volume = undefined;
+  return item;
 };
 
 onMounted(() => {

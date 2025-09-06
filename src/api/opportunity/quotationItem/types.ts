@@ -72,32 +72,32 @@ export interface QuotationItemVO {
   /**
    * 售价
    */
-  salePrice: number;
+  salePrice: number | string;
 
   /**
    * 原价
    */
-  originalPrice: number;
+  originalPrice: number | string;
 
   /**
    * 成本价
    */
-  costPrice: number;
+  costPrice: number | string;
 
   /**
    * 重量(kg)
    */
-  weight: number;
+  weight: number | string;
 
   /**
    * 体积(m³)
    */
-  volume: number;
+  volume: number | string;
 
   /**
    * 单价
    */
-  unitPrice: number;
+  unitPrice: number | string;
 
   /**
    * 购买数量
@@ -107,7 +107,7 @@ export interface QuotationItemVO {
   /**
    * 总价
    */
-  totalPrice: number;
+  totalPrice: number | string;
 
   /**
    * 交付日期
