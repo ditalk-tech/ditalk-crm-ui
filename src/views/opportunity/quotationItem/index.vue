@@ -328,8 +328,8 @@ const handleQuery = () => {
 const resetQuery = () => {
   dateRangeCreateTime.value = ['', ''];
   queryFormRef.value?.resetFields();
-  handleQuery();
   queryParams.value.quotationId = defaultQuotationId.value;
+  handleQuery();
 };
 
 /** 多选框选中数据 */
